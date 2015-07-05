@@ -4,7 +4,7 @@ Chess Arbiter Tools
 arbitools    ------ Version 0.5
 *********************************************************************************************
 
-Arbitools is a collection of programs that allow chess arbiters to manage a chess tournament. this is something that traditionally was possible only with non-free software. Arbitools tries to be the GNU way to do it. Important features of the GNU way: the possibility to work from commandline; possibility of integration with other software (to write pdfs, easily export databases, etc.). And most importantly, the easiness of making changes and improvements.
+Arbitools is a collection of programs that allow chess arbiters to manage a chess tournament. This is something that traditionally was possible only with non-free software. Arbitools tries to be the GNU way to do it. Important features of the GNU way: the possibility to work from commandline; possibility of integration with other software (to write pdfs, easily export databases, etc.). And most importantly, the easiness of making changes and improvements.
 arbitools.py offers the Tournament class, very easy to use for other projects.
 It is written in Python 3. It should work in other platforms apart from GNU/Linux.
 
