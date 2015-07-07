@@ -1,7 +1,7 @@
 # arbitools
 Chess Arbiter Tools
 ********************************************************************************************
-arbitools    ------ Version 0.5
+arbitools    ------ Version 0.7
 *********************************************************************************************
 
 Arbitools is a collection of programs that allow chess arbiters to manage a chess tournament. This is something that traditionally was possible only with non-free software. Arbitools tries to be the GNU way to do it. Important features of the GNU way: the possibility to work from commandline; possibility of integration with other software (to write pdfs, easily export databases, etc.). And most importantly, the easiness of making changes and improvements.
@@ -11,14 +11,14 @@ It is written in Python 3. It should work in other platforms apart from GNU/Linu
 FEATURES:
 Up to here, the following tasks are possible:
 
-- Updating the players data in the database file. Supported formats for the database are: .csv, .txt, .veg
+- Updating the players data in the database file. Supported formats for the database are: .csv, .txt (fide official), .veg
 - Adding a list of players in a file to a database file.
+- Produce output for standings: a .txt file and a .tex file, ready to pdflatex
 
 TODO:
 - Pairing engine. This is the hardest part of all, is the reason why most arbiters use non-free software. For the moment, I recommend the use of JavaPairing (javapairing.sourceforge.net). Although this program is free software, it doesn't opperate the GNU way. But it offers the possibility to pair a file from commandline.
-- Producing output for standings.
 - Appliying tiebreaks.
-- Producint FIDE reports.
+- Producing FIDE reports.
 
 
 
@@ -70,6 +70,15 @@ SYNOPSIS
 	arbitools-add.py [-i inputfile] [-u file where the new data are]
 DESCRIPTION
 	Retrieves data from -u and paste them in -i.
+
+
+----------------------------------------------------
+NAME
+	arbitools-standings.py
+SYNOPSIS
+	arbitools-standings.py [-i inputfile]
+DESCRIPTION
+	Creates to files, a .txt and a .tex with the standings
 
 ---------------------------------------------
 GUI.
