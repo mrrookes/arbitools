@@ -75,6 +75,8 @@ class Tournament:
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
                 if inputfile.endswith('.txt'):
                         outputfile=inputfilesplit[0]+'_updated'+'.txt'
+                else:
+                        print("No renocozco este formato")
                 with open(outputfile, 'w') as csvoutputfile:
                         writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
                         if inputfile.endswith('.csv'):
@@ -100,10 +102,14 @@ class Tournament:
 
 
         #Print standings to file
-        def standings_to_file(self, inputfile, outputfile):
+        def standings_to_file(self, inputfile):
+                inputfilestrip = inputfile.split('.')
+                outputfile = inputfilestrip[0]+"_standings.txt"
+                outputfileTeX = inputfilestrip[0]+"standings.tex"
                 numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
                 currentround = int(self.info['CURRENT_ROUND'])
-                
+                #tex_header = []
+                #tex_middle = []
                 playerspoints = []
                 if inputfile.endswith('.veg'):
                         for i in range(0, numberofplayers):
@@ -121,19 +127,37 @@ class Tournament:
                                 self.standings.append(line)
                 newlist = sorted(self.standings, key=itemgetter('POINTS'), reverse=True)        
                 
+#Writing the text file
                 with open(outputfile, 'w') as csvoutputfile:
+                        print("Writing .txt file...")
                         csvoutputfile.write(self.info['TOURNAMENT_NAME']+"\n")
                         csvoutputfile.write("Standings\n")
                         for i in range(0, len(newlist)):
-                                line = str(newlist[i])
+                                line = newlist[i]['NAME']+" "+str(newlist[i]['POINTS'])
                                 csvoutputfile.write(line)
                                 csvoutputfile.write("\n")
                                 
+#Writing the LaTeX file
+                with open("tex_header.txt") as texheaderfile:
+                        tex_header = texheaderfile.read()
+                with open("tex_middle.txt") as texmiddlefile:
+                        tex_middle = texmiddlefile.read()
+                with open(outputfileTeX, 'w') as csvoutputfile:
+                        csvoutputfile.write(tex_header)
+                        tournamentname = self.info['TOURNAMENT_NAME'].strip()
+                        csvoutputfile.write("\n\\lhead{ \\Large "+tournamentname+"\\\\\\vspace{6mm}}")
+                        csvoutputfile.write(tex_middle)
+                        csvoutputfile.write("\n\n")
+                        for i in range(0, len(newlist)):
+                                line = newlist[i]['NAME']+" "+str(newlist[i]['POINTS'])
+                                csvoutputfile.write(line)
+                                csvoutputfile.write("\n\n")
+                        csvoutputfile.write("\\end{document}")
 
         #Apply recursive tiebreaks to standings
         def applyARPO(self, inputfile):
                 RPtournament = MyRP.Tournament.load(inputfile, 1400, x)
-		
+                
                 return
 
         #Read a elo list and get the players data. The argument listfile_rows comes from the get_list_data_from_file method 
@@ -267,6 +291,7 @@ class Tournament:
                         if filename.endswith('.txt') or filename.endswith('.trf') or filename.endswith('.trfx'):
                                 print("FIDE format file")
                                 line=' '
+                                players_index = 0
                                 while line:
                                         line = csvfile.readline()
                                         firstblock = line[0:3]
@@ -311,11 +336,29 @@ class Tournament:
                                                 idfide = line[57:68]
                                                 birthday = line[69:79]
                                                 points = line[80:84]
-                                                
+                                                roundblock = ' '
+                                                offset = 0
+                                                numberofrounds = 0 #This variable is to count the number of rounds. This data is not in the TRF format
+                                                playersopponent_temp = ''
+                                                prueba = 0#Testing
+                                                while 1:
+                                                       offset += 10
+                                                       opponent = line[91+offset:95+offset]
+                                                       if not opponent:
+                                                              break
+                                                       playersopponent_temp = playersopponent_temp+" "+opponent
+                                                       #self.playersopponent[0]=self.playersopponent[0]+" "+opponent#I have to put the right index here.
+                                                       numberofrounds += 1
+                                                       prueba += 1#Testing
 
                                                 new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': fide, 'COUNTRY': fed, 'TITLE': title, 'BIRTHDAY': birthday, 'POINTS':points}
-                                                print(new_row)
-                                                self.players_data.append(new_row) 
+                                                self.playersopponent.append(playersopponent_temp)
+
+                                                self.info['NUMBER_OF_ROUNDS'] = numberofrounds #This is not correct, but the info is not always available in this file format.
+                                                self.info['CURRENT_ROUND'] = numberofrounds
+                                                #print(new_row)
+                                                self.players_data.append(new_row)
+                                                players_index += 1        
                                 
                         if filename.endswith('.veg'):
                                 print(".veg file. Don't worry, I won't touch the original. It will be backed up.")
