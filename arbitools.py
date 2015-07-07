@@ -40,8 +40,9 @@ class Tournament:
 
         def __init__(self):
                         
-                self.info={'TOURNAMENT_NAME':'', 'CITY':'', 'FED':'', 'BEGIN_DATE':'', 'END_DATE':'', 'ARBITER':'', 'TIEBREAKS':'', 'NUMBER_OF_ROWS':'', 'CURRENT_ROUND':'', 'NUMBER_OF_PLAYERS':''}
+                self.info={'TOURNAMENT_NAME':'', 'CITY':'', 'FED':'', 'BEGIN_DATE':'', 'END_DATE':'', 'ARBITER':'', 'DEPUTY':'', 'TIEBREAKS':'', 'NUMBER_OF_ROWS':'', 'CURRENT_ROUND':'', 'NUMBER_OF_PLAYERS':''}
                 self.standings=[]
+
                 self.players_data = []
                 self.crosstable = []
 
@@ -72,11 +73,13 @@ class Tournament:
                         outputfile=inputfilesplit[0]+'_updated'+'.csv'#Get the name for the updated file.
                 if inputfile.endswith('.veg'):
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
-                
+                if inputfile.endswith('.txt'):
+                        outputfile=inputfilesplit[0]+'_updated'+'.txt'
                 with open(outputfile, 'w') as csvoutputfile:
                         writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
                         if inputfile.endswith('.csv'):
                                 writer.writeheader()
+#This code is for .veg and .csv only. I have to write the code for .txt
                         try:
                                 if inputfile.endswith('.veg'):
                                         csvoutputfile.writelines(self.vegaheader)
@@ -97,20 +100,25 @@ class Tournament:
 
 
         #Print standings to file
-        def standings_to_file(self, outputfile):
+        def standings_to_file(self, inputfile, outputfile):
                 numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
                 currentround = int(self.info['CURRENT_ROUND'])
                 
                 playerspoints = []
-                for i in range(0, numberofplayers):
-                        playersresults = self.roundresults[i].split(" ")
-                        playerspoints.append(0)
-                        for j in range(4, 4+currentround-1):
-                                playerspoints[i] += int(playersresults[j])
+                if inputfile.endswith('.veg'):
+                        for i in range(0, numberofplayers):
+                                playersresults = self.roundresults[i].split(" ")
+                                playerspoints.append(0)
+                                for j in range(4, 4+currentround-1):
+                                        playerspoints[i] += int(playersresults[j])
                                 
-                for i in range(0, numberofplayers):
-                        line = {'NAME':self.players_data[i]['NAME'], 'POINTS':playerspoints[i]}
-                        self.standings.append(line)
+                        for i in range(0, numberofplayers):
+                                line = {'NAME':self.players_data[i]['NAME'], 'POINTS':playerspoints[i]}
+                                self.standings.append(line)
+                if inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
+                        for i in range(0, numberofplayers):
+                                line = {'NAME':self.players_data[i]['NAME'], 'POINTS':self.players_data[i]['POINTS']}
+                                self.standings.append(line)
                 newlist = sorted(self.standings, key=itemgetter('POINTS'), reverse=True)        
                 
                 with open(outputfile, 'w') as csvoutputfile:
@@ -125,6 +133,7 @@ class Tournament:
         #Apply recursive tiebreaks to standings
         def applyARPO(self, inputfile):
                 RPtournament = MyRP.Tournament.load(inputfile, 1400, x)
+		
                 return
 
         #Read a elo list and get the players data. The argument listfile_rows comes from the get_list_data_from_file method 
@@ -255,6 +264,59 @@ class Tournament:
         def get_tournament_data_from_file(self, filename):
                 
                 with open(filename) as csvfile:
+                        if filename.endswith('.txt') or filename.endswith('.trf') or filename.endswith('.trfx'):
+                                print("FIDE format file")
+                                line=' '
+                                while line:
+                                        line = csvfile.readline()
+                                        firstblock = line[0:3]
+                                        if firstblock == "012":
+                                                info = line[4:]
+                                                self.info['TOURNAMENT_NAME'] = info
+                                                print(info)
+                                        if firstblock == "022":
+                                                info = line[4:]
+                                                self.info['CITY'] = info
+                                                print(info)
+                                        if firstblock == "032":
+                                                info = line[4:]
+                                                self.info['FED'] = info
+                                                print(info)
+                                        if firstblock == "042":
+                                                info = line[4:]
+                                                self.info['BEGIN_DATE'] = info
+                                                print(info)
+                                        if firstblock == "052":
+                                                info = line[4:]
+                                                self.info['END_DATE'] = info
+                                                print(info)
+                                        if firstblock == "062":
+                                                info = line[4:]
+                                                self.info['NUMBER_OF_PLAYERS'] = info
+                                                print(info)
+                                        if firstblock == "102":
+                                                info = line[4:]
+                                                self.info['ARBITER'] = info
+                                                print(info)
+                                        if firstblock == "022":
+                                                info = line[4:]
+                                                self.info['CITY'] = info
+                                                print(info)
+                                        if firstblock == "001": #Players information
+                                                sex = line[9]
+                                                title = line[10:13]
+                                                name = line[14:47]
+                                                fide = line[48:52]
+                                                fed = line[53:56]
+                                                idfide = line[57:68]
+                                                birthday = line[69:79]
+                                                points = line[80:84]
+                                                
+
+                                                new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': fide, 'COUNTRY': fed, 'TITLE': title, 'BIRTHDAY': birthday, 'POINTS':points}
+                                                print(new_row)
+                                                self.players_data.append(new_row) 
+                                
                         if filename.endswith('.veg'):
                                 print(".veg file. Don't worry, I won't touch the original. It will be backed up.")
 
@@ -391,5 +453,27 @@ class Tournament:
                                         sys.exit('file %s, line %d: %s' % (inputfile, DictReader.line_num, e))
 
         #Add new players to players_data
-        def add_players_data_from_file(self):
-                return
+        def add_players_data_from_file(self, addfile):
+                foundit = 0
+                addfile_rows=[]
+                with open(addfile) as csvaddfile:
+                        print("Reading new data...")
+                        reader = csv.DictReader(csvaddfile, delimiter = ";")
+                        try:
+                                for row in reader:
+                                        new_row = row
+                                        addfile_rows.append(new_row)
+                        except csv.Error as e:
+                                sys.exit('file %s, line %d: %s' % (inputfile, DictReader.line_num, e))
+                        
+                                
+                for addrow in addfile_rows:
+                        for row in self.players_data:
+                                if addrow['NAME']==row['NAME']:
+                                        foundit = 1
+                                if foundit == 0:
+                                        print("Add:" +addrow['NAME'])
+                                        self.players_data.append(addrow)
+                                foundit = 0
+				
+                print(self.players_data)
