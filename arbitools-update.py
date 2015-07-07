@@ -99,8 +99,6 @@ def main(argv):
 	#print(listdata)
 	tournament.get_tournament_data_from_file(inputfile)
 	tournament.update_players_data_from_list(listdata, method, 1,1,1,1)
-	if inputfile.endswith('.veg'):
-		tournament.standings_to_file("standings.txt")
 	tournament.output_to_file(inputfile)
 
 if __name__ == "__main__":
