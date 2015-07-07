@@ -69,7 +69,6 @@ def main(argv):
         #print(listdata)
         tournament.get_tournament_data_from_file(inputfile)
         if inputfile.endswith('.veg') or inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
-                inputfilesplit = inputfile.split('.')
-                tournament.standings_to_file(inputfile, inputfile[0]+"standings.txt")
+                tournament.standings_to_file(inputfile)
 if __name__ == "__main__":
    main(sys.argv[1:])
