@@ -72,6 +72,12 @@ class App:
         self.infiletextbox.pack()
         self.infiletextbox.insert(tkinter.END, "")
         
+        
+        self.updatedatabutton = ttk.Button(frame, text="Update data", width=15, command=self.update_data)
+        self.updatedatabutton.pack()
+        
+        self.separatorone = ttk.Separator(frame, orient = tkinter.HORIZONTAL)
+        self.separatorone.pack(fill="x")
         #widgets for the addfile information (to use with arbitools-add)
         self.addfilelabel = ttk.Label(frame, text="File with new data:")
         self.addfilelabel.pack()
@@ -83,35 +89,38 @@ class App:
         self.addfiletextbox = tkinter.Text(frame, height=1, width=50)
         self.addfiletextbox.pack()
         self.addfiletextbox.insert(tkinter.END, "")
+        
+        self.adddatabutton = ttk.Button(frame, text="Add data from file", width=15, command=self.add_data)
+        self.adddatabutton.pack()
 
-        self.resultsBox = tkinter.Text(frame, height=15, width=75)
-        self.resultsBox.pack()
-
+        self.separatorone = ttk.Separator(frame, orient = tkinter.HORIZONTAL)
+        self.separatorone.pack(fill="x")
         #self.scrollbar = Scrollbar(self.resultsBox, command=self.textbox.yview)
         #self.resultsBox.configure(yscrollcommand=self.scrollbar.set)
         #self.scrollbar.grid(column=3, sticky=N+S)
         
-        self.updatedatabutton = ttk.Button(frame, text="Update data", width=15, command=self.update_data)
-        self.updatedatabutton.pack()
-
+        self.optionslabel = ttk.Label(frame, text="Select elo file:")
+        self.optionslabel.pack()
+ 
         self.optionscombobox=ttk.Combobox(frame)
         self.optionscombobox['values']=('FIDE-FEDA Vega.csv', 'players_list_xml.xml', 'elo_feda.xls')
         self.optionscombobox.state(['readonly'])
         #self.optionscombobox.bind('<<Combobox Selected>>, 
         self.optionscombobox.pack()
-        
-        self.method=tkinter.IntVar()
+       
+        self.methodlabel = ttk.Label(frame, text="Select search method:")
+        self.methodlabel.pack()
+ 
+        #self.method=tkinter.IntVar()
         self.methodcombobox=ttk.Combobox(frame)
         self.methodcombobox['values']=('idfide', 'name')
         self.methodcombobox.state(['readonly'])
-        self.methodcombobox.bind('<<Combobox Selected>>', self.method)
+        #self.methodcombobox.bind('<<Combobox Selected>>', self.method)
         
         self.methodcombobox.pack()
 
         
-        self.adddatabutton = ttk.Button(frame, text="Add data from file", width=15, command=self.add_data)
-        self.adddatabutton.pack()
-
+        
         self.whattoupdatelabel = ttk.Label(frame, text="Data to update:")
         self.whattoupdatelabel.pack()
 
@@ -134,6 +143,9 @@ class App:
         self.varidfeda=tkinter.IntVar()
         self.checkboxidfeda=tkinter.Checkbutton(frame, text="ID FEDA", variable=self.varidfeda)
         self.checkboxidfeda.pack()
+
+        self.resultsBox = tkinter.Text(frame, height=15, width=75)
+        self.resultsBox.pack()
 
     def infile(self):
         self.infiletextbox.insert(tkinter.END, askopenfilename())
@@ -167,18 +179,26 @@ class App:
                 listfile='FIDE-FEDA Vega.csv'
         if self.optionscombobox.get() == "elo_feda.xls":
                 elolist='feda'
-                tkinter.messagebox.showinfo("ELO Feda", "There are mistakes in this file. Check everything after doing this.")
+                tkinter.messagebox.showinfo("ELO Feda", "There are multiple spelling issues in this file. Check everything after doing this.")
                 listfile='elo_feda.xls'
-        
+        method=''        
+
+        if self.methodcombobox.get() == "idfide":
+                method='idfide'
+                tkinter.messagebox.showinfo("WARNING!", "Don't use this option with the FEDA elo file.")
+        if self.methodcombobox.get() == "name":
+                method='name'
+
         inputfile = self.infiletextbox.get(1.0, tkinter.END).strip()
 
-        tkinter.messagebox.showinfo("var", elolist)
-        listdata = self.tournament.get_list_data_from_file(elolist, listfile, self.method.get())
+        #tkinter.messagebox.showinfo("var", elolist)#testing
+        listdata = self.tournament.get_list_data_from_file(elolist, listfile, method)
         self.tournament.get_tournament_data_from_file(inputfile)
-        self.tournament.update_players_data_from_list(listdata, self.method.get(), self.varfide.get(), self.varfeda.get(), self.varidfide.get(), self.varidfeda.get())
+        #self.tournament.update_players_data_from_list(listdata, self.method.get(), self.varfide.get(), self.varfeda.get(), self.varidfide.get(), int(self.varidfeda.get()))
+        self.tournament.update_players_data_from_list(listdata, method, self.varfide.get(), self.varfeda.get(), self.varidfide.get(), self.varidfeda.get())
         self.tournament.output_to_file(inputfile)
 
-
+        self.resultsBox.insert(tkinter.END, "File updated...\n")        
         #self.update_data(texttext, elolist, method, self.varname.get(), self.varfide.get(), self.varfeda.get(), self.varidfide.get(), self.varidfeda.get())
         
     def add_data(self):
