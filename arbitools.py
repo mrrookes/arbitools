@@ -71,9 +71,9 @@ class Tournament:
                 inputfilesplit = inputfile.split('.')#Separate file name and extension.
                 if inputfile.endswith('.csv'):
                         outputfile=inputfilesplit[0]+'_updated'+'.csv'#Get the name for the updated file.
-                if inputfile.endswith('.veg'):
+                elif inputfile.endswith('.veg'):
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
-                if inputfile.endswith('.txt'):
+                elif inputfile.endswith('.txt'):
                         outputfile=inputfilesplit[0]+'_updated'+'.txt'
                 else:
                         print("I don't have a filter for this file format.")
@@ -169,26 +169,31 @@ class Tournament:
                                 if method == 'idfide':
                                         if listfilerow['IDFIDE']==row['IDFIDE']:
                                                 print('Updating data from: '+row['NAME']+'...')
-                                                if listfilerow['IDFIDE'] != '' and idfide == 1:
+                                                if listfilerow['IDFIDE'] != ' ' and idfide == 1:
                                                         row['IDFIDE']=listfilerow['IDFIDE']
-                                                if listfilerow['ELOFIDE'] != '' and fide == 1:
+                                                if listfilerow['ELOFIDE'] != ' ' and fide == 1:
                                                         row['ELOFIDE']=listfilerow['ELOFIDE']
-                                                if listfilerow['ELONAT'] != '' and feda == 1:
+                                                if listfilerow['ELONAT'] != ' ' and feda == 1:
                                                         row['ELONAT']=listfilerow['ELONAT']
-                                                if listfilerow['IDNAT'] != '' and idfeda == 1:
+                                                if listfilerow['IDNAT'] != ' ' and idfeda == 1:
                                                         row['IDNAT']=listfilerow['IDNAT']
+                                                if listfilerow['KFIDE'] != ' ':
+                                                        row['KFIDE']=listfilerow['KFIDE']
                                 if method == 'name':
                                         if listfilerow['NAME']==row['NAME']:
                                                 print('Updating data from: '+row['NAME']+'...')
-                                                if listfilerow['IDFIDE'] != '' and idfide == 1:
+                                                if listfilerow['IDFIDE'] != ' ' and idfide == 1:
                                                         row['IDFIDE']=listfilerow['IDFIDE']
-                                                if listfilerow['ELOFIDE'] != '' and fide == 1:
+                                                if listfilerow['ELOFIDE'] != ' ' and fide == 1:
                                                         row['ELOFIDE']=listfilerow['ELOFIDE']
-                                                if listfilerow['ELONAT'] != '' and feda == 1:
+                                                if listfilerow['ELONAT'] != ' ' and feda == 1:
                                                         row['ELONAT']=listfilerow['ELONAT']
-                                                if listfilerow['IDNAT'] != '' and idfeda == 1:
+                                                if listfilerow['IDNAT'] != ' ' and idfeda == 1:
                                                         row['IDNAT']=listfilerow['IDNAT']
-                
+                                                if listfilerow['KFIDE'] != ' ':
+                                                        row['KFIDE']=listfilerow['KFIDE']
+                          
+                        #print(row)#testing
 
 
         #Get data from a list (fide, feda, fidefeda) and return the data in listfilerows. 
@@ -206,7 +211,9 @@ class Tournament:
                                         for row in reader:
                                                 new_row=row
                                                 listfile_rows.append(new_row)#we use this lines as they are, because is the same format this program uses.
+                                        #print(listfile_rows)
                                         return listfile_rows
+                                        
                                 except csv.Error as e:
                                         sys.exit('file %s, line %d: %s' % (inputfile, DictReader.lin_num, e))
 
@@ -220,10 +227,30 @@ class Tournament:
                                 
                                 if ',' in cell:
                                         cell = cell.split(',')#To separate first and last name
-                                        lastname = cell[0].capitalize()#We leave only the first capital in the Surname
+                                        lastnamesplit = cell[0].split(" ")#In case the surname has more than one word
+
+                                        lastname1 = lastnamesplit[0].capitalize()#We leave only the first capital in the Surname
+                                        firstname = ''
+                                        lastname = ''
+                                        lastname2 = ''
+                                        if len(lastnamesplit)>1:
+                                                lastname2 = lastnamesplit[1].capitalize()
+                                                lastname = lastname1+" "+lastname2
+                                        elif len(lastnamesplit) == 1:
+                                                lastname = lastname1
+                                        
                                         firstname = cell[1].strip()#To remove the space in front of the name, because it was after the comma.
-                                        firstname = firstname.capitalize()#Only the first capital is left.
+                                        firstnamesplit = firstname.split(" ")
+                                        firstname1 = firstnamesplit[0].capitalize()
+                                        firstname2 = ''
+                                        if len(firstnamesplit)>1:
+                                                firstname2 = firstnamesplit[1].capitalize()
+                                                firstname = firstname1+" "+firstname2
+                                        elif len(firstnamesplit) == 1:
+                                                firstname = firstname1
+                                        
                                         name=lastname+", "+firstname#Lastly, join everything in the variable name.
+                                        
                 
                                 elif '.' in cell:  #I detected some mistakes in the file feda, some names are separated with a dot from the surnames, instead of using a comma.
                                         cell = cell.split('.')#Separate first and last name.
@@ -238,7 +265,7 @@ class Tournament:
                                 elonat = str(int(worksheet.cell_value(i, 3)))
                                 idnat = str(int(worksheet.cell_value(i, 0)))
                                 
-                                new_row={'NAME': name, 'G': '', 'IDFIDE': '', 'ELOFIDE': '', 'COUNTRY': '', 'TITLE': '', 'ELONAT': elonat, 'KFIDE': '', 'CLUB': '', 'BIRTHDAY': '', 'KNAT': '0', 'IDNAT': idnat}
+                                new_row={'NAME': name, 'G': ' ', 'IDFIDE': ' ', 'ELOFIDE': ' ', 'COUNTRY': ' ', 'TITLE': ' ', 'ELONAT': elonat, 'KFIDE': ' ', 'CLUB': ' ', 'BIRTHDAY': ' ', 'KNAT': '0', 'IDNAT': idnat}
                                 listfile_rows.append(new_row)
                         return listfile_rows
 
@@ -263,7 +290,7 @@ class Tournament:
                                         
                                         for row in self.players_data:#This file is too large, it is better to fill listfile only with players present in the tournament
                                                 if name == row['NAME']:
-                                                        new_row={'NAME': name, 'G': '', 'IDFIDE': '', 'ELOFIDE': '', 'COUNTRY': '', 'TITLE': '', 'ELONAT': elonat, 'KFIDE': '', 'CLUB': '', 'BIRTHDAY': '', 'KNAT': '0', 'IDNAT': idnat}
+                                                        new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': rating, 'COUNTRY': country, 'TITLE': title, 'ELONAT': '', 'KFIDE': k, 'CLUB': '', 'BIRTHDAY': birthday, 'KNAT': '0', 'IDNAT': ''}
                                                         listfile_rows.append(new_row)
                                         return listfile_rows
 
@@ -487,6 +514,11 @@ class Tournament:
                         if filename.endswith('.csv'):
                                 reader = csv.DictReader(csvfile, delimiter=';')
                                 self.header = reader.fieldnames
+                                #Remove the spaces from the fields
+                                
+                                for i in range(0, len(reader.fieldnames)):
+                                        reader.fieldnames[i] = reader.fieldnames[i].strip()
+                                                               
                                 try:
                                         print('Reading file...')
                                         for row in reader:
@@ -504,21 +536,35 @@ class Tournament:
                 with open(addfile) as csvaddfile:
                         print("Reading new data...")
                         reader = csv.DictReader(csvaddfile, delimiter = ";")
+                        header = reader.fieldnames
+                        for i in range(0, len(reader.fieldnames)):
+                                reader.fieldnames[i] = reader.fieldnames[i].strip()
+                                
                         try:
                                 for row in reader:
                                         new_row = row
                                         addfile_rows.append(new_row)
+                                
                         except csv.Error as e:
                                 sys.exit('file %s, line %d: %s' % (inputfile, DictReader.line_num, e))
                         
-                                
+                lenplayersdata = len(self.players_data)
+                lenaddfile = len(addfile)
+                
                 for addrow in addfile_rows:
-                        for row in self.players_data:
-                                if addrow['NAME']==row['NAME']:
+                        for i in range(0, lenplayersdata):
+                                addrow['NAME'] = addrow['NAME'].strip()
+                                self.players_data[i]['NAME'] = self.players_data[i]['NAME'].strip()
+                                if addrow['NAME']==self.players_data[i]['NAME']:
+                                        print("Not adding "+addrow['NAME']+". The player is already in the file.")
                                         foundit = 1
-                                if foundit == 0:
-                                        print("Add:" +addrow['NAME'])
-                                        self.players_data.append(addrow)
-                                foundit = 0
-				
-                print(self.players_data)
+                                        break
+                                #print(addrow['NAME']+" y "+self.players_data[i]['NAME']+" no son iguales")
+                        if foundit == 0:
+                                print("Add:" +addrow['NAME'])
+                                self.players_data.append(addrow)
+                        foundit = 0
+                                
+                                
+                #print(self.players_data)
+
