@@ -53,7 +53,7 @@ def main(argv):
                         inputfile = arg
                 
                 elif opt in ("-v", "--version"):
-                        print('GNU Chess Arbiter Tools Versión 0.5')
+                        print('GNU Chess Arbiter Tools')
                         print('Copyright 2015 David González Gándara')
                         print('License GPLv.3+ <http://www.gnu.org/licenses/gpl.htm>')
                         print('This is free software, you are free to change and distribute it.')
