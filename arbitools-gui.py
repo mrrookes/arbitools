@@ -50,7 +50,7 @@ class App:
         # create and position widgets
         current_path=os.path.dirname(os.path.realpath(sys.argv[0]))
         if not os.path.isfile(current_path+"/FIDE-FEDA Vega.csv"):
-                tkMessageBox.showinfo("Error", "I can't find FIDE-FEDA Vega.csv. You won't be able to get fidefeda data.")
+                tkinter.messagebox.showinfo("Error", "I can't find FIDE-FEDA Vega.csv. You won't be able to get fidefeda data.")
         if not os.path.isfile(current_path+"/players_list_xml.xml"):
                 tkinter.messagebox.showinfo("Error", "I can't find players_list_xml.xml. You won't be able to use fide xml data.")
         if not os.path.isfile(current_path+"/elo_feda.xls"):
