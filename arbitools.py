@@ -76,7 +76,7 @@ class Tournament:
                 if inputfile.endswith('.txt'):
                         outputfile=inputfilesplit[0]+'_updated'+'.txt'
                 else:
-                        print("No renocozco este formato")
+                        print("I don't have a filter for this file format.")
                 with open(outputfile, 'w') as csvoutputfile:
                         writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
                         if inputfile.endswith('.csv'):
@@ -105,7 +105,7 @@ class Tournament:
         def standings_to_file(self, inputfile):
                 inputfilestrip = inputfile.split('.')
                 outputfile = inputfilestrip[0]+"_standings.txt"
-                outputfileTeX = inputfilestrip[0]+"standings.tex"
+                outputfileTeX = inputfilestrip[0]+"_standings.tex"
                 numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
                 currentround = int(self.info['CURRENT_ROUND'])
                 #tex_header = []
@@ -145,13 +145,15 @@ class Tournament:
                 with open(outputfileTeX, 'w') as csvoutputfile:
                         csvoutputfile.write(tex_header)
                         tournamentname = self.info['TOURNAMENT_NAME'].strip()
-                        csvoutputfile.write("\n\\lhead{ \\Large "+tournamentname+"\\\\\\vspace{6mm}}")
+                        csvoutputfile.write("\n\\lhead{ \\LARGE \\bfseries "+tournamentname+"}")
                         csvoutputfile.write(tex_middle)
                         csvoutputfile.write("\n\n")
+                        csvoutputfile.write("\\begin{tabular}{p{8cm}l}")
                         for i in range(0, len(newlist)):
-                                line = newlist[i]['NAME']+" "+str(newlist[i]['POINTS'])
+                                line = newlist[i]['NAME']+"&"+str(newlist[i]['POINTS']+"\\\\")
                                 csvoutputfile.write(line)
                                 csvoutputfile.write("\n\n")
+                        csvoutputfile.write("\\end{tabular}")
                         csvoutputfile.write("\\end{document}")
 
         #Apply recursive tiebreaks to standings
