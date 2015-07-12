@@ -24,6 +24,7 @@ import csv
 import unicodedata
 from collections import namedtuple
 from operator import itemgetter
+from itertools import dropwhile, compress
 import PyRP
 try:
         from lxml import etree
@@ -114,30 +115,45 @@ class Tournament:
                 if inputfile.endswith('.veg'):
                         for i in range(0, numberofplayers):
                                 playersresults = self.roundresults[i].split(" ")
-                                playerspoints.append(0)
-                                for j in range(4, 4+currentround-1):
-                                        playerspoints[i] += int(playersresults[j])
-                                
+                                for result in playersresults:
+                                        result = result.strip()
+                                #print(playersresults)#testing
+                                points = 0
+                                for j in range(2, len(playersresults)):
+                                        
+                                        points += float(playersresults[j])
+                                playerspoints.append(str(points))
+                            
                         for i in range(0, numberofplayers):
                                 line = {'NAME':self.players_data[i]['NAME'], 'POINTS':playerspoints[i]}
+                                #print("I'm here"+str(line))#testing
                                 self.standings.append(line)
                 if inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
                         for i in range(0, numberofplayers):
                                 line = {'NAME':self.players_data[i]['NAME'], 'POINTS':self.players_data[i]['POINTS']}
+                                #print(line)#testing
                                 self.standings.append(line)
                 newlist = sorted(self.standings, key=itemgetter('POINTS'), reverse=True)        
-                
+                #print("puntos: "+str(playerspoints))#testing
 #Writing the text file
                 with open(outputfile, 'w') as csvoutputfile:
-                        print("Writing .txt file...")
+                        print("Writing standings to .txt file...")
                         csvoutputfile.write(self.info['TOURNAMENT_NAME']+"\n")
-                        csvoutputfile.write("Standings\n")
+                        csvoutputfile.write("Standings\n\n")
+                        csvoutputfile.write("NAME\t\t\t\t\tPOINTS\n")
                         for i in range(0, len(newlist)):
-                                line = newlist[i]['NAME']+" "+str(newlist[i]['POINTS'])
+                                tabspace = " "
+                                tabspacelen = 39-len(newlist[i]['NAME'])
+                                
+                                for j in range(0, tabspacelen):
+                                        
+                                        tabspace = tabspace+" "
+                                line = newlist[i]['NAME']+tabspace+str(newlist[i]['POINTS'])
                                 csvoutputfile.write(line)
                                 csvoutputfile.write("\n")
                                 
 #Writing the LaTeX file
+                print("Writing standings to .tex file...")
                 with open("tex_header.txt") as texheaderfile:
                         tex_header = texheaderfile.read()
                 with open("tex_middle.txt") as texmiddlefile:
@@ -150,7 +166,7 @@ class Tournament:
                         csvoutputfile.write("\n\n")
                         csvoutputfile.write("\\begin{tabular}{p{8cm}l}")
                         for i in range(0, len(newlist)):
-                                line = newlist[i]['NAME']+"&"+str(newlist[i]['POINTS']+"\\\\")
+                                line = newlist[i]['NAME']+"&"+str(newlist[i]['POINTS']+"\\\\")#This doesn't work with .veg files.
                                 csvoutputfile.write(line)
                                 csvoutputfile.write("\n\n")
                         csvoutputfile.write("\\end{tabular}")
@@ -158,7 +174,17 @@ class Tournament:
 
         #Apply recursive tiebreaks to standings
         def applyARPO(self, inputfile):
-                RPtournament = MyRP.Tournament.load(inputfile, 1400, x)
+                RPtournament = PyRP.Tournament.load("testing.txt") #Load a Tournament object, from PyRP library, not arbitools
+                #Now, let's fill the properties. The method load is supposed to do so, but I have to adjust the working of PyRP to arbitools.
+                RPtournament._names = [str(player['NAME']) for player in self.players_data]
+                RPtournament._opponents = [player.split(' ') for player in self.playersopponent]
+                RPtournament._number_of_opponents = [len(opps) for opps in RPtournament._opponents]
+                RPtournament._did_not_play = [name for name, opps in zip(RPtournament._names, RPtournament._number_of_opponents) if opps == 0]
+                RPtournament._names = list(compress(RPtournament._names, RPtournament._number_of_opponents))
+                
+                #RPtournament._elos = [RP._calculate_elo(self.players_data['ELOFIDE'], 1400) for line in compress(lines, RPtournament._number_of_opponents)]
+                #print(RPtournament._names)#testing 
+                #print(RPtournament._opponents)#testing
                 
                 return
 
@@ -327,44 +353,44 @@ class Tournament:
                                         if firstblock == "012":
                                                 info = line[4:]
                                                 self.info['TOURNAMENT_NAME'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "022":
                                                 info = line[4:]
                                                 self.info['CITY'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "032":
                                                 info = line[4:]
                                                 self.info['FED'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "042":
                                                 info = line[4:]
                                                 self.info['BEGIN_DATE'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "052":
                                                 info = line[4:]
                                                 self.info['END_DATE'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "062":
                                                 info = line[4:]
                                                 self.info['NUMBER_OF_PLAYERS'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "102":
                                                 info = line[4:]
                                                 self.info['ARBITER'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "022":
                                                 info = line[4:]
                                                 self.info['CITY'] = info
-                                                print(info)
+                                                #print(info)
                                         if firstblock == "001": #Players information
-                                                sex = line[9]
-                                                title = line[10:13]
-                                                name = line[14:47]
-                                                fide = line[48:52]
-                                                fed = line[53:56]
-                                                idfide = line[57:68]
-                                                birthday = line[69:79]
-                                                points = line[80:84]
+                                                sex = line[9].strip()
+                                                title = line[10:13].strip()
+                                                name = line[14:47].strip()
+                                                fide = line[48:52].strip()
+                                                fed = line[53:56].strip()
+                                                idfide = line[57:68].strip()
+                                                birthday = line[69:79].strip()
+                                                points = line[80:84].strip()
                                                 roundblock = ' '
                                                 offset = 0
                                                 numberofrounds = 0 #This variable is to count the number of rounds. This data is not in the TRF format
@@ -372,23 +398,25 @@ class Tournament:
                                                 prueba = 0#Testing
                                                 while 1:
                                                        offset += 10
-                                                       opponent = line[91+offset:95+offset]
+                                                       opponent = line[91+offset:95+offset].strip()
                                                        if not opponent:
                                                               break
-                                                       playersopponent_temp = playersopponent_temp+" "+opponent
+                                                       if opponent != '0000':
+                                                              playersopponent_temp = playersopponent_temp+" "+opponent.strip()
                                                        #self.playersopponent[0]=self.playersopponent[0]+" "+opponent#I have to put the right index here.
                                                        numberofrounds += 1
                                                        prueba += 1#Testing
 
                                                 new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': fide, 'COUNTRY': fed, 'TITLE': title, 'BIRTHDAY': birthday, 'POINTS':points}
-                                                self.playersopponent.append(playersopponent_temp)
+                                                self.playersopponent.append(playersopponent_temp.strip())
+                                                
 
                                                 self.info['NUMBER_OF_ROUNDS'] = numberofrounds #This is not correct, but the info is not always available in this file format.
                                                 self.info['CURRENT_ROUND'] = numberofrounds
                                                 #print(new_row)
                                                 self.players_data.append(new_row)
                                                 players_index += 1        
-                                
+                                #print(self.playersopponent)
                         if filename.endswith('.veg'):
                                 print(".veg file. Don't worry, I won't touch the original. It will be backed up.")
 
@@ -490,7 +518,7 @@ class Tournament:
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
                                         if i > 0:
-                                                self.roundresults.append(line)
+                                                self.roundresults.append(line.strip())
 
                                 
                                 csvfile.seek(0)
