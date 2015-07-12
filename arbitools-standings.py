@@ -68,6 +68,7 @@ def main(argv):
         
         #print(listdata)
         tournament.get_tournament_data_from_file(inputfile)
+        tournament.applyARPO(inputfile)
         if inputfile.endswith('.veg') or inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
                 tournament.standings_to_file(inputfile)
 if __name__ == "__main__":
