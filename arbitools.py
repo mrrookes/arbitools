@@ -41,8 +41,9 @@ class Tournament:
 
         def __init__(self):
                         
-                self.info={'TOURNAMENT_NAME':'', 'CITY':'', 'FED':'', 'BEGIN_DATE':'', 'END_DATE':'', 'ARBITER':'', 'DEPUTY':'', 'TIEBREAKS':'', 'NUMBER_OF_ROWS':'', 'CURRENT_ROUND':'', 'NUMBER_OF_PLAYERS':''}
+                self.info={'TOURNAMENT_NAME':'', 'CITY':'', 'FED':'', 'BEGIN_DATE':'', 'END_DATE':'', 'ARBITER':'', 'DEPUTY':'', 'TIEBREAKS':'', 'NUMBER_OF_ROUNDS':'', 'CURRENT_ROUND':'', 'NUMBER_OF_PLAYERS':''}
                 self.standings=[]
+                self.dates=[]
 
                 self.players_data = []
                 self.crosstable = []
@@ -174,17 +175,62 @@ class Tournament:
 
         #Apply recursive tiebreaks to standings
         def applyARPO(self, inputfile):
+                lines = []#This is the list PyRP takes. We have to fill it with the players and tournament info.
+                             
+                for i in range(0, len(self.players_data)):
+                        opponents = self.playersopponent[i].split(' ')
+                        colors = self.playerscolor[i].split(' ')
+                        results = self.roundresults[i].split(' ')
+                        
+                        line = [i+1, i+1, self.players_data[i]['TITLE'], self.players_data[i]['NAME'], self.players_data[i]['ELOFIDE'], self.players_data[i]['COUNTRY']]
+                        
+                        for j in range(0, int(self.info['CURRENT_ROUND'])):
+                                if j < len(opponents):
+                                        line.append(opponents[j])
+                                        line.append(colors[j])
+                                        if results[j] == "+":
+                                                line.append("1")#We put 1s in the +s. This is not correct, I'll change it in the future.
+                                        elif results[j] == "-":
+                                                line.append("0")
+                                        elif results[j] == "=":
+                                                line.append("x")#The symbol for draw in the TRF file is =. We replace that with x, which is what ARPO takes.
+                                        else:
+                                                line.append(results[j])
+                                
+                        line.append(self.players_data[i]['POINTS'].strip())
+                        line.append("0")#I should put the real performance here. But it seems irrelevant.
+                        lines.append(line)
+                #print(lines)#testing
+                index_rounds = []
+                roundcount = 6
+                limit = self.info['CURRENT_ROUND']*3+6
+                while roundcount <= self.info['CURRENT_ROUND']*3:
+                        index_rounds.append(roundcount)
+                        roundcount += 3
+                
                 RPtournament = PyRP.Tournament.load("testing.txt") #Load a Tournament object, from PyRP library, not arbitools
                 #Now, let's fill the properties. The method load is supposed to do so, but I have to adjust the working of PyRP to arbitools.
+                
                 RPtournament._names = [str(player['NAME']) for player in self.players_data]
-                RPtournament._opponents = [player.split(' ') for player in self.playersopponent]
+#fill the property "opponents" -- doesn't work yet.
+                RPtournament._opponents = [RPtournament._calculate_opponents(line, index_rounds) for line in lines]
+                
                 RPtournament._number_of_opponents = [len(opps) for opps in RPtournament._opponents]
                 RPtournament._did_not_play = [name for name, opps in zip(RPtournament._names, RPtournament._number_of_opponents) if opps == 0]
                 RPtournament._names = list(compress(RPtournament._names, RPtournament._number_of_opponents))
                 
-                #RPtournament._elos = [RP._calculate_elo(self.players_data['ELOFIDE'], 1400) for line in compress(lines, RPtournament._number_of_opponents)]
-                #print(RPtournament._names)#testing 
-                #print(RPtournament._opponents)#testing
+                RPtournament._elos = [RPtournament._calculate_elo(line[4], 1400) for line in compress(lines, RPtournament._number_of_opponents)]
+                index_points = 3+self.info['CURRENT_ROUND']*3 #I don't really understand why 3+ and not 5+, since there are 5 fields and then the fields for the rounds.
+                
+                RPtournament._points = [RPtournament._calculate_points(line[index_points], draw_character="x") for line in compress(lines, RPtournament._number_of_opponents)]
+                
+                RPtournament._played_points = [RPtournament._calculate_played_points(line, index_rounds, "x") for line in compress(lines, RPtournament._number_of_opponents)]
+                RPtournament._number_of_opponents = list(compress(RPtournament._number_of_opponents, RPtournament._number_of_opponents))
+                
+                RPtournament._number_of_rounds = len(index_rounds)
+                print(RPtournament._names)#testing
+                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'ARPO', 'worst': 1, 'best': 1}), output_file = r"test.csv")
+                
                 
                 return
 
@@ -347,6 +393,9 @@ class Tournament:
                                 print("FIDE format file")
                                 line=' '
                                 players_index = 0
+                                numberofrounds = 0
+                                playercount = 0
+                                
                                 while line:
                                         line = csvfile.readline()
                                         firstblock = line[0:3]
@@ -382,6 +431,17 @@ class Tournament:
                                                 info = line[4:]
                                                 self.info['CITY'] = info
                                                 #print(info)
+                                        if firstblock == "132": #Round dates information
+                                                offset = 0
+                                                while 1:
+                                                        date = line[91+offset:99+offset]
+                                                        offset += 10
+                                                        if not date:
+                                                                break
+                                                        self.dates.append(date.strip())
+                                                        numberofrounds += 1                                               
+                                                self.info['NUMBER_OF_ROUNDS'] = numberofrounds #This is not correct, but the info is not always available in this file format and we need to fill the variable.
+                                                self.info['CURRENT_ROUND'] = numberofrounds
                                         if firstblock == "001": #Players information
                                                 sex = line[9].strip()
                                                 title = line[10:13].strip()
@@ -393,29 +453,42 @@ class Tournament:
                                                 points = line[80:84].strip()
                                                 roundblock = ' '
                                                 offset = 0
-                                                numberofrounds = 0 #This variable is to count the number of rounds. This data is not in the TRF format
+                                                numberofrounds = 0 #This variable is to count the number of rounds. This data is not in the TRF format.
+                                                
                                                 playersopponent_temp = ''
-                                                prueba = 0#Testing
-                                                while 1:
-                                                       offset += 10
+                                                playerscolor_temp = ''
+                                                playersresults_temp = ''
+                                                
+                                                for i in range(1, len(self.dates)):
+                                                       
                                                        opponent = line[91+offset:95+offset].strip()
-                                                       if not opponent:
-                                                              break
-                                                       if opponent != '0000':
+                                                       color = line[96+offset:97+offset].strip()
+                                                       
+                                                       result = line[98+offset:99+offset].strip()
+                                                       
+                                                       offset += 10
+                                                       if not opponent: #Fill empty rounds with data
+                                                              playersopponent_temp = playersopponent_temp+" 0000"
+                                                              playerscolor_temp = playerscolor_temp+" -"
+                                                              playersresults_temp = playersresults_temp+" 0"
+                                                       else: #If there is data, use the actual data
                                                               playersopponent_temp = playersopponent_temp+" "+opponent.strip()
-                                                       #self.playersopponent[0]=self.playersopponent[0]+" "+opponent#I have to put the right index here.
-                                                       numberofrounds += 1
-                                                       prueba += 1#Testing
-
+                                                              playerscolor_temp = playerscolor_temp+" "+color.strip()
+                                                              playersresults_temp = playersresults_temp+" "+result.strip()
+                                                       
+                                                    
                                                 new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': fide, 'COUNTRY': fed, 'TITLE': title, 'BIRTHDAY': birthday, 'POINTS':points}
+                                        
                                                 self.playersopponent.append(playersopponent_temp.strip())
+                                                self.playerscolor.append(playerscolor_temp.strip())
+                                                self.roundresults.append(playersresults_temp.strip())
                                                 
 
-                                                self.info['NUMBER_OF_ROUNDS'] = numberofrounds #This is not correct, but the info is not always available in this file format.
-                                                self.info['CURRENT_ROUND'] = numberofrounds
                                                 #print(new_row)
                                                 self.players_data.append(new_row)
-                                                players_index += 1        
+                                                players_index += 1
+                                                playercount += 1
+        
                                 #print(self.playersopponent)
                         if filename.endswith('.veg'):
                                 print(".veg file. Don't worry, I won't touch the original. It will be backed up.")
@@ -497,7 +570,7 @@ class Tournament:
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
                                         if i > 0:
-                                                self.playersopponent.append(line) #We store the data in the property.
+                                                self.playersopponent.append(line.strip()) #We store the data in the property.
 
                                 
                                 csvfile.seek(0)
@@ -507,7 +580,7 @@ class Tournament:
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
                                         if i > 0:
-                                                self.playersfloater.append(line) 
+                                                self.playersfloater.append(line.strip()) 
 
 
 
