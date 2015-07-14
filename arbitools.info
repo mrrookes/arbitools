@@ -1,0 +1,320 @@
+This is arbitools.info, produced by makeinfo version 5.2 from
+arbitools.texi.
+
+This manual is for Chess Arbiter Tools, version 0.9.
+
+   Copyright (C) 2015 David Gonzalez Gandara.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation.
+
+
+File: arbitools.info,  Node: Top,  Next: Introduction,  Up: (dir)
+
+Chess Arbiter Tools
+*******************
+
+This manual is for Chess Arbiter Tools, version 0.9.
+
+   Copyright (C) 2015 David Gonzalez Gandara.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation.
+
+* Menu:
+
+
+* Introduction: Introduction
+* Installation: Installation
+* Usage: Usage
+* File Formats: File Formats
+* Common Arbiters Tasks: Common Arbiters Tasks
+* The python library: The python library
+* Troubleshooting: Troubleshooting
+
+
+File: arbitools.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
+
+1 Introduction
+**************
+
+Chess Arbiter Tools were born as a solution to a situation where chess
+arbiters are forced to use privative software because of the lack of
+free tournament management tools.  It consists of a group of programs
+that allows the arbiter to do some important tasks in tournaments, such
+as maintaining the players database up to date or produce reports.
+
+   The philosophy is to provide the arbiter with more freedom over the
+tournament files.  The most common programs (usually privative software)
+don't usually allow direct operations on the files, so the arbiter has
+to stick to the possibilities the program offers.  The alternative is to
+allow the arbiter with complete control over the files during the
+tournament.
+
+   Apart from that, as it happens with any other free software program,
+if the user is not happy with the way the program does stuff, he or she
+can just change the code to make it works the way he likes.
+
+
+File: arbitools.info,  Node: Installation,  Next: Usage,  Prev: Introduction,  Up: Top
+
+2 Installation
+**************
+
+This program is written in python 3, which is an interpreted language,
+so you don't really need to install it.  Just download the latest
+version from <http://www.github.com/mrrookes/arbitools>.
+
+2.1 Installing Python
+=====================
+
+What you may need to install is python.  If you use GNU/Linux it is most
+likely already install, but not in other systems.  You can get the
+latest version from <http://www.python.org/downloads>.  Remember to
+download 3.*.* and not 2.*.*.
+
+   You also need to have a couple of modules of python, namely xlrd and
+lxml.  The easiest way to install modules is through pip.  In order to
+use pip.  Open a command console, go to the python folder in your
+system, then go to the Scripts folder and type:
+
+   'pip install xlrd' 'pip install lxml'
+
+   Ir this is too difficult for you, there are graphical python
+installer you can find on the internet.
+
+2.2 Other files you may need
+============================
+
+     _players_list_xml.xml_ You need this file if you want to update the
+     FIDE ratings of the players.  You can download it from
+     <http://ratings.fide.com/download/players_list_xml.zip>.
+
+     _elo_feda.xls_ You need this file if you want to update the FEDA
+     ratings of the players.  You can get it here
+     <http://www.feda.org/web/index.php/elo>.  The file has a different
+     name, but you need to rename it to "elo_feda.xls"
+
+     _FIDE-FEDA Vega.csv_ Alternatively, you can use this file, which
+     contain either FIDE ratings and FEDA ratings.  This file is
+     maintained by Jesus Mena.  You can get it here
+     <http://www.jemchess.com>
+
+
+File: arbitools.info,  Node: Usage,  Next: File Formats,  Prev: Installation,  Up: Top
+
+3 Usage
+*******
+
+Chess Arbiter Tools has been designed to be used in command line.  Some
+of the newest features are only possible through this means.  Anyway,
+sooner or later, all the features will be available in the graphical
+interface also.
+
+3.1 Graphical Interface
+=======================
+
+Invoking the graphical interface is easy.  Just run "arbitools-gui.py".
+Choose your file, your options and press the button withe function you
+want to perform.
+
+3.2 Command Line
+================
+
+3.2.1 arbitools-update.py
+-------------------------
+
+Updates the players information stored in a file.  It is a very useful
+function when a new list is published and you had already set up the
+tournament.
+     -i This argument takes the name of the input file.  This is the
+     file with the information we want to update.
+
+     You can use .veg files, .txt (FIDE Krause) or .csv.  For details
+     see the section *Note File Formats::.
+     -l Write the name of the elo list here.  "fide" uses the official
+     fide list from the file "players_list_xml.xml".  It won't work if
+     you don't have that file in your folder.  You can download it from
+     www.fide.com.  "feda" uses the feda list from the file
+     "elo_feda.xls".  You have to rename the file from www.feda.org.
+     "fidefeda" uses the file "FIDE-FEDA Vega.csv".  You can download it
+     from www.jemchess.com.
+     -m Search method.  You can use "idfide" or "name".  "idfide"
+     doesn't have a effect if you use the feda list, because it doesn't
+     contain the fide codes.
+
+3.2.2 arbitools-add.py
+----------------------
+
+Adds extra players to an existing file.
+     -i This argument takes the name of the input file.  This is the
+     file with the information we want to update.
+
+     You can use .veg files, .txt (FIDE Krause) or .csv.  For details
+     see the section *Note File Formats::.
+     -a This argument takes the name of the file with the extra players
+     you want to add.  It should be a .csv file with the structure
+     described in the "File Formats" section.
+
+     You can use .veg files, .txt (FIDE Krause) or .csv.  For details
+     see the section *Note File Formats::.
+
+3.2.3 arbitools-standings.py
+----------------------------
+
+Produces the standings for a tournament.  A file with the "standings"
+suffix is created.  You get also a .tex file, ready to use with pdflatex
+to get a pdf.
+     -i This argument takes the name of the input file.  It will only
+     work witn .txt (FIDE Krause) or .veg.  Other formats don't contain
+     the tournament's information needed to produce the standings.
+
+
+File: arbitools.info,  Node: File Formats,  Next: Common Arbiters Tasks,  Prev: Usage,  Up: Top
+
+4 File Formats
+**************
+
+4.1 .veg files
+==============
+
+This is the format of the Vega software, written by Luigi Forlano.
+Although it is not free software, the file format is free.  This program
+is widely used in Spain and Italy.
+
+4.2 .txt files (FIDE Krause)
+============================
+
+This is the official format approved by FIDE.
+
+4.3 .csv files
+==============
+
+Chess Arbiter Tools accepts .csv with ";" separator and the following
+headings:
+
+   'NAME;COUNTRY;BIRTHDAY;G;TITLE;IDFIDE;ELOFIDE;KFIDE;IDNAT;ELONAT;K;CLUB'
+
+   You won't be able to produce reports from this kind of file, since it
+doesn't store the tournament information, only the players'.
+
+
+File: arbitools.info,  Node: Common Arbiters Tasks,  Next: The python library,  Prev: File Formats,  Up: Top
+
+5 Common Arbiters Tasks
+***********************
+
+You created a tournament and already have the file "mytournament.veg"
+with the tournaments information.  You can do lots of operations with
+arbitools.  For example:
+
+5.1 Updating the players data in a file.
+========================================
+
+You want to add the FEDA elos to the players data.  You type the
+following command:
+
+   'python3 -i mytournament.veg -l feda -m name'
+
+   You want to update the FIDE elos because a new list was published:
+
+   'python3 -i mytournament.veg -l fide -m idfide'
+
+   Just remember this process is really, really slow.  It is because
+"players_list_xml.xml" is a very big file, and the .xml format is very
+unefficient.
+
+5.2 Adding extra players to an existing file.
+=============================================
+
+You got a new list of players that have to be added to your original
+file.  The new list is called "late_entries.csv".
+
+   'python3 -i mytournament.veg -a late_entries.csv'
+
+5.3 Getting the standings for a tournament.
+===========================================
+
+This task is really easy to perform
+
+   'python3 -i mytournament.veg'
+
+
+File: arbitools.info,  Node: The python library,  Next: Troubleshooting,  Prev: Common Arbiters Tasks,  Up: Top
+
+6 The python library
+********************
+
+Chess Arbiter Tools offers a python library which programmers can use in
+other programs.  It provides the class "Tournament", with the following
+properties and methods:
+
+6.1 Creating an instance of the class
+=====================================
+
+You can create an instance of the class Tournament easily: 'mytournament
+= arbitools.Tournament()'
+
+6.2 Properties
+==============
+
+     _info_ This dictionary encapsulates important information about the
+     tournament:
+       1. _TOURNAMENT_NAME_
+       2. _CITY_
+       3. _FED_
+       4. _BEGIN_DATE_
+       5. _END_DATE_
+       6. _ARBITER_
+       7. _DEPUTY_
+       8. _NUMBER_OF_ROUNDS_
+       9. _CURRENT_ROUND_
+       10. _NUMBER_OR_PLAYERS_
+
+     _players data_ List of dictionaries with the data of the players.
+       1. _NAME_: Surname, Name
+       2. _G_: Sex: "m" or "f"
+       3. _IDFIDE_
+       4. _ELOFIDE_
+       5. _COUNTRY_
+       6. _TITLE_
+       7. _ELONAT_
+       8. _KFIDE_
+       9. _CLUB_
+       10. _BIRTHDAY_
+       11. _KNAT_
+       12. _IDNAT_
+
+6.3 Methods
+===========
+
+     _output_to_file(inputfile)_ It takes one argument, the name of the
+     file to output the information.
+
+
+File: arbitools.info,  Node: Troubleshooting,  Prev: The python library,  Up: Top
+
+7 Troubleshooting
+*****************
+
+Known bugs
+  1. Standings won't work with tournament files where a player didn't
+     play any rounds.
+
+
+
+Tag Table:
+Node: Top402
+Node: Introduction1071
+Node: Installation2112
+Node: Usage3839
+Node: File Formats6515
+Node: Common Arbiters Tasks7282
+Node: The python library8531
+Node: Troubleshooting9848
+
+End Tag Table
