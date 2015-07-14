@@ -159,12 +159,19 @@ class Tournament:
                         csvoutputfile.write("\n\\lhead{ \\LARGE \\bfseries "+tournamentname+"}")
                         csvoutputfile.write(tex_middle)
                         csvoutputfile.write("\n\n")
-                        csvoutputfile.write("\\begin{tabular}{p{8cm}l}")
+                        #csvoutputfile.write("\\begin{tabular}{p{8cm}l}")
+                        #for i in range(0, len(newlist)):
+                        #        line = newlist[i]['NAME']+"&"+str(newlist[i]['POINTS']+"\\\\")#This doesn't work with .veg files.
+                        #        csvoutputfile.write(line)
+                        #        csvoutputfile.write("\n\n")
+                        #csvoutputfile.write("\\end{tabular}")
+                        csvoutputfile.write("\\begin{tabbing}")
+                        csvoutputfile.write("\\bfseries Name \\hspace{5cm} \\= \\bfseries Points \\\\")
                         for i in range(0, len(newlist)):
-                                line = newlist[i]['NAME']+"&"+str(newlist[i]['POINTS']+"\\\\")#This doesn't work with .veg files.
-                                csvoutputfile.write(line)
-                                csvoutputfile.write("\n\n")
-                        csvoutputfile.write("\\end{tabular}")
+                                 line = newlist[i]['NAME']+"\\> "+str(newlist[i]['POINTS'])+"\\\\"
+                                 csvoutputfile.write(line)
+                                 csvoutputfile.write("\n\n")
+                        csvoutputfile.write("\\end{tabbing}")
                         csvoutputfile.write("\\end{document}")
 
         #Apply recursive tiebreaks to standings
