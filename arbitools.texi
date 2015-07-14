@@ -172,6 +172,7 @@ This task is really easy to perform
 
 @code{python3 -i mytournament.veg}
 
+You will get a .txt file with the standings. You will also get a .tex file you can compile with pdflatex and get a pdf. Additionally, it generates a file ``test.csv'' with the ARPO tiebreak calculations. This is very experimental, hence the name of the file. This option is possible thanks to the python libraries written by Julio Gonzalez and Jose Carlos Diaz. More information on @url{http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm}
 @node    The python library
 @chapter The python library
 
