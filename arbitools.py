@@ -88,7 +88,10 @@ class Tournament:
                                 if inputfile.endswith('.veg'):
                                         csvoutputfile.writelines(self.vegaheader)
                                         csvoutputfile.writelines(self.headeroutputvega)
-                                writer.writerows(self.players_data)
+                                players_data_veg = self.players_data
+                                for player in players_data_veg:
+                                        del player['POINTS']
+                                writer.writerows(players_data_veg)
                                 if inputfile.endswith('.veg'):
                                         csvoutputfile.writelines(self.restofvega)
                                 print('File '+outputfile+' created.')
@@ -112,21 +115,12 @@ class Tournament:
                 currentround = int(self.info['CURRENT_ROUND'])
                 #tex_header = []
                 #tex_middle = []
-                playerspoints = []
+                #playerspoints = []
                 if inputfile.endswith('.veg'):
+                                                    
                         for i in range(0, numberofplayers):
-                                playersresults = self.roundresults[i].split(" ")
-                                for result in playersresults:
-                                        result = result.strip()
-                                #print(playersresults)#testing
-                                points = 0
-                                for j in range(2, len(playersresults)):
-                                        
-                                        points += float(playersresults[j])
-                                playerspoints.append(str(points))
-                            
-                        for i in range(0, numberofplayers):
-                                line = {'NAME':self.players_data[i]['NAME'], 'POINTS':playerspoints[i]}
+                                #print(self.players_data[i]['POINTS'])
+                                line = {'NAME':self.players_data[i]['NAME'], 'POINTS':self.players_data[i]['POINTS']}
                                 #print("I'm here"+str(line))#testing
                                 self.standings.append(line)
                 if inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
@@ -182,9 +176,10 @@ class Tournament:
                         colors = self.playerscolor[i].split(' ')
                         results = self.roundresults[i].split(' ')
                         
+                                                
                         line = [i+1, i+1, self.players_data[i]['TITLE'], self.players_data[i]['NAME'], self.players_data[i]['ELOFIDE'], self.players_data[i]['COUNTRY']]
                         
-                        for j in range(0, int(self.info['CURRENT_ROUND'])):
+                        for j in range(0, int(self.info['CURRENT_ROUND'])-1):
                                 if j < len(opponents):
                                         line.append(opponents[j])
                                         line.append(colors[j])
@@ -208,14 +203,16 @@ class Tournament:
                         index_rounds.append(roundcount)
                         roundcount += 3
                 
+                
                 RPtournament = PyRP.Tournament.load("testing.txt") #Load a Tournament object, from PyRP library, not arbitools
                 #Now, let's fill the properties. The method load is supposed to do so, but I have to adjust the working of PyRP to arbitools.
                 
                 RPtournament._names = [str(player['NAME']) for player in self.players_data]
 #fill the property "opponents" -- doesn't work yet.
                 RPtournament._opponents = [RPtournament._calculate_opponents(line, index_rounds) for line in lines]
-                
+                print(RPtournament._opponents)#testing
                 RPtournament._number_of_opponents = [len(opps) for opps in RPtournament._opponents]
+                #print(RPtournament._number_of_opponents)#testing
                 RPtournament._did_not_play = [name for name, opps in zip(RPtournament._names, RPtournament._number_of_opponents) if opps == 0]
                 RPtournament._names = list(compress(RPtournament._names, RPtournament._number_of_opponents))
                 
@@ -228,8 +225,10 @@ class Tournament:
                 RPtournament._number_of_opponents = list(compress(RPtournament._number_of_opponents, RPtournament._number_of_opponents))
                 
                 RPtournament._number_of_rounds = len(index_rounds)
-                print(RPtournament._names)#testing
-                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'ARPO', 'worst': 1, 'best': 1}), output_file = r"test.csv")
+                print(RPtournament._points)#testing
+                #print(self.info['NUMBER_OF_PLAYERS'])#testing
+                #print(self.players_data)#testing
+                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'Bucholz'}, {'method': 'ARPO', 'worst': 1, 'best': 1}), output_file = r"test.csv")
                 
                 
                 return
@@ -440,8 +439,8 @@ class Tournament:
                                                                 break
                                                         self.dates.append(date.strip())
                                                         numberofrounds += 1                                               
-                                                self.info['NUMBER_OF_ROUNDS'] = numberofrounds #This is not correct, but the info is not always available in this file format and we need to fill the variable.
-                                                self.info['CURRENT_ROUND'] = numberofrounds
+                                                self.info['NUMBER_OF_ROUNDS'] = numberofrounds-1 #This is not correct, but the info is not always available in this file format and we need to fill the variable.
+                                                self.info['CURRENT_ROUND'] = numberofrounds-1
                                         if firstblock == "001": #Players information
                                                 sex = line[9].strip()
                                                 title = line[10:13].strip()
@@ -524,7 +523,7 @@ class Tournament:
                                 self.vegaheader.append(line)
                                 roundinfo = line.split(" ")
                                 self.info['NUMBER_OF_ROUNDS'] = roundinfo[0]
-                                self.info['CURRENT_ROUND'] = roundinfo[2]
+                                self.info['CURRENT_ROUND'] = int(roundinfo[2])
                                 line = csvfile.readline()#Line 10. Unused by the moment.
                                 self.vegaheader.append(line)
                                 line = csvfile.readline()# Line 11. Unused by the moment. 
@@ -560,8 +559,29 @@ class Tournament:
                                 for i in range(len(restofvegapointer)):
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
-                                        if i > 0:
+
+                                        linesplit = restofvegapointer[i].strip().split(' ') #Split the strig, remove the name of the player and some extra spaces in order to store just the information that is useful.
+                                        while True:
+                                                try:
+                                                        linesplit.remove("")
+                                                except ValueError:
+                                                        break
+                                        for j in range(len(linesplit)):
+                                                if linesplit[j] == "-1":
+                                                        linesplit[j] = "b"
+                                                if linesplit[j] == "1":
+                                                        linesplit[j] = "w"
+                                                if linesplit[j] == "0":
+                                                        linesplit[j] = "-"
+                                        del linesplit[0]
+                                      
+                                        #add the code to put W and B
+                                        if i > 0:  #We don't need the first line of this block. It's a comment.
+                                                line = " ".join(linesplit).strip()
+                                                #print(line)
                                                 self.playerscolor.append(line) #Store the data.
+                                
+                                
                                 
                                 csvfile.seek(0)
                                 endofrange = endofrangenext+numberofplayers+1 #Next jump. Players opponents.
@@ -569,31 +589,79 @@ class Tournament:
                                 for i in range(len(restofvegapointer)):
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
+
+                                        linesplit = restofvegapointer[i].strip().split(' ') #Split the strig, remove the name of the player and some extra spaces in order to store just the information that is useful.
+                                        while True:
+                                                try:
+                                                        linesplit.remove("")
+                                                except ValueError:
+                                                        break
+                                        for j in range(len(linesplit)):
+                                                if linesplit[j] == "0":
+                                                        linesplit[j] = "0000"
+
+                                        del linesplit[0]
+                                                                           
                                         if i > 0:
+                                                line = " ".join(linesplit)
+                                                #print(line)#testing
                                                 self.playersopponent.append(line.strip()) #We store the data in the property.
 
-                                
                                 csvfile.seek(0)
                                 endofrangenext = endofrange+numberofplayers+1
                                 restofvegapointer = csvfile.readlines()[endofrange:endofrangenext]
                                 for i in range(len(restofvegapointer)):
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
+
+                                        linesplit = restofvegapointer[i].strip().split() #Split the strig, remove the name of the player and some extra spaces in order to store just the information that is useful.
+                                        while True:
+                                                try:
+                                                        linesplit.remove("")
+                                                except ValueError:
+                                                        break
+                                        del linesplit[0]
+                                        
+
                                         if i > 0:
+                                                line = " ".join(linesplit)
                                                 self.playersfloater.append(line.strip()) 
 
 
-
+                                
                                 csvfile.seek(0)
                                 endofrange = endofrangenext+numberofplayers+1
                                 restofvegapointer = csvfile.readlines()[endofrangenext:endofrange]
+                                
                                 for i in range(len(restofvegapointer)):
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
-                                        if i > 0:
-                                                self.roundresults.append(line.strip())
+                                        
+                                        linesplit = restofvegapointer[i].strip().split(' ') #Split the strig, remove the name of the player and some extra spaces in order to store just the information that is useful.
+                                        while True:
+                                                try:
+                                                        linesplit.remove("")
+                                                except ValueError:
+                                                        break
+                                        for j in range(len(linesplit)): #Change .veg file values to normal values.
+                                                if linesplit[j] == "2":
+                                                        linesplit[j] = "="
+                                                if linesplit[j] == "6":
+                                                        linesplit[j] = "="
+                                                if linesplit[j] == "3":
+                                                        linesplit[j] = "1"
+                                                if linesplit[j] == "4":
+                                                        linesplit[j] = "0"
+                                                if linesplit[j] == "8":
+                                                        linesplit[j] = "="
 
-                                
+                                        del linesplit[0]
+                                        #print(linesplit)
+                                        if i > 0:
+                                                line = " ".join(linesplit)
+                                                #print(line)#testing
+                                                self.roundresults.append(line.strip())
+                                                                
                                 csvfile.seek(0)
                                 restofvegapointer = csvfile.readlines()[endofrange:]
                                 for i in range(len(restofvegapointer)):
@@ -601,7 +669,7 @@ class Tournament:
                                         self.restofvega.append(line) #I don't use this data. Just store it like it is to put it back in the file in the output.
 
 
-
+                                #print(self.playersopponent)
                                         
                                 for line in lines:
                                         new_row = {}
@@ -611,6 +679,30 @@ class Tournament:
                                                 line[i] = line[i].strip()
                                                 new_row[self.header[i]] = line[i]
                                         self.players_data.append(new_row)
+
+                                #Write the points for each player.
+                                playerspoints = []
+                                numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
+                                for i in range(0, numberofplayers):
+                                
+
+                                        playersresults = self.roundresults[i].split(" ")
+                                        
+                                        for result in playersresults:
+                                                result = result.strip()
+                                        #print(playersresults)#testing
+                                        points = 0.0
+                                        for j in range(0, len(playersresults)):
+                                                if playersresults[j] == "=":
+                                                        points += 0.5
+                                                if playersresults[j] == "1":
+                                                        points += 1
+                                        
+                                        playerspoints.append(str(points))
+                                                                                
+                                        self.players_data[i].update({'POINTS' : str(points)})
+                                        #print(self.players_data[i])#testing
+                                
                                 csvfile.seek(0)
                         if filename.endswith('.csv'):
                                 reader = csv.DictReader(csvfile, delimiter=';')
