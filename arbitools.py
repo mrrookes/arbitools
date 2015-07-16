@@ -41,7 +41,7 @@ class Tournament:
 
         def __init__(self):
                         
-                self.info={'TOURNAMENT_NAME':'', 'CITY':'', 'FED':'', 'BEGIN_DATE':'', 'END_DATE':'', 'ARBITER':'', 'DEPUTY':'', 'TIEBREAKS':'', 'NUMBER_OF_ROUNDS':'', 'CURRENT_ROUND':'', 'NUMBER_OF_PLAYERS':''}
+                self.info={'TOURNAMENT_NAME':' ', 'CITY':' ', 'FED':' ', 'BEGIN_DATE':' ', 'END_DATE':' ', 'ARBITER':' ', 'DEPUTY':' ', 'TIEBREAKS':' ', 'NUMBER_OF_ROUNDS':' ', 'CURRENT_ROUND':' ', 'NUMBER_OF_PLAYERS':' ', 'NUMBER_OF_RATED_PLAYERS':' ', 'NUMBER_OF_TEAMS':' ', 'TYPE_OF_TOURNAMENT':' ', 'ALLOTED_TIME':' ', 'DATES': ' '}
                 self.standings=[]
                 self.dates=[]
 
@@ -67,46 +67,88 @@ class Tournament:
 
         #Output players_data, tournament info or both to a file (.veg, .csv, .txt)      
         def output_to_file(self, inputfile):
+                outputfile = ''
                 if self.players_data == '':
                         print("I don't have anything to write in the file")
                         sys.exit()
                 inputfilesplit = inputfile.split('.')#Separate file name and extension.
+                outputfiletxt=inputfilesplit[0]+'_updated'+'.txt' #The name for the .txt file.
                 if inputfile.endswith('.csv'):
                         outputfile=inputfilesplit[0]+'_updated'+'.csv'#Get the name for the updated file.
                 elif inputfile.endswith('.veg'):
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
                 elif inputfile.endswith('.txt'):
-                        outputfile=inputfilesplit[0]+'_updated'+'.txt'
+                        true = True
                 else:
                         print("I don't have a filter for this file format.")
-                with open(outputfile, 'w') as csvoutputfile:
-                        writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
-                        if inputfile.endswith('.csv'):
-                                writer.writeheader()
+                if inputfile.endswith('.csv') or inputfile.endswith('.veg'):
+                        with open(outputfile, 'w') as csvoutputfile:
+                                writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
+                                if inputfile.endswith('.csv'):
+                                        writer.writeheader()
 #This code is for .veg and .csv only. I have to write the code for .txt
-                        try:
-                                if inputfile.endswith('.veg'):
-                                        csvoutputfile.writelines(self.vegaheader)
-                                        csvoutputfile.writelines(self.headeroutputvega)
-                                players_data_veg = self.players_data
-                                for player in players_data_veg:
-                                        del player['POINTS']
-                                writer.writerows(players_data_veg)
-                                if inputfile.endswith('.veg'):
-                                        csvoutputfile.writelines(self.restofvega)
-                                print('File '+outputfile+' created.')
+                                try:
+                                        if inputfile.endswith('.veg'):
+                                                csvoutputfile.writelines(self.vegaheader)
+                                                csvoutputfile.writelines(self.headeroutputvega)
+                                        players_data_veg = self.players_data
+                                        for player in players_data_veg:
+                                                if "POINTS" in player:
+                                                        del player['POINTS']
+                                        writer.writerows(players_data_veg)
+                                        if inputfile.endswith('.veg'):
+                                                csvoutputfile.writelines(self.restofvega)
+                                        print('File '+outputfile+' created.')
 
-                        except csv.Error as e:
-                                sys.exit('file %s, line %d: %s' % (inputfile, DictWriter.line_num, e))
-                if inputfile.endswith('.veg'):
-                        new_name=inputfilesplit[0]+'_old'+'.veg'
-                        print('Renaming '+inputfile+'. Now the name is: '+new_name)
-                        os.rename(inputfile, new_name)
-                        os.rename(outputfile, inputfile)
+                                except csv.Error as e:
+                                        sys.exit('file %s, line %d: %s' % (inputfile, DictWriter.line_num, e))
+                        if inputfile.endswith('.veg'):
+                                new_name=inputfilesplit[0]+'_old'+'.veg'
+                                print('Renaming '+inputfile+'. Now the name is: '+new_name)
+                                os.rename(inputfile, new_name)
+                                os.rename(outputfile, inputfile)
+                self.export_to_fide(inputfile)
                 return
 
 
         #Print standings to file
+        def export_to_fide(self, inputfile):
+                inputfilesplit = inputfile.split('.')
+                outputfiletxt=inputfilesplit[0]+'_export'+'.txt' #The name for the .txt file.
+                with open(outputfiletxt, 'w') as txtoutputfile:
+                        txtoutputfile.write("012 "+self.info['TOURNAMENT_NAME'])
+                        txtoutputfile.write("022 "+self.info['CITY'])
+                        txtoutputfile.write("032 "+self.info['FED'])
+                        txtoutputfile.write("042 "+self.info['BEGIN_DATE'])
+                        txtoutputfile.write("052 "+self.info['END_DATE'])
+                        txtoutputfile.write("062 "+self.info['NUMBER_OF_PLAYERS'])
+                        txtoutputfile.write("072 "+self.info['NUMBER_OF_RATED_PLAYERS'])#Number of rated players.
+                        if self.info['NUMBER_OF_RATED_PLAYERS'] == ' ':
+                                txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
+                        txtoutputfile.write("082 "+self.info['NUMBER_OF_TEAMS'])#Number of teams. Implement in the future, by now, only tournaments without teams.
+                        if self.info['NUMBER_OF_TEAMS'] == ' ':
+                                txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
+                        txtoutputfile.write("092 "+self.info['TYPE_OF_TOURNAMENT'])#Type of tournament.
+                        if self.info['TYPE_OF_TOURNAMENT'] == ' ':
+                                txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
+                        txtoutputfile.write("102 "+self.info['ARBITER'])
+                        if self.info['ARBITER'] == ' ':
+                                txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
+                        txtoutputfile.write("112 "+self.info['DEPUTY'])
+                        if self.info['DEPUTY'] == ' ':
+                                txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
+                        txtoutputfile.write("122 "+self.info['ALLOTED_TIME'])
+                        if self.info['ALLOTED_TIME'] == ' ':
+                                txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
+                        dates = "132                                                                                        "#We need spaces until position 92. Maybe there is a better way of doing this...
+                        dates = dates+self.info['DATES']
+                        txtoutputfile.write(dates)
+                        if self.info['DATES'] == ' ':
+                                txtoutputfile.write("\n")
+                return
+
+
+
         def standings_to_file(self, inputfile):
                 inputfilestrip = inputfile.split('.')
                 outputfile = inputfilestrip[0]+"_standings.txt"
@@ -159,12 +201,6 @@ class Tournament:
                         csvoutputfile.write("\n\\lhead{ \\LARGE \\bfseries "+tournamentname+"}")
                         csvoutputfile.write(tex_middle)
                         csvoutputfile.write("\n\n")
-                        #csvoutputfile.write("\\begin{tabular}{p{8cm}l}")
-                        #for i in range(0, len(newlist)):
-                        #        line = newlist[i]['NAME']+"&"+str(newlist[i]['POINTS']+"\\\\")#This doesn't work with .veg files.
-                        #        csvoutputfile.write(line)
-                        #        csvoutputfile.write("\n\n")
-                        #csvoutputfile.write("\\end{tabular}")
                         csvoutputfile.write("\\begin{tabbing}")
                         csvoutputfile.write("\\bfseries Name \\hspace{5cm} \\= \\bfseries Points \\\\")
                         for i in range(0, len(newlist)):
@@ -235,7 +271,9 @@ class Tournament:
                 print(RPtournament._points)#testing
                 #print(self.info['NUMBER_OF_PLAYERS'])#testing
                 #print(self.players_data)#testing
-                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'Bucholz'}, {'method': 'ARPO', 'worst': 1, 'best': 1}), output_file = r"test.csv")
+                inputfilesplit = inputfile.split('.')
+                outputfile = inputfilesplit[0]+"_ARPO.csv"
+                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'Bucholz'}, {'method': 'ARPO', 'worst': 1, 'best': 1}), output_file = outputfile)
                 
                 
                 return
@@ -429,10 +467,25 @@ class Tournament:
                                                 info = line[4:]
                                                 self.info['NUMBER_OF_PLAYERS'] = info
                                                 #print(info)
+                                        if firstblock == "072":
+                                                info = line[4:]
+                                                self.info['NUMBER_OF_RATED_PLAYERS'] = info
+                                        if firstblock == "082":
+                                                info = line[4:]
+                                                self.info['NUMBER_OF_TEAMS'] = info
+                                        if firstblock == "092":
+                                                info = line[4:]
+                                                self.info['TYPE_OF_TOURNAMENT'] = info
                                         if firstblock == "102":
                                                 info = line[4:]
                                                 self.info['ARBITER'] = info
                                                 #print(info)
+                                        if firstblock == "112":
+                                                info = line[4:]
+                                                self.info['DEPUTY'] = info
+                                        if firstblock == "122":
+                                                info = line[4:]
+                                                self.info['ALLOTED_TIME'] = info
                                         if firstblock == "022":
                                                 info = line[4:]
                                                 self.info['CITY'] = info
@@ -445,6 +498,7 @@ class Tournament:
                                                         if not date:
                                                                 break
                                                         self.dates.append(date.strip())
+                                                        self.info['DATES'] = self.info['DATES']+date.strip()+"  "
                                                         numberofrounds += 1                                               
                                                 self.info['NUMBER_OF_ROUNDS'] = numberofrounds-1 #This is not correct, but the info is not always available in this file format and we need to fill the variable.
                                                 self.info['CURRENT_ROUND'] = numberofrounds-1
