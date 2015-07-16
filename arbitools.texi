@@ -69,6 +69,7 @@ What you may need to install is python. If you use GNU/Linux it is most likely a
 You also need to have a couple of modules of python, namely xlrd and lxml. The easiest way to install modules is through pip. In order to use pip. Open a command console, go to the python folder in your system, then go to the Scripts folder and type:
 
 @code{pip install xlrd}
+
 @code{pip install lxml}
 
 Ir this is too difficult for you, there are graphical python installer you can find on the internet.
@@ -154,25 +155,25 @@ You created a tournament and already have the file ``mytournament.veg'' with the
 @section Updating the players data in a file.
 You want to add the FEDA elos to the players data. You type the following command:
 
-@code{python3 -i mytournament.veg -l feda -m name}
+@code{python3 arbitools-update.py -i mytournament.veg -l feda -m name}
 
 You want to update the FIDE elos because a new list was published:
 
-@code{python3 -i mytournament.veg -l fide -m idfide}
+@code{python3 arbitools-update.py -i mytournament.veg -l fide -m idfide}
 
 Just remember this process is really, really slow. It is because ``players_list_xml.xml'' is a very big file, and the .xml format is very unefficient.
 
 @section Adding extra players to an existing file.
 You got a new list of players that have to be added to your original file. The new list is called ``late_entries.csv''.
 
-@code{python3 -i mytournament.veg -a late_entries.csv}
+@code{python3 arbitools-add.py -i mytournament.veg -a late_entries.csv}
 
 @section Getting the standings for a tournament.
 This task is really easy to perform
 
-@code{python3 -i mytournament.veg}
+@code{python3 arbitools-standings.py -i mytournament.veg}
 
-You will get a .txt file with the standings. You will also get a .tex file you can compile with pdflatex and get a pdf. Additionally, it generates a file ``test.csv'' with the ARPO tiebreak calculations. This is very experimental, hence the name of the file. This option is possible thanks to the python libraries written by Julio Gonzalez and Jose Carlos Diaz. More information on @url{http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm}
+You will get a .txt file with the standings. You will also get a .tex file you can compile with pdflatex and get a pdf. Additionally, it generates a file with the suffix ``_ARPO.csv'' with the ARPO tiebreak calculations. This is very experimental. This option is possible thanks to the python libraries written by Julio Gonzalez and Jose Carlos Diaz. More information on @url{http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm}
 @node    The python library
 @chapter The python library
 
@@ -242,6 +243,14 @@ You can create an instance of the class Tournament easily:
 @indentedblock
 @emph{output_to_file(inputfile)} It takes one argument, the name of the file to output the information.
 @end indentedblock
+@indentedblock
+@emph{export_to_file(inputfile)} This method creates a file with the official Krause FIDE format and fill it with the tournament info and the players data.
+@end indentedblock
+@indentedblock
+@emph{applyARPO} It applies the tiebreaks created by Julio Gonzalez and Jose Carlos Diaz. It outputs the results to a file.
+@end indentedblock
+
+
 @node Troubleshooting
 @chapter Troubleshooting
 Known bugs
