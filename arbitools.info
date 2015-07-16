@@ -82,7 +82,9 @@ lxml.  The easiest way to install modules is through pip.  In order to
 use pip.  Open a command console, go to the python folder in your
 system, then go to the Scripts folder and type:
 
-   'pip install xlrd' 'pip install lxml'
+   'pip install xlrd'
+
+   'pip install lxml'
 
    Ir this is too difficult for you, there are graphical python
 installer you can find on the internet.
@@ -243,6 +245,14 @@ This task is really easy to perform
 
    'python3 -i mytournament.veg'
 
+   You will get a .txt file with the standings.  You will also get a
+.tex file you can compile with pdflatex and get a pdf.  Additionally, it
+generates a file "test.csv" with the ARPO tiebreak calculations.  This
+is very experimental, hence the name of the file.  This option is
+possible thanks to the python libraries written by Julio Gonzalez and
+Jose Carlos Diaz.  More information on
+<http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm>
+
 
 File: arbitools.info,  Node: The python library,  Next: Troubleshooting,  Prev: Common Arbiters Tasks,  Up: Top
 
@@ -294,6 +304,11 @@ You can create an instance of the class Tournament easily: 'mytournament
 
      _output_to_file(inputfile)_ It takes one argument, the name of the
      file to output the information.
+     _export_to_file(inputfile)_ This method creates a file with the
+     official Krause FIDE format and fill it with the tournament info
+     and the players data.
+     _applyARPO_ It applies the tiebreaks created by Julio Gonzalez and
+     Jose Carlos Diaz.  It outputs the results to a file.
 
 
 File: arbitools.info,  Node: Troubleshooting,  Prev: The python library,  Up: Top
@@ -311,10 +326,10 @@ Tag Table:
 Node: Top402
 Node: Introduction1071
 Node: Installation2112
-Node: Usage3839
-Node: File Formats6515
-Node: Common Arbiters Tasks7282
-Node: The python library8531
-Node: Troubleshooting9848
+Node: Usage3843
+Node: File Formats6519
+Node: Common Arbiters Tasks7286
+Node: The python library8993
+Node: Troubleshooting10606
 
 End Tag Table
