@@ -107,7 +107,6 @@ class Tournament:
                                 print('Renaming '+inputfile+'. Now the name is: '+new_name)
                                 os.rename(inputfile, new_name)
                                 os.rename(outputfile, inputfile)
-                self.export_to_fide(inputfile)
                 return
 
 
@@ -143,8 +142,80 @@ class Tournament:
                         dates = "132                                                                                        "#We need spaces until position 92. Maybe there is a better way of doing this...
                         dates = dates+self.info['DATES']
                         txtoutputfile.write(dates)
-                        if self.info['DATES'] == ' ':
-                                txtoutputfile.write("\n")
+                        #if self.info['DATES'] == ' ':
+                        txtoutputfile.write("\n")
+                        count = 1
+                        for player in self.players_data:
+                                countstr = ''
+                                titlestr=''
+                                namestr=''
+                                elostr=''
+                                idfidestr = ''
+                                birthdaystr = ''
+                                pointsstr = ''
+                                rankstr = ''
+                                roundsstr = ''
+                                if len(str(count)) < 4:
+                                        extra = 4-len(str(count))
+                                        countstr = " "*extra+str(count)
+                                if len(player['TITLE']) == 2:
+                                        titlestr = " "+player['TITLE']
+                                elif player['TITLE'] == '':
+                                        titlestr = "   "
+                                else:
+                                        titlestr = player['TITLE']
+                                if len(player['NAME']) < 33:
+                                        extra = 33-len(player['NAME'])
+                                        namestr = player['NAME']+" "*extra
+                                elif len(player['NAME']) >= 33:
+                                        namestr = player['NAME'][:33]
+                                if len(player['ELOFIDE']) < 4:
+                                        extra = 4-len(player['ELOFIDE'])
+                                        elostr = " "*extra+player['ELOFIDE']
+                                else:
+                                        elostr = player['ELOFIDE']
+                                if len(player['IDFIDE']) < 11:
+                                        extra = 11-len(player['IDFIDE'])
+                                        idfidestr = " "*extra+player['IDFIDE']
+                                else:
+                                        idfidestr = player['IDFIDE']
+                                if len(player['BIRTHDAY']) < 10:
+                                        extra = 10-len(player['BIRTHDAY'])
+                                        birthdaystr = " "*extra+player['BIRTHDAY']
+                                else:
+                                        birthdaystr = player['BIRTHDAY']
+                                
+                                if len(player['POINTS']) < 4:
+                                        extra = 4-len(player['POINTS'])
+                                        pointsstr = " "*extra+player['POINTS']
+                                else:
+                                        pointsstr = player['POINTS']
+                                if len(player['RANK']) < 4:
+                                        extra = 4-len(player['RANK'])
+                                        rankstr = " "*extra+player['RANK']
+                                else:
+                                        rankstr = player['RANK']
+                                #print(self.playersopponent[count-1])#testing
+                                playersopponentsplit = self.playersopponent[count-1].split(' ')
+                                playerscolorsplit = self.playerscolor[count-1].split(' ')
+                                roundresultssplit = self.roundresults[count-1].split(' ')
+                                offset = 0
+                                opponent = ''
+                                color = ''
+                                result = ''
+                                for i in range(len(playersopponentsplit)):
+                                        if len(playersopponentsplit[i]) < 4:
+                                                extra = 4-len(playersopponentsplit[i])
+                                                opponent = " "*extra+playersopponentsplit[i]
+                                        else:
+                                                opponent = playersopponentsplit[i]
+                                        color = playerscolorsplit[i]
+                                        result = roundresultssplit[i]
+                                        roundsstr = roundsstr+" "+opponent+" "+color+" "+result
+                                        offset += 10
+                                playerdata = "001 "+countstr+" "+player['G']+titlestr+" "+namestr+" "+elostr+" "+player['COUNTRY']+" "+idfidestr+" "+birthdaystr+" "+pointsstr+" "+rankstr+"  "+roundsstr
+                                txtoutputfile.write(playerdata+"\n")
+                                count += 1
                 return
 
 
@@ -253,7 +324,7 @@ class Tournament:
                 RPtournament._names = [str(player['NAME']) for player in self.players_data]
 #fill the property "opponents" -- doesn't work yet.
                 RPtournament._opponents = [RPtournament._calculate_opponents(line, index_rounds) for line in lines]
-                print(RPtournament._opponents)#testing
+                #print(RPtournament._opponents)#testing
                 RPtournament._number_of_opponents = [len(opps) for opps in RPtournament._opponents]
                 #print(RPtournament._number_of_opponents)#testing
                 RPtournament._did_not_play = [name for name, opps in zip(RPtournament._names, RPtournament._number_of_opponents) if opps == 0]
@@ -268,7 +339,7 @@ class Tournament:
                 RPtournament._number_of_opponents = list(compress(RPtournament._number_of_opponents, RPtournament._number_of_opponents))
                 
                 RPtournament._number_of_rounds = len(index_rounds)
-                print(RPtournament._points)#testing
+                #print(RPtournament._points)#testing
                 #print(self.info['NUMBER_OF_PLAYERS'])#testing
                 #print(self.players_data)#testing
                 inputfilesplit = inputfile.split('.')
@@ -511,6 +582,7 @@ class Tournament:
                                                 idfide = line[57:68].strip()
                                                 birthday = line[69:79].strip()
                                                 points = line[80:84].strip()
+                                                rank = line[85:89].strip()
                                                 roundblock = ' '
                                                 offset = 0
                                                 numberofrounds = 0 #This variable is to count the number of rounds. This data is not in the TRF format.
@@ -537,7 +609,7 @@ class Tournament:
                                                               playersresults_temp = playersresults_temp+" "+result.strip()
                                                        
                                                     
-                                                new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': fide, 'COUNTRY': fed, 'TITLE': title, 'BIRTHDAY': birthday, 'POINTS':points}
+                                                new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': fide, 'COUNTRY': fed, 'TITLE': title, 'BIRTHDAY': birthday, 'POINTS':points, 'RANK':rank}
                                         
                                                 self.playersopponent.append(playersopponent_temp.strip())
                                                 self.playerscolor.append(playerscolor_temp.strip())
@@ -762,6 +834,7 @@ class Tournament:
                                         playerspoints.append(str(points))
                                                                                 
                                         self.players_data[i].update({'POINTS' : str(points)})
+                                        self.players_data[i].update({'RANK': '0'})#This is not the correct rank. Fix it!!!.
                                         #print(self.players_data[i])#testing
                                 
                                 csvfile.seek(0)
