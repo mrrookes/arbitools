@@ -120,7 +120,7 @@ Adds extra players to an existing file.
 You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
 @end indentedblock
 @indentedblock
-@b{-a} This argument takes the name of the file with the extra players you want to add. It should be a .csv file with the structure described in the ``File Formats'' section.
+@b{-a} This argument takes the name of the file with the extra players you want to add. It should be a .csv file with the structure described in @xref{File Formats}.
 
 You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
 @end indentedblock
@@ -167,6 +167,8 @@ Just remember this process is really, really slow. It is because ``players_list_
 You got a new list of players that have to be added to your original file. The new list is called ``late_entries.csv''.
 
 @code{python3 arbitools-add.py -i mytournament.veg -a late_entries.csv}
+
+Remember that the headings of the original file and the file with the extra players have to be identical. Be specially careful with the ``K'' fields. Sometimes, it is called ``KNAT''. Remember also that you should only add players to a tournament that has not started yet. If you add players to an already started tournament, you will corrupt the pairings information, and you won't be able to use the file anymore.
 
 @section Getting the standings for a tournament.
 This task is really easy to perform
