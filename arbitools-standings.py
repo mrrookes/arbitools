@@ -71,5 +71,6 @@ def main(argv):
         tournament.applyARPO(inputfile)
         if inputfile.endswith('.veg') or inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
                 tournament.standings_to_file(inputfile)
+                tournament.export_to_fide(inputfile)
 if __name__ == "__main__":
    main(sys.argv[1:])
