@@ -160,7 +160,7 @@ Adds extra players to an existing file.
      see the section *Note File Formats::.
      -a This argument takes the name of the file with the extra players
      you want to add.  It should be a .csv file with the structure
-     described in the "File Formats" section.
+     described in *Note File Formats::.
 
      You can use .veg files, .txt (FIDE Krause) or .csv.  For details
      see the section *Note File Formats::.
@@ -220,11 +220,11 @@ arbitools.  For example:
 You want to add the FEDA elos to the players data.  You type the
 following command:
 
-   'python3 -i mytournament.veg -l feda -m name'
+   'python3 arbitools-update.py -i mytournament.veg -l feda -m name'
 
    You want to update the FIDE elos because a new list was published:
 
-   'python3 -i mytournament.veg -l fide -m idfide'
+   'python3 arbitools-update.py -i mytournament.veg -l fide -m idfide'
 
    Just remember this process is really, really slow.  It is because
 "players_list_xml.xml" is a very big file, and the .xml format is very
@@ -236,21 +236,28 @@ unefficient.
 You got a new list of players that have to be added to your original
 file.  The new list is called "late_entries.csv".
 
-   'python3 -i mytournament.veg -a late_entries.csv'
+   'python3 arbitools-add.py -i mytournament.veg -a late_entries.csv'
+
+   Remember that the headings of the original file and the file with the
+extra players have to be identical.  Be specially careful with the "K"
+fields.  Sometimes, it is called "KNAT". Remember also that you should
+only add players to a tournament that has not started yet.  If you add
+players to an already started tournament, you will corrupt the pairings
+information, and you won't be able to use the file anymore.
 
 5.3 Getting the standings for a tournament.
 ===========================================
 
 This task is really easy to perform
 
-   'python3 -i mytournament.veg'
+   'python3 arbitools-standings.py -i mytournament.veg'
 
    You will get a .txt file with the standings.  You will also get a
 .tex file you can compile with pdflatex and get a pdf.  Additionally, it
-generates a file "test.csv" with the ARPO tiebreak calculations.  This
-is very experimental, hence the name of the file.  This option is
-possible thanks to the python libraries written by Julio Gonzalez and
-Jose Carlos Diaz.  More information on
+generates a file with the suffix "_ARPO.csv" with the ARPO tiebreak
+calculations.  This is very experimental.  This option is possible
+thanks to the python libraries written by Julio Gonzalez and Jose Carlos
+Diaz.  More information on
 <http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm>
 
 
@@ -307,8 +314,9 @@ You can create an instance of the class Tournament easily: 'mytournament
      _export_to_file(inputfile)_ This method creates a file with the
      official Krause FIDE format and fill it with the tournament info
      and the players data.
-     _applyARPO_ It applies the tiebreaks created by Julio Gonzalez and
-     Jose Carlos Diaz.  It outputs the results to a file.
+     _applyARPO(inputfile)_ It applies the tiebreaks created by Julio
+     Gonzalez and Jose Carlos Diaz.  It outputs the results to a file
+     with the "_ARPO.csv" suffix.
 
 
 File: arbitools.info,  Node: Troubleshooting,  Prev: The python library,  Up: Top
@@ -327,9 +335,9 @@ Node: Top402
 Node: Introduction1071
 Node: Installation2112
 Node: Usage3843
-Node: File Formats6519
-Node: Common Arbiters Tasks7286
-Node: The python library8993
-Node: Troubleshooting10606
+Node: File Formats6513
+Node: Common Arbiters Tasks7280
+Node: The python library9475
+Node: Troubleshooting11132
 
 End Tag Table
