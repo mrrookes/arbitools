@@ -247,7 +247,7 @@ You can create an instance of the class Tournament easily:
 @emph{export_to_file(inputfile)} This method creates a file with the official Krause FIDE format and fill it with the tournament info and the players data.
 @end indentedblock
 @indentedblock
-@emph{applyARPO} It applies the tiebreaks created by Julio Gonzalez and Jose Carlos Diaz. It outputs the results to a file.
+@emph{applyARPO(inputfile)} It applies the tiebreaks created by Julio Gonzalez and Jose Carlos Diaz. It outputs the results to a file with the ``_ARPO.csv'' suffix.
 @end indentedblock
 
 
