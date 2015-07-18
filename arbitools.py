@@ -95,6 +95,8 @@ class Tournament:
                                         for player in players_data_veg:
                                                 if "POINTS" in player:
                                                         del player['POINTS']
+                                                if "RANK" in player:
+                                                        del player['RANK']
                                         writer.writerows(players_data_veg)
                                         if inputfile.endswith('.veg'):
                                                 csvoutputfile.writelines(self.restofvega)
