@@ -39,8 +39,22 @@ import unicodedata
 
 class App:
     def __init__(self, master):
-        frame = ttk.Frame(master)
-        frame.pack()
+        frame_update = ttk.Frame(master)
+        frame_update.grid(row=0, column=0)
+        frame_add = ttk.Frame(master)
+        frame_add.grid(row=1, column=0)
+        frame_options = ttk.Frame(master)
+        frame_options.grid(row=2, column=0)
+
+        frame_textbox = ttk.Frame(master)
+        frame_textbox.grid(row=3, column=0)
+
+        frame_info = ttk.Frame(master)
+        frame_info.grid(row=0, rowspan=3, column=1)
+
+        frame_standings = ttk.Frame(master)
+        frame_standings.grid(row=3, column=1)
+
         
         filename=""
         buscaconcodigo=0
@@ -61,58 +75,61 @@ class App:
                 tkinter.messagebox.showinfo("Error", "I can't find arbitools-add.py. This program may not work properly. Copy the file to this folder.")
 
         #widgets for the infile information
-        self.infilelabel = ttk.Label(frame, text="Input file:")
-        self.infilelabel.pack()
+        self.infilelabel = ttk.Label(frame_update, text="Input file:")
+        self.infilelabel.grid(row=0)
 
-        self.infilebutton = ttk.Button(frame, text="Browse", width=15, command=self.infile)
-        self.infilebutton.pack()        
-        
-        
-        self.infiletextbox = tkinter.Text(frame, height=1, width=40)
-        self.infiletextbox.pack()
+        self.infiletextbox = tkinter.Text(frame_update, height=1, width=40)
+        self.infiletextbox.grid(row=0, column=1)
         self.infiletextbox.insert(tkinter.END, "")
         
         
-        self.updatedatabutton = ttk.Button(frame, text="Update data", width=15, command=self.update_data)
-        self.updatedatabutton.pack()
+        self.infilebutton = ttk.Button(frame_update, text="Browse", width=15, command=self.infile)
+        self.infilebutton.grid(row=0, column=2)        
         
-        self.separatorone = ttk.Separator(frame, orient = tkinter.HORIZONTAL)
+        
+        
+        self.optionslabel = ttk.Label(frame_update, text="Select elo file:")
+        self.optionslabel.grid(row=1, column=0)
+ 
+        self.optionscombobox=ttk.Combobox(frame_update)
+        self.optionscombobox['values']=('FIDE-FEDA Vega.csv', 'players_list_xml.xml', 'elo_feda.xls')
+        self.optionscombobox.state(['readonly'])
+        #self.optionscombobox.bind('<<Combobox Selected>>, 
+        self.optionscombobox.grid(row=1, column=1)
+        
+        
+        self.updatedatabutton = ttk.Button(frame_update, text="Update data", width=15, command=self.update_data)
+        self.updatedatabutton.grid(row=1, column=2)
+        
+        self.separatorone = ttk.Separator(frame_add, orient = tkinter.HORIZONTAL)
         self.separatorone.pack(fill="x")
         #widgets for the addfile information (to use with arbitools-add)
-        self.addfilelabel = ttk.Label(frame, text="File with new data:")
+        self.addfilelabel = ttk.Label(frame_add, text="File with new data:")
         self.addfilelabel.pack()
 
-        self.addfilebutton = ttk.Button(frame, text="Browse", width=15, command=self.addfile)
+        self.addfilebutton = ttk.Button(frame_add, text="Browse", width=15, command=self.addfile)
         self.addfilebutton.pack()       
         
 
-        self.addfiletextbox = tkinter.Text(frame, height=1, width=50)
+        self.addfiletextbox = tkinter.Text(frame_add, height=1, width=50)
         self.addfiletextbox.pack()
         self.addfiletextbox.insert(tkinter.END, "")
         
-        self.adddatabutton = ttk.Button(frame, text="Add data from file", width=15, command=self.add_data)
+        self.adddatabutton = ttk.Button(frame_add, text="Add data from file", width=15, command=self.add_data)
         self.adddatabutton.pack()
 
-        self.separatorone = ttk.Separator(frame, orient = tkinter.HORIZONTAL)
+        self.separatorone = ttk.Separator(frame_add, orient = tkinter.HORIZONTAL)
         self.separatorone.pack(fill="x")
         #self.scrollbar = Scrollbar(self.resultsBox, command=self.textbox.yview)
         #self.resultsBox.configure(yscrollcommand=self.scrollbar.set)
         #self.scrollbar.grid(column=3, sticky=N+S)
         
-        self.optionslabel = ttk.Label(frame, text="Select elo file:")
-        self.optionslabel.pack()
- 
-        self.optionscombobox=ttk.Combobox(frame)
-        self.optionscombobox['values']=('FIDE-FEDA Vega.csv', 'players_list_xml.xml', 'elo_feda.xls')
-        self.optionscombobox.state(['readonly'])
-        #self.optionscombobox.bind('<<Combobox Selected>>, 
-        self.optionscombobox.pack()
        
-        self.methodlabel = ttk.Label(frame, text="Select search method:")
+        self.methodlabel = ttk.Label(frame_options, text="Select search method:")
         self.methodlabel.pack()
  
         #self.method=tkinter.IntVar()
-        self.methodcombobox=ttk.Combobox(frame)
+        self.methodcombobox=ttk.Combobox(frame_options)
         self.methodcombobox['values']=('idfide', 'name')
         self.methodcombobox.state(['readonly'])
         #self.methodcombobox.bind('<<Combobox Selected>>', self.method)
@@ -121,37 +138,84 @@ class App:
 
         
         
-        self.whattoupdatelabel = ttk.Label(frame, text="Data to update:")
+        self.whattoupdatelabel = ttk.Label(frame_options, text="Data to update:")
         self.whattoupdatelabel.pack()
 
         self.varname=tkinter.IntVar()
-        self.checkboxname=tkinter.Checkbutton(frame, text="Name", variable=self.varname)
-        self.checkboxname.pack()
+        self.checkboxname=tkinter.Checkbutton(frame_options, text="Name", variable=self.varname)
+        self.checkboxname.pack(side=tkinter.LEFT)
         
         self.varfide=tkinter.IntVar()
-        self.checkboxfide=tkinter.Checkbutton(frame, text="FIDE", variable=self.varfide)
-        self.checkboxfide.pack()
+        self.checkboxfide=tkinter.Checkbutton(frame_options, text="FIDE", variable=self.varfide)
+        self.checkboxfide.pack(side=tkinter.LEFT)
 
         self.varfeda=tkinter.IntVar()
-        self.checkboxfeda=tkinter.Checkbutton(frame, text="FEDA", variable=self.varfeda)
-        self.checkboxfeda.pack()
+        self.checkboxfeda=tkinter.Checkbutton(frame_options, text="FEDA", variable=self.varfeda)
+        self.checkboxfeda.pack(side=tkinter.LEFT)
 
         self.varidfide=tkinter.IntVar()
-        self.checkboxidfide=tkinter.Checkbutton(frame, text="ID FIDE", variable=self.varidfide)
-        self.checkboxidfide.pack()
+        self.checkboxidfide=tkinter.Checkbutton(frame_options, text="ID FIDE", variable=self.varidfide)
+        self.checkboxidfide.pack(side=tkinter.LEFT)
         
         self.varidfeda=tkinter.IntVar()
-        self.checkboxidfeda=tkinter.Checkbutton(frame, text="ID FEDA", variable=self.varidfeda)
-        self.checkboxidfeda.pack()
+        self.checkboxidfeda=tkinter.Checkbutton(frame_options, text="ID FEDA", variable=self.varidfeda)
+        self.checkboxidfeda.pack(side=tkinter.LEFT)
 
-        self.resultsBox = tkinter.Text(frame, height=15, width=75)
+        self.resultsBox = tkinter.Text(frame_textbox, height=5, width=50)
         self.resultsBox.pack()
 
+        self.infoBox = tkinter.Text(frame_info, height=15, width=30)
+        self.infoBox.pack()
+
+
+        self.standingsbutton = ttk.Button(frame_standings, text="Get Standings", width=15, command=self.get_standings)
+        self.standingsbutton.pack()
+
+        self.exportbutton = ttk.Button(frame_standings, text="Export to FIDE", width=15, command=self.export)
+        self.exportbutton.pack()
+
+
     def infile(self):
+        self.infiletextbox.delete(1.0, tkinter.END)
+
         self.infiletextbox.insert(tkinter.END, askopenfilename())
 
     def addfile(self):
+        self.addfiletextbox.delete(1.0, tkinter.END)
         self.addfiletextbox.insert(tkinter.END, askopenfilename())
+   
+    def export(self):
+        texttext = self.infiletextbox.get(1.0, tkinter.END)
+        texttext=texttext.encode("utf-8")  #encode unicode to str
+        texttext=texttext.rstrip() #remove what we don't need
+        
+        self.resultsBox.insert(tkinter.END, "Exporting to FIDE...\n")
+        
+        inputfile = self.infiletextbox.get(1.0, tkinter.END).strip()
+
+        self.tournament.get_tournament_data_from_file(inputfile)
+        self.tournament.export_to_fide(inputfile)
+
+        self.resultsBox.insert(tkinter.END, "Data exported. Search for '_export.txt' file...\n")        
+
+
+    def get_standings(self):
+        
+        texttext = self.infiletextbox.get(1.0, tkinter.END)
+        texttext=texttext.encode("utf-8")  #encode unicode to str
+        texttext=texttext.rstrip() #remove what we don't need
+        
+        self.resultsBox.insert(tkinter.END, "Getting standings...\n")
+        
+        inputfile = self.infiletextbox.get(1.0, tkinter.END).strip()
+
+        self.tournament.get_tournament_data_from_file(inputfile)
+        self.tournament.applyARPO(inputfile)
+        self.tournament.standings_to_file(inputfile)
+
+        self.resultsBox.insert(tkinter.END, "Standings files created with suffix '_standings'...\n")        
+       
+        
 
     def update_data(self):
           
@@ -227,7 +291,7 @@ class App:
 def main(argv):
     
         root = tkinter.Tk()
-        root.title("Tunear csv")
+        root.title("Chess Arbiter Tools")
         app = App(root)
         root.mainloop()
 
