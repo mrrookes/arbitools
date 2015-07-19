@@ -141,7 +141,7 @@ class Tournament:
                         txtoutputfile.write("122 "+self.info['ALLOTED_TIME'])
                         if self.info['ALLOTED_TIME'] == ' ':
                                 txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
-                        dates = "132                                                                                        "#We need spaces until position 92. Maybe there is a better way of doing this...
+                        dates = "132"+" "*87#We need spaces until position 92. Maybe there is a better way of doing this...
                         dates = dates+self.info['DATES']
                         txtoutputfile.write(dates)
                         #if self.info['DATES'] == ' ':
@@ -183,7 +183,7 @@ class Tournament:
                                         idfidestr = player['IDFIDE']
                                 if len(player['BIRTHDAY']) < 10:
                                         extra = 10-len(player['BIRTHDAY'])
-                                        birthdaystr = " "*extra+player['BIRTHDAY']
+                                        birthdaystr = player['BIRTHDAY']+" "*extra
                                 else:
                                         birthdaystr = player['BIRTHDAY']
                                 
@@ -213,9 +213,9 @@ class Tournament:
                                                 opponent = playersopponentsplit[i]
                                         color = playerscolorsplit[i]
                                         result = roundresultssplit[i]
-                                        roundsstr = roundsstr+" "+opponent+" "+color+" "+result
+                                        roundsstr = roundsstr+"  "+opponent+" "+color+" "+result
                                         offset += 10
-                                playerdata = "001 "+countstr+" "+player['G']+titlestr+" "+namestr+" "+elostr+" "+player['COUNTRY']+" "+idfidestr+" "+birthdaystr+" "+pointsstr+" "+rankstr+"  "+roundsstr
+                                playerdata = "001 "+countstr+" "+player['G']+titlestr+" "+namestr+" "+elostr+" "+player['COUNTRY']+" "+idfidestr+" "+birthdaystr+" "+pointsstr+" "+rankstr+roundsstr
                                 txtoutputfile.write(playerdata+"\n")
                                 count += 1
                 return
@@ -661,8 +661,8 @@ class Tournament:
                                 line = csvfile.readline()#Line 5. The end and begin dates. We have to split them in order to store them.
                                 self.vegaheader.append(line)
                                 endandstartdates = line.split(',')
-                                self.info['BEGIN_DATE'] = endandstartdates[0]
-                                self.info['END_DATE'] = endandstartdates[1].strip()
+                                self.info['BEGIN_DATE'] = endandstartdates[0].strip()+"\n"
+                                self.info['END_DATE'] = endandstartdates[1].strip()+"\n"
                                 line = csvfile.readline()#Line 6. Arbiter.
                                 self.vegaheader.append(line)
                                 self.info['ARBITER'] = line
@@ -684,6 +684,8 @@ class Tournament:
                                 line = csvfile.readline()# Line 12. Number of players.
                                 self.vegaheader.append(line)
                                 self.info['NUMBER_OF_PLAYERS'] = line
+                                self.info['NUMBER_OF_TEAMS'] = "0\n"
+                                self.info['TYPE_OF_TOURNAMENT'] = "Individual: Swiss System Dutch\n"
                                 headerline=csvfile.readline()#This is the line with the names of the fields.
                                 csvfile.seek(0)#Reset the file pointer.
                                 lines = csvfile.readlines()[12:]#Read from 12th line, where the players data is.
@@ -701,7 +703,12 @@ class Tournament:
                                 numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
                                 endofrange = 13+numberofplayers #Calculate where the players data end.
                                 lines = csvfile.readlines()[13:endofrange] #Read the lines where the players data is.
-
+                                
+                                numberofratedplayers = 0
+                                for line in lines:
+                                        if line[2] != '' and line[2] != "0" and line[2] != " ":
+                                                numberofratedplayers +=1
+                                self.info['NUMBER_OF_RATED_PLAYERS'] = str(numberofratedplayers)+"\n"
                         #Lastly, we read the .veg file to the end.
 
                                 
@@ -713,7 +720,7 @@ class Tournament:
                                         line = restofvegapointer[i]
                                         self.restofvega.append(line)
 
-                                        linesplit = restofvegapointer[i].strip().split(' ') #Split the strig, remove the name of the player and some extra spaces in order to store just the information that is useful.
+                                        linesplit = restofvegapointer[i].strip().split(' ') #Split the string, remove the name of the player and some extra spaces in order to store just the information that is useful.
                                         while True:
                                                 try:
                                                         linesplit.remove("")
@@ -726,7 +733,7 @@ class Tournament:
                                                         linesplit[j] = "w"
                                                 if linesplit[j] == "0":
                                                         linesplit[j] = "-"
-                                        del linesplit[0]
+                                        del linesplit[0]#We don't need the first part. It's the players number.
                                       
                                         #add the code to put W and B
                                         if i > 0:  #We don't need the first line of this block. It's a comment.
