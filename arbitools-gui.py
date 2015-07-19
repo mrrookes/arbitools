@@ -39,21 +39,21 @@ import unicodedata
 
 class App:
     def __init__(self, master):
-        frame_update = ttk.Frame(master)
-        frame_update.grid(row=0, column=0)
-        frame_add = ttk.Frame(master)
-        frame_add.grid(row=1, column=0)
-        frame_options = ttk.Frame(master)
-        frame_options.grid(row=2, column=0)
+        frame_update = ttk.LabelFrame(master, text="Update data")
+        frame_update.grid(row=0, column=0, padx="5", pady="5")
+        frame_add = ttk.LabelFrame(master, text="Add players to file")
+        frame_add.grid(row=1, column=0, padx="5", pady="5")
+        frame_options = ttk.LabelFrame(master, text="Search options")
+        frame_options.grid(row=2, column=0, padx="5", pady="5")
 
-        frame_textbox = ttk.Frame(master)
-        frame_textbox.grid(row=3, column=0)
+        frame_textbox = ttk.LabelFrame(master, text="Output")
+        frame_textbox.grid(row=3, column=0, padx="5", pady="5")
 
-        frame_info = ttk.Frame(master)
-        frame_info.grid(row=0, rowspan=3, column=1)
+        frame_info = ttk.LabelFrame(master, text="Tournament Info")
+        frame_info.grid(row=0, rowspan=3, column=1, padx="5", pady="5")
 
-        frame_standings = ttk.Frame(master)
-        frame_standings.grid(row=3, column=1)
+        frame_standings = ttk.LabelFrame(master, text="Reports")
+        frame_standings.grid(row=3, column=1, padx="5", pady="5")
 
         
         filename=""
@@ -79,17 +79,17 @@ class App:
         self.infilelabel.grid(row=0)
 
         self.infiletextbox = tkinter.Text(frame_update, height=1, width=40)
-        self.infiletextbox.grid(row=0, column=1)
+        self.infiletextbox.grid(row=0, column=1, padx="2")
         self.infiletextbox.insert(tkinter.END, "")
         
         
         self.infilebutton = ttk.Button(frame_update, text="Browse", width=15, command=self.infile)
-        self.infilebutton.grid(row=0, column=2)        
+        self.infilebutton.grid(row=0, column=2, padx="2", pady="2")        
         
         
         
         self.optionslabel = ttk.Label(frame_update, text="Select elo file:")
-        self.optionslabel.grid(row=1, column=0)
+        self.optionslabel.grid(row=1, column=0, padx="2")
  
         self.optionscombobox=ttk.Combobox(frame_update)
         self.optionscombobox['values']=('FIDE-FEDA Vega.csv', 'players_list_xml.xml', 'elo_feda.xls')
@@ -99,30 +99,22 @@ class App:
         
         
         self.updatedatabutton = ttk.Button(frame_update, text="Update data", width=15, command=self.update_data)
-        self.updatedatabutton.grid(row=1, column=2)
+        self.updatedatabutton.grid(row=1, column=2, padx="2", pady="2")
         
-        self.separatorone = ttk.Separator(frame_add, orient = tkinter.HORIZONTAL)
-        self.separatorone.pack(fill="x")
         #widgets for the addfile information (to use with arbitools-add)
         self.addfilelabel = ttk.Label(frame_add, text="File with new data:")
-        self.addfilelabel.pack()
+        self.addfilelabel.grid(row=0, column=0, padx="2")
 
         self.addfilebutton = ttk.Button(frame_add, text="Browse", width=15, command=self.addfile)
-        self.addfilebutton.pack()       
+        self.addfilebutton.grid(row=0, column=2)       
         
 
-        self.addfiletextbox = tkinter.Text(frame_add, height=1, width=50)
-        self.addfiletextbox.pack()
+        self.addfiletextbox = tkinter.Text(frame_add, height=1, width=40)
+        self.addfiletextbox.grid(row=0, column=1)
         self.addfiletextbox.insert(tkinter.END, "")
         
         self.adddatabutton = ttk.Button(frame_add, text="Add data from file", width=15, command=self.add_data)
-        self.adddatabutton.pack()
-
-        self.separatorone = ttk.Separator(frame_add, orient = tkinter.HORIZONTAL)
-        self.separatorone.pack(fill="x")
-        #self.scrollbar = Scrollbar(self.resultsBox, command=self.textbox.yview)
-        #self.resultsBox.configure(yscrollcommand=self.scrollbar.set)
-        #self.scrollbar.grid(column=3, sticky=N+S)
+        self.adddatabutton.grid(row=1, column=2, padx="2", pady="2")
         
        
         self.methodlabel = ttk.Label(frame_options, text="Select search method:")
@@ -161,18 +153,18 @@ class App:
         self.checkboxidfeda=tkinter.Checkbutton(frame_options, text="ID FEDA", variable=self.varidfeda)
         self.checkboxidfeda.pack(side=tkinter.LEFT)
 
-        self.resultsBox = tkinter.Text(frame_textbox, height=5, width=50)
-        self.resultsBox.pack()
+        self.resultsBox = tkinter.Text(frame_textbox, height=5, width=60)
+        self.resultsBox.pack(padx="5", pady="5")
 
         self.infoBox = tkinter.Text(frame_info, height=15, width=30)
         self.infoBox.pack()
 
 
         self.standingsbutton = ttk.Button(frame_standings, text="Get Standings", width=15, command=self.get_standings)
-        self.standingsbutton.pack()
+        self.standingsbutton.pack(pady="5")
 
         self.exportbutton = ttk.Button(frame_standings, text="Export to FIDE", width=15, command=self.export)
-        self.exportbutton.pack()
+        self.exportbutton.pack(pady="5")
 
 
     def infile(self):
