@@ -94,9 +94,54 @@ Ir this is too difficult for you, there are graphical python installer you can f
 @node    Usage
 @chapter Usage
 
-Chess Arbiter Tools has been designed to be used in command line. Some of the newest features are only possible through this means. Anyway, sooner or later, all the features will be available in the graphical interface also.
+Chess Arbiter Tools has been designed to be used in command line. Some of the newest features are only possible through this means.
+Additionally, there are two frontends. The first one (and recommended) is through Emacs. It is the most GNU way of managing a tournament.
+The second frontend is the Graphical Interface.
+@section Emacs environment
+The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. In order to do this, launch ``arbitools.el'' by ``M-x load-file''. It will provide the interactive functions: arbitools-standings, arbitools-add and arbitools-update.
 @section Graphical Interface
-Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform.
+Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform. The main screen looks like this:
+@image{arbitools, 640, 480}
+
+The interface is really easy to understand.
+@subsection Update data
+- Browse the tournament file in the ``input file'' box.
+
+- Select an ELO list from the list. Some of the options may not be available until you download the corresponding files.
+
+- Select a search method from the list.
+
+- Click the data you want to update.
+
+- Click the ``Update data'' button.
+
+You will get the results in a file:
+
+If you used a .veg file, a backup of the original file is renamed with the ``_old'' suffix.
+
+If you used a .csv file, a file with the ``_update'' suffix is created with the updated data, the original file remains untouched.
+
+If you used a .txt file, a file with the ``_export'' suffix is created with the updated data, the original file remains untouched.
+
+@subsection Add players to an existing tournament
+- Browse the tournament file in the ``input file'' box.
+
+- Browse the file with additional players in ``file with new data''.
+
+- Click ``Add data from file''.
+@subsection Get the standings.
+- Browse the tournament file in the ``input file'' box. 
+
+- Click ``Get standings''.
+
+This action produces the standings for a tournament. You will get the files:
+
+- A file with the ``_standings.txt'' suffix with the standings in a text file.
+
+- A file with the ``_standings.tex'' suffix with the standings in a LaTeX file, ready for pdflatex.
+
+- A file with the ``_ARPO.csv'' suffix, with tiebreaks information. The library PyRP.py and _PyRP.py by Julio Gonzalez And Jose Carlos Diaz is used.
+
 @section Command Line
 @subsection arbitools-update.py
 Updates the players information stored in a file. It is a very useful function when a new list is published and you had already set up the tournament.
@@ -111,6 +156,12 @@ You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section 
 @indentedblock
 @b{-m} Search method. You can use ``idfide'' or ``name''. ``idfide'' doesn't have a effect if you use the feda list, because it doesn't contain the fide codes.
 @end indentedblock
+
+If you used a .veg file, a backup of the original file is renamed with the ``_old'' suffix.
+
+If you used a .csv file, a file with the ``_update'' suffix is created with the updated data, the original file remains untouched.
+
+If you used a .txt file, a file with the ``_export'' suffix is created with the updated data, the original file remains untouched.
 
 @subsection arbitools-add.py
 Adds extra players to an existing file.
@@ -127,7 +178,14 @@ You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section 
 
 
 @subsection arbitools-standings.py
-Produces the standings for a tournament. A file with the ``standings'' suffix is created. You get also a .tex file, ready to use with pdflatex to get a pdf.
+Produces the standings for a tournament. You will get the files:
+
+- A file with the ``_standings.txt'' suffix with the standings in a text file.
+
+- A file with the ``_standings.tex'' suffix with the standings in a LaTeX file, ready for pdflatex.
+
+- A file with the ``_ARPO.csv'' suffix, with tiebreaks information. The library PyRP.py and _PyRP.py by Julio Gonzalez And Jose Carlos Diaz is used.
+
 @indentedblock
 @b{-i} This argument takes the name of the input file. It will only work witn .txt (FIDE Krause) or .veg. Other formats don't contain the tournament's information needed to produce the standings.
 @end indentedblock
