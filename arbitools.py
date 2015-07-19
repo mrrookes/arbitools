@@ -310,8 +310,25 @@ class Tournament:
                                 
                         line.append(self.players_data[i]['POINTS'].strip())
                         line.append("0")#I should put the real performance here. But it seems irrelevant.
+                        #The following code tries to manage the players without opponents, that make ARPO crash
+                        #opponentsOK = False
+                        
+                        #for opponent in opponents:
+                        #        if opponent != '0000':
+                        #                opponentsOK = True #Say OK if the player has real opponents.
+                        #if opponentsOK == True:
+                        #        lines.append(line)
+                        #else:
+                        #        alternative_line =  [i+1, i+1, self.players_data[i]['TITLE'], self.players_data[i]['NAME'], self.players_data[i]['ELOFIDE'], self.players_data[i]['COUNTRY']]
+                        #        for j in range(0, int(self.info['CURRENT_ROUND'])-1):
+                        #                if j < len(opponents):
+                        #                        alternative_line.append(str(j))
+                        #                        alternative_line.append("w")
+                        #                        alternative_line.append("0")
+                        #        alternative_line.append(self.players_data[i]['POINTS'].strip())
+                        #        lines.append(alternative_line)
                         lines.append(line)
-                #print(lines)#testing
+                print(lines)#testing
                 index_rounds = []
                 roundcount = 6
                 limit = self.info['CURRENT_ROUND']*3+6
@@ -323,15 +340,16 @@ class Tournament:
                 RPtournament = PyRP.Tournament.load("testing.txt") #Load a Tournament object, from PyRP library, not arbitools
                 #Now, let's fill the properties. The method load is supposed to do so, but I have to adjust the working of PyRP to arbitools.
                 
-                RPtournament._names = [str(player['NAME']) for player in self.players_data]
-#fill the property "opponents" -- doesn't work yet.
+                RPtournament._names = [line[3] for line in lines]
+                #print(RPtournament._names)#testing
+#fill the property "opponents" -- doesn't work properlyyet.
                 RPtournament._opponents = [RPtournament._calculate_opponents(line, index_rounds) for line in lines]
                 #print(RPtournament._opponents)#testing
                 RPtournament._number_of_opponents = [len(opps) for opps in RPtournament._opponents]
                 #print(RPtournament._number_of_opponents)#testing
                 RPtournament._did_not_play = [name for name, opps in zip(RPtournament._names, RPtournament._number_of_opponents) if opps == 0]
                 RPtournament._names = list(compress(RPtournament._names, RPtournament._number_of_opponents))
-                
+                #print(RPtournament._names)#testing
                 RPtournament._elos = [RPtournament._calculate_elo(line[4], 1400) for line in compress(lines, RPtournament._number_of_opponents)]
                 index_points = 3+self.info['CURRENT_ROUND']*3 #I don't really understand why 3+ and not 5+, since there are 5 fields and then the fields for the rounds.
                 
@@ -346,7 +364,7 @@ class Tournament:
                 #print(self.players_data)#testing
                 inputfilesplit = inputfile.split('.')
                 outputfile = inputfilesplit[0]+"_ARPO.csv"
-                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'Bucholz'}, {'method': 'ARPO', 'worst': 1, 'best': 1}), output_file = outputfile)
+                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'Bucholz'}, {'method': 'ARPO', 'worst': 1, 'best': 1}, {'method': 'Performance'}), output_file = outputfile)
                 
                 
                 return
