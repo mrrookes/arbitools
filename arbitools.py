@@ -78,7 +78,7 @@ class Tournament:
                 elif inputfile.endswith('.veg'):
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
                 elif inputfile.endswith('.txt'):
-                        true = True
+                        self.export_to_fide(inputfile)
                 else:
                         print("I don't have a filter for this file format.")
                 if inputfile.endswith('.csv') or inputfile.endswith('.veg'):
@@ -328,7 +328,7 @@ class Tournament:
                         #        alternative_line.append(self.players_data[i]['POINTS'].strip())
                         #        lines.append(alternative_line)
                         lines.append(line)
-                print(lines)#testing
+                #print(lines)#testing
                 index_rounds = []
                 roundcount = 6
                 limit = self.info['CURRENT_ROUND']*3+6
