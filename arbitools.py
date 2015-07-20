@@ -284,7 +284,7 @@ class Tournament:
                         csvoutputfile.write("\\end{document}")
 
         #Apply recursive tiebreaks to standings
-        def applyARPO(self, inputfile):
+        def applyARPO(self, inputfile, methods_list, sort_by):
                 lines = []#This is the list PyRP takes. We have to fill it with the players and tournament info.
                              
                 for i in range(0, len(self.players_data)):
@@ -364,7 +364,7 @@ class Tournament:
                 #print(self.players_data)#testing
                 inputfilesplit = inputfile.split('.')
                 outputfile = inputfilesplit[0]+"_ARPO.csv"
-                RPtournament.run(methods_list = ({'method': 'Name'}, {'method': 'Points'}, {'method': 'Bucholz'}, {'method': 'ARPO', 'worst': 1, 'best': 1}, {'method': 'Performance'}), output_file = outputfile)
+                RPtournament.run(methods_list = methods_list, output_file = outputfile, sort_by=sort_by)
                 
                 
                 return

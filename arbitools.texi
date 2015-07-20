@@ -190,6 +190,14 @@ Produces the standings for a tournament. You will get the files:
 @b{-i} This argument takes the name of the input file. It will only work witn .txt (FIDE Krause) or .veg. Other formats don't contain the tournament's information needed to produce the standings.
 @end indentedblock
 
+You can write a file ``.arbitools'', and define the tiebreak methods for ARPO. The structure of the file is as follows:
+
+Methods:<methods>
+
+Sort:<methods>
+
+Either in the ``Methods'' or the ``Sort'' line you can choose: Name, Points, Bucholz, ARPO, and some more (see PyRP.py).
+
 @node File Formats
 @chapter File Formats
 
