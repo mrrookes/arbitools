@@ -202,7 +202,12 @@ class App:
         inputfile = self.infiletextbox.get(1.0, tkinter.END).strip()
 
         self.tournament.get_tournament_data_from_file(inputfile)
-        self.tournament.applyARPO(inputfile)
+        try:
+
+                self.tournament.applyARPO(inputfile)
+                self.resultsBox.insert(tkinter.END, "ARPO calcuations written to file with suffix '_ARPO'...\n")
+        except Exception:
+                self.resultsBox.insert(tkinter.END, "Sorry, I can't get ARPO calculations from this file...\n")
         self.tournament.standings_to_file(inputfile)
 
         self.resultsBox.insert(tkinter.END, "Standings files created with suffix '_standings'...\n")        
