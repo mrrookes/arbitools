@@ -67,9 +67,32 @@ def main(argv):
         
         
         #print(listdata)
+        methods_list = ()
+        methods_temp = []
+        sort_by = ()
+        sort_by_temp = []
         tournament.get_tournament_data_from_file(inputfile)
+        with open(".arbitools") as configfile:
+                lines = configfile.readlines()
+                for line in lines:
+                        linesplit = line.split(":")
+                        if linesplit[0] == "Methods":
+                                methods = linesplit[1].split(",")
+                                for method in methods:
+                                        methods_temp.append({'method': method.strip()})
+                        elif linesplit[0] == "Sort":
+                                sorts = linesplit[1].split(",")
+                                for sort in sorts:
+                                        sort_by_temp.append({'method': sort.strip()})
+        methods_list=tuple(methods_temp)
+        sort_by=tuple(sort_by_temp)
+       
         try:
-                tournament.applyARPO(inputfile)
+                if methods_list:
+                        tournament.applyARPO(inputfile, methods_list, sort_by)
+                
+                else:
+                        tournament.applyARPO(inputfile, ({'method':'Name'}, {'method':'Points'}, {'method':'ARPO'}), ({'method':'Points'}, {'method': 'ARPO'}))
         except Exception:
                 print("I cannot calculate ARPO for this file")
                 pass
