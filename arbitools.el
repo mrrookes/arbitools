@@ -43,6 +43,13 @@
     '("\\('\\w*'\\)" . font-lock-variable-name-face))
    "Expresions for arbitools mode")
 
+(defvar arbitools-mode-syntax-table
+  (let ((st (make-syntax-table)))
+
+  (modify syntax-entry ?_ "w" st)
+  st)
+  "Syntax table for arbitools-mode")
+
 (defun arbitools-mode()
   "Major mode for Chess Tournament management"
   (interactive)
