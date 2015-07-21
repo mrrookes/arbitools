@@ -39,6 +39,8 @@ import unicodedata
 
 class App:
     def __init__(self, master):
+
+       #Defyning graphical layout.
         frame_update = ttk.LabelFrame(master, text="Update data")
         frame_update.grid(row=0, column=0, padx="5", pady="5")
         frame_add = ttk.LabelFrame(master, text="Add players to file")
@@ -55,7 +57,7 @@ class App:
         frame_standings = ttk.LabelFrame(master, text="Reports")
         frame_standings.grid(row=3, column=1, padx="5", pady="5")
 
-        
+        #Create variables
         filename=""
         buscaconcodigo=0
         self.tournament = arbitools.Tournament()
@@ -116,7 +118,7 @@ class App:
         self.adddatabutton = ttk.Button(frame_add, text="Add data from file", width=15, command=self.add_data)
         self.adddatabutton.grid(row=1, column=2, padx="2", pady="2")
         
-       
+       #Widgets with the options elements.
         self.methodlabel = ttk.Label(frame_options, text="Select search method:")
         self.methodlabel.pack()
  
@@ -153,13 +155,15 @@ class App:
         self.checkboxidfeda=tkinter.Checkbutton(frame_options, text="ID FEDA", variable=self.varidfeda)
         self.checkboxidfeda.pack(side=tkinter.LEFT)
 
+       #Results box widget.
         self.resultsBox = tkinter.Text(frame_textbox, height=5, width=60)
         self.resultsBox.pack(padx="5", pady="5")
 
-        self.infoBox = tkinter.Text(frame_info, height=15, width=30)
+       #Info box widget.
+        self.infoBox = tkinter.Text(frame_info, height=15, width=50)
         self.infoBox.pack()
 
-
+       #Reports buttons.
         self.standingsbutton = ttk.Button(frame_standings, text="Get Standings", width=15, command=self.get_standings)
         self.standingsbutton.pack(pady="5")
 
@@ -168,13 +172,63 @@ class App:
 
 
     def infile(self):
-        self.infiletextbox.delete(1.0, tkinter.END)
 
-        self.infiletextbox.insert(tkinter.END, askopenfilename())
+       #Store the information in the boxes in case the user presses cancel.        
+        textbox = self.infiletextbox.get(1.0, tkinter.END)
+        infobox = self.infoBox.get(1.0, tkinter.END)
+        self.infiletextbox.delete(1.0, tkinter.END)
+        self.resultsBox.delete(1.0, tkinter.END)
+        self.infoBox.delete(1.0, tkinter.END)
+        
+        inputfile = askopenfilename()
+        self.infiletextbox.insert(tkinter.END, inputfile)
+
+       #If cancel, restore the boxes.
+        if not inputfile:
+                self.infiletextbox.insert(tkinter.END, textbox)
+                self.infoBox.insert(tkinter.END, infobox)
+
+        if inputfile.endswith('.txt'):
+                self.resultsBox.insert(tkinter.END, "Looks like a FIDE file...")
+        elif inputfile.endswith('.veg'):
+                self.resultsBox.insert(tkinter.END, "Looks like a Vega file...")
+        else:
+                self.resultsBox.insert(tkinter.END, "Doesn't look like a tournament file...")
+        self.tournament.get_tournament_data_from_file(inputfile)
+        if self.tournament.info['TOURNAMENT_NAME'] != ' ':
+                string = self.tournament.info['TOURNAMENT_NAME']
+                self.infoBox.insert(tkinter.END, string)
+        if self.tournament.info['TYPE_OF_TOURNAMENT'] != ' ':
+                string = self.tournament.info['TYPE_OF_TOURNAMENT']
+                self.infoBox.insert(tkinter.END, string)
+
+        if self.tournament.info['CITY'] != ' ':
+                string = self.tournament.info['CITY']
+                self.infoBox.insert(tkinter.END, string)
+        if self.tournament.info['NUMBER_OF_PLAYERS'] != ' ':
+                string = "Number of players: "+self.tournament.info['NUMBER_OF_PLAYERS']
+                self.infoBox.insert(tkinter.END, string)
+        if self.tournament.info['ARBITER'] != ' ':
+                string = "Arbiter: "+self.tournament.info['ARBITER']
+                self.infoBox.insert(tkinter.END, string)
+        if self.tournament.info['BEGIN_DATE'] != ' ':
+                string = "Starts: "+self.tournament.info['BEGIN_DATE']
+                self.infoBox.insert(tkinter.END, string)
+        if self.tournament.info['END_DATE'] != ' ':
+                string = "Ends: "+self.tournament.info['END_DATE']
+                self.infoBox.insert(tkinter.END, string)
+        if self.tournament.info['ALLOTED_TIME'] != ' ':
+                string = "Alloted time: "+self.tournament.info['ALLOTED_TIME']
+                self.infoBox.insert(tkinter.END, string)
+
+
 
     def addfile(self):
+        text = self.addfiletextbox.get(1.0, tkinter.END)
         self.addfiletextbox.delete(1.0, tkinter.END)
-        self.addfiletextbox.insert(tkinter.END, askopenfilename())
+        filename = self.addfiletextbox.insert(tkinter.END, askopenfilename())
+        if not filename:
+                self.addfiletextbox.insert(tkinter.END, text)
    
     def export(self):
         texttext = self.infiletextbox.get(1.0, tkinter.END)
