@@ -75,6 +75,15 @@ def main(argv):
 
                 elif opt in ("-m", "--method"):
                         method = arg
+                        if method == 'name':
+                                print("Searching players by name...")
+                        elif method == 'idfide':
+                                print("Searching players by ID FIDE...")
+                        elif method == 'idfeda':
+                                print("Searching players by ID FEDA...")
+                        else:
+                                print("I don't know this search method. Try name of idfide.")
+                                sys.exit()
                 elif opt in ("-i", "--ifile"):
                         inputfile = arg
                 
@@ -98,7 +107,10 @@ def main(argv):
                 print("No list specified")
         #print(listdata)
         tournament.get_tournament_data_from_file(inputfile)
-        tournament.update_players_data_from_list(listdata, method, 1,1,1,1)
+        if inputfile.endswith('.fegaxa'):
+                tournament.update_players_data_from_list_fegaxa(listdata)
+        else:
+                tournament.update_players_data_from_list(listdata, method, 1,1,1,1,1)
         tournament.output_to_file(inputfile)
 
 if __name__ == "__main__":
