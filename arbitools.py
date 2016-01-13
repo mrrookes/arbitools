@@ -73,18 +73,20 @@ class Tournament:
                         sys.exit()
                 inputfilesplit = inputfile.split('.')#Separate file name and extension.
                 outputfiletxt=inputfilesplit[0]+'_updated'+'.txt' #The name for the .txt file.
-                if inputfile.endswith('.csv'):
+                if inputfile.endswith('.csv') or inputfile.endswith('.xls'):
                         outputfile=inputfilesplit[0]+'_updated'+'.csv'#Get the name for the updated file.
                 elif inputfile.endswith('.veg'):
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
                 elif inputfile.endswith('.txt'):
                         self.export_to_fide(inputfile)
+                elif inputfile.endswith('.fegaxa'):
+                        self.export_to_fegaxa(inputfile)
                 else:
                         print("I don't have a filter for this file format.")
-                if inputfile.endswith('.csv') or inputfile.endswith('.veg'):
+                if inputfile.endswith('.csv') or inputfile.endswith('.veg') or inputfile.endswith('xls'):
                         with open(outputfile, 'w') as csvoutputfile:
                                 writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
-                                if inputfile.endswith('.csv'):
+                                if inputfile.endswith('.csv') or inputfile.endswith('.xls'):
                                         writer.writeheader()
 #This code is for .veg and .csv only. I have to write the code for .txt
                                 try:
@@ -112,7 +114,21 @@ class Tournament:
                 return
 
 
-        #Print standings to file
+        #Export to Fegaxa database format
+        def export_to_fegaxa(self, inputfile):
+                inputfilesplit = inputfile.split('.')
+                outputfile = inputfilesplit[0]+'_updated'+'.xls'
+                with open(outputfile, 'w') as csvoutputfile:
+                        writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
+                        writer.writeheader()
+                        try:
+                                writer.writerows(self.players_data)
+                                print('File '+outputfile+' created.')
+                        except csv.Error as e:
+                                sys.exit('file %s, line %d: %s' % (inputfile, DictWriter.line_num, e))
+                return 
+
+        #Export to FIDE rtf format
         def export_to_fide(self, inputfile):
                 inputfilesplit = inputfile.split('.')
                 outputfiletxt=inputfilesplit[0]+'_export'+'.txt' #The name for the .txt file.
@@ -221,7 +237,7 @@ class Tournament:
                 return
 
 
-
+        #print standings to file
         def standings_to_file(self, inputfile):
                 inputfilestrip = inputfile.split('.')
                 outputfile = inputfilestrip[0]+"_standings.txt"
@@ -368,16 +384,34 @@ class Tournament:
                 
                 
                 return
+        #Read a elo list and get the players data for fegaxa database
+        def update_players_data_from_list_fegaxa(self, listfile_rows):
+                for row in self.players_data:
+                        for listfilerow in listfile_rows:
+                                nombrecompleto = row['Apellidos']+', '+row['Nombre']
+                                if listfilerow['NAME']==nombrecompleto:
+                                        print('Updating data from: '+nombrecompleto+'...')
+                                        if listfilerow['ELOFIDE'] != ' ':
+                                                        row['EloFIDE']=listfilerow['ELOFIDE']
+                                        if listfilerow['IDFIDE'] != ' ':
+                                                        row['codigoFIDE']=listfilerow['IDFIDE']
+                                        if listfilerow['IDNAT'] != ' ':
+                                                        row['codigoFEDA']=listfilerow['IDNAT']
+                                        if listfilerow['ELONAT'] != ' ':
+                                                        row['EloFEDA']=listfilerow['ELONAT']
+                return
+
+
 
         #Read a elo list and get the players data. The argument listfile_rows comes from the get_list_data_from_file method 
-        def update_players_data_from_list(self, listfile_rows, method, fide, feda, idfide, idfeda):
+        def update_players_data_from_list(self, listfile_rows, method, fide, feda, idfide, idfeda, name):
                 for row in self.players_data:
                         for listfilerow in listfile_rows:
                                 if method == 'idfide':
                                         if listfilerow['IDFIDE']==row['IDFIDE']:
                                                 print('Updating data from: '+row['NAME']+'...')
-                                                if listfilerow['IDFIDE'] != ' ' and idfide == 1:
-                                                        row['IDFIDE']=listfilerow['IDFIDE']
+                                                #if listfilerow['IDFIDE'] != ' ' and idfide == 1:
+                                                #        row['IDFIDE']=listfilerow['IDFIDE']
                                                 if listfilerow['ELOFIDE'] != ' ' and fide == 1:
                                                         row['ELOFIDE']=listfilerow['ELOFIDE']
                                                 if listfilerow['ELONAT'] != ' ' and feda == 1:
@@ -386,6 +420,8 @@ class Tournament:
                                                         row['IDNAT']=listfilerow['IDNAT']
                                                 if listfilerow['KFIDE'] != ' ':
                                                         row['KFIDE']=listfilerow['KFIDE']
+                                                if listfilerow['NAME'] != ' ' and name == 1:
+                                                        row['NAME']=listfilerow['NAME']
                                 if method == 'name':
                                         if listfilerow['NAME']==row['NAME']:
                                                 print('Updating data from: '+row['NAME']+'...')
@@ -399,6 +435,13 @@ class Tournament:
                                                         row['IDNAT']=listfilerow['IDNAT']
                                                 if listfilerow['KFIDE'] != ' ':
                                                         row['KFIDE']=listfilerow['KFIDE']
+                                if method == 'idfeda':
+                                        if listfilerow['IDNAT']==row['IDNAT']:
+                                                print('Updating data from: '+row['NAME']+'...')
+                                                if listfilerow['ELONAT'] != ' ' and feda == 1:
+                                                        row['ELONAT']=listfilerow['ELONAT']
+                                                if listfilerow['IDNAT'] != ' ' and idfeda == 1:
+                                                        row['IDNAT']=listfilerow['IDNAT']
                           
                         #print(row)#testing
 
@@ -436,25 +479,16 @@ class Tournament:
                                         cell = cell.split(',')#To separate first and last name
                                         lastnamesplit = cell[0].split(" ")#In case the surname has more than one word
 
-                                        lastname1 = lastnamesplit[0].capitalize()#We leave only the first capital in the Surname
-                                        firstname = ''
-                                        lastname = ''
-                                        lastname2 = ''
+                                        lastname = lastnamesplit[0].capitalize()#We leave only the first capital in the Surname
+                                        firstname = cell[1].strip()#sometimes there is a blank space at the end of the name that we have to remove
+                                        firstnamesplit = firstname.split(' ')
+                                        firstname = firstnamesplit[0].capitalize()
                                         if len(lastnamesplit)>1:
-                                                lastname2 = lastnamesplit[1].capitalize()
-                                                lastname = lastname1+" "+lastname2
-                                        elif len(lastnamesplit) == 1:
-                                                lastname = lastname1
-                                        
-                                        firstname = cell[1].strip()#To remove the space in front of the name, because it was after the comma.
-                                        firstnamesplit = firstname.split(" ")
-                                        firstname1 = firstnamesplit[0].capitalize()
-                                        firstname2 = ''
+                                                for j in range(1, len(lastnamesplit)):
+                                                        lastname = lastname+' '+lastnamesplit[j].capitalize()
                                         if len(firstnamesplit)>1:
-                                                firstname2 = firstnamesplit[1].capitalize()
-                                                firstname = firstname1+" "+firstname2
-                                        elif len(firstnamesplit) == 1:
-                                                firstname = firstname1
+                                                for j in range(1, len(firstnamesplit)):
+                                                        firstname = firstname+' '+firstnamesplit[j].capitalize()
                                         
                                         name=lastname+", "+firstname#Lastly, join everything in the variable name.
                                         
@@ -495,11 +529,12 @@ class Tournament:
                                         k = player.find('k').text
 
                                         
-                                        for row in self.players_data:#This file is too large, it is better to fill listfile only with players present in the tournament
-                                                if name == row['NAME']:
-                                                        new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': rating, 'COUNTRY': country, 'TITLE': title, 'ELONAT': '', 'KFIDE': k, 'CLUB': '', 'BIRTHDAY': birthday, 'KNAT': '0', 'IDNAT': ''}
-                                                        listfile_rows.append(new_row)
-                                        return listfile_rows
+                                        #for row in self.players_data:#This file is too large, it is better to fill listfile only with players present in the tournament
+                                        #        if name == row['NAME']:
+                                        new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': rating, 'COUNTRY': country, 'TITLE': title, 'ELONAT': '', 'KFIDE': k, 'CLUB': '', 'BIRTHDAY': birthday, 'KNAT': '0', 'IDNAT': ''}
+                                        listfile_rows.append(new_row)
+                                
+                                return listfile_rows
 
                         except etree.XMLSyntaxError:
                                 print('XML parsing error.')
@@ -868,6 +903,7 @@ class Tournament:
                         if filename.endswith('.csv'):
                                 reader = csv.DictReader(csvfile, delimiter=';')
                                 self.header = reader.fieldnames
+                                #print(self.header)
                                 #Remove the spaces from the fields
                                 
                                 for i in range(0, len(reader.fieldnames)):
@@ -882,6 +918,99 @@ class Tournament:
                                                 self.players_data.append(new_row)
                                 except csv.Error as e:
                                         sys.exit('file %s, line %d: %s' % (inputfile, DictReader.line_num, e))
+                        if filename.endswith('.xls') and xlrd_present == True:
+                                print("Excel format (galician league)")
+                                header = ['NAME', 'COUNTRY', 'BIRTHDAY', 'G', 'TITLE', 'IDFIDE', 'ELOFIDE', 'KFIDE', 'IDNAT', 'ELONAT', 'K', 'CLUB']
+                                self.header = header
+                                workbook = xlrd.open_workbook(filename)
+                                worksheet = workbook.sheet_by_index(0)
+                                for i in range(1, worksheet.nrows):
+                                        cell = str(worksheet.cell_value(i, 10))
+                                        cellsplit = cell.split(' ')
+                                        cellsplithyphen = cellsplit[0].split('-')
+                                        surname = cellsplithyphen[0].capitalize()
+                                        if len(cellsplithyphen)>1:
+                                                for j in range(1, len(cellsplithyphen)):
+                                                        surname = surname+'-'+cellsplithyphen[j].capitalize()   
+                                        if len(cellsplit)>1:
+                                                for j in range(1, len(cellsplit)):
+                                                        cellsplithyphen = cellsplit[j].split('-')
+                                                        surname = surname+' '+cellsplithyphen[0].capitalize()
+                                                        if len(cellsplithyphen)>1:
+                                                                for k in range(1, len(cellsplithyphen)):
+                                                                       surname = surname+'-'+cellsplithyphen[k].capitalize()        
+                                        cell = str(worksheet.cell_value(i, 11))
+                                        cellsplit = cell.split(' ')
+                                        firstname = cellsplit[0].capitalize()
+                                        if len(cellsplit)>1:
+                                                for j in range(1, len(cellsplit)):
+                                                        firstname = firstname+' '+cellsplit[j].capitalize()
+                                        name = surname+', '+firstname
+                                        idfide = str(int(worksheet.cell_value(i, 5)))
+                                        birthday = str(worksheet.cell_value(i, 7))
+                                        feda = str(int(worksheet.cell_value(i, 4)))
+                                        idfeda = str(int(worksheet.cell_value(i, 3)))
+                                        fide = str(int(worksheet.cell_value(i, 6)))
+                                        fed = str(worksheet.cell_value(i, 8))
+                                        title = str(worksheet.cell_value(i, 2))
+                                        sex = str(worksheet.cell_value(i, 9))
+                                        new_row={'NAME': name, 'COUNTRY': fed, 'BIRTHDAY': birthday, 'G': sex, 'TITLE': title, 'IDFIDE': idfide, 'ELOFIDE': fide,  'KFIDE': '0', 'IDNAT': idfeda, 'ELONAT': feda, 'K': '0', 'CLUB': ' '}
+                                        #print(surname+', '+firstname)
+                                        self.players_data.append(new_row)
+                        if filename.endswith(".fegaxa") and xlrd_present == True: #Database file in fegaxa format
+                                print("Fegaxa format")
+                                header = ['codigoFADA', 'codigoFEDA', 'codigoFIDE', 'DNI', 'LetraFinal', 'Apellidos', 'Nombre', 'FechaNacimiento', 'Hombre', 'email', 'Direccion', 'Telefono', 'Nacionalidad', 'Federado', 'NombreClub', 'Provincia', 'CodJugador', 'nombreLocalidad', 'Localidad', 'EloFADA', 'EloFEDA', 'EloFIDE']
+                                self.header = header
+                                workbook = xlrd.open_workbook(filename)
+                                worksheet = workbook.sheet_by_index(0)
+                                for i in range(1, worksheet.nrows):
+                                        cell = str(worksheet.cell_value(i, 5))
+                                        cellsplit = cell.split(' ')
+                                        cellsplithyphen = cellsplit[0].split('-')
+                                        surname = cellsplithyphen[0].capitalize()
+                                        if len(cellsplithyphen)>1:
+                                                for j in range(1, len(cellsplithyphen)):
+                                                        surname = surname+'-'+cellsplithyphen[j].capitalize()   
+                                        if len(cellsplit)>1:
+                                                for j in range(1, len(cellsplit)):
+                                                        cellsplithyphen = cellsplit[j].split('-')
+                                                        surname = surname+' '+cellsplithyphen[0].capitalize()
+                                                        if len(cellsplithyphen)>1:
+                                                                for k in range(1, len(cellsplithyphen)):
+                                                                       surname = surname+'-'+cellsplithyphen[k].capitalize()   
+                                        cell = str(worksheet.cell_value(i, 6))
+                                        cellsplit = cell.split(' ')
+                                        firstname = cellsplit[0].capitalize()
+                                        if len(cellsplit)>1:
+                                                for j in range(1, len(cellsplit)):
+                                                        firstname = firstname+' '+cellsplit[j].capitalize()
+
+                                        idfeda = str(int(worksheet.cell_value(i, 1)))
+                                        idfide = str(int(worksheet.cell_value(i, 2)))
+                                        dni = str(worksheet.cell_value(i, 3))
+                                        letradni = str(worksheet.cell_value(i, 4))
+                                        
+                                        birthday = str(worksheet.cell_value(i, 7))
+                                        sex = str(worksheet.cell_value(i, 8)) #1 hombre, 0 mujer
+                                        email = str(worksheet.cell_value(i, 9))
+                                        address = str(worksheet.cell_value(i,10))
+                                        telephone = str(worksheet.cell_value(i, 11))
+                                        nationality = str(worksheet.cell_value(i, 12))
+                                        federated = str(worksheet.cell_value(i, 13))
+                                        club = str(worksheet.cell_value(i, 14))
+                                        province = str(worksheet.cell_value(i, 15))
+                                        code = str(worksheet.cell_value(i, 16))
+                                        cityname = str(worksheet.cell_value(i, 17))
+                                        city = str(worksheet.cell_value(i, 18))
+                                        
+                                        feda = str(int(worksheet.cell_value(i,20)))
+                                        fide = str(int(worksheet.cell_value(i, 21)))
+                                        title = str(worksheet.cell_value(i, 2))
+                                        
+                                        new_row={'codigoFADA': '0', 'codigoFEDA': idfeda, 'codigoFIDE': idfide, 'DNI': dni, 'LetraFinal': letradni, 'Apellidos': surname, 'Nombre': firstname, 'FechaNacimiento': birthday, 'Hombre': sex, 'email': email, 'Direccion':address, 'Telefono': telephone, 'Nacionalidad': nationality, 'Federado': federated, 'NombreClub': club, 'Provincia': province, 'CodJugador': code, 'nombreLocalidad':cityname, 'Localidad':city, 'EloFADA':'0', 'EloFEDA':feda, 'EloFIDE':fide}
+                                        #print(surname+', '+firstname)
+                                        self.players_data.append(new_row)
+
 
         #Add new players to players_data
         def add_players_data_from_file(self, addfile):
