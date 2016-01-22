@@ -65,11 +65,13 @@ This program is written in python 3, which is an interpreted language, so you do
 @section Installing Python
 What you may need to install is python. If you use GNU/Linux it is most likely already install, but not in other systems. You can get the latest version from @url{http://www.python.org/downloads}. Remember to download 3.*.* and not 2.*.*.
 
-You also need to have a couple of modules of python, namely xlrd and lxml. The easiest way to install modules is through pip. In order to use pip. Open a command console, go to the python folder in your system, then go to the Scripts folder and type:
+You also need to have some modules of python, namely xlrd, xlwt and lxml. The easiest way to install modules is through pip. In order to use pip, open a command console, go to the python folder in your system, then go to the Scripts folder and type:
 
 @code{pip install xlrd}
 
 @code{pip install lxml}
+
+@code{pip install xlwt}
 
 Ir this is too difficult for you, there are graphical python installer you can find on the internet.
 
@@ -152,15 +154,17 @@ You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section 
 @indentedblock
 @b{-l} Write the name of the elo list here. ``fide'' uses the official fide list from the file ``players_list_xml.xml''. It won't work if you don't have that file in your folder. You can download it from www.fide.com. ``feda'' uses the feda list from the file ``elo_feda.xls''. You have to rename the file from www.feda.org. ``fidefeda'' uses the file ``FIDE-FEDA Vega.csv''. You can download it from www.jemchess.com.
 @end indentedblock
-@indentedblock
-@b{-m} Search method. You can use ``idfide'' or ``name''. ``idfide'' doesn't have a effect if you use the feda list, because it doesn't contain the fide codes.
-@end indentedblock
 
 If you used a .veg file, a backup of the original file is renamed with the ``_old'' suffix.
 
-If you used a .csv file, a file with the ``_update'' suffix is created with the updated data, the original file remains untouched.
+If you used a .csv or a .xls file, a new file with the ``_update'' suffix is created with the updated data, the original file remains untouched.
+
+If you used a .fegaxa file, a new file with the ``_update'' suffix is created with the updated data. Arbitools will try to produce a xls format file, but most likely a csv is going to be. Be careful about this, because if you want to use the produced file to be upgraded again, it has to be a xls file. What you can do is open with LibreOffice and save is as xls.
 
 If you used a .txt file, a file with the ``_export'' suffix is created with the updated data, the original file remains untouched.
+
+You can see a report of the updated actions in arbitools-report.log
+
 
 @subsection arbitools-add.py
 Adds extra players to an existing file.
@@ -213,6 +217,18 @@ Chess Arbiter Tools accepts .csv with ``;'' separator and the following headings
 
 You won't be able to produce reports from this kind of file, since it doesn't store the tournament information, only the players'.
 
+@section .xls files
+Files with .xls format are admitted if they store the information with the followint format of columns. The name of the columns is not important in this case, just the data has to be in the right column.
+
+@code{ID;NAME;TITLE;IDNAT;ELONAT;IDFIDE;ELOFIDE;BIRTHDAY;COUNTRY;G;SURNAME;FIRSTNAME}
+
+@section .fegaxa files
+A special kind of xls files are accepted if the .xls ending is replaced with a .fegaxa ending. This type of file is specially designed for the Galician Federation. The structure of the columns has to be:
+
+@code{codigoFADA;codigoFEDA;codigoFIDE;DNI;LetraFinal;Apellidos;Nombre;FechaNacimiento;Hombre;email;Direccion;Telefono;Nacionalidad;Federado;NombreClub;Provincia;CodJugador;nombreLocalidad;Localidad;EloFADA;EloFEDA;EloFIDE}
+
+This kind of files is very useful if you really need to store extra data about the players.
+
 
 @node Common Arbiters Tasks
 @chapter Common Arbiters Tasks
@@ -220,11 +236,11 @@ You created a tournament and already have the file ``mytournament.veg'' with the
 @section Updating the players data in a file.
 You want to add the FEDA elos to the players data. You type the following command:
 
-@code{python3 arbitools-update.py -i mytournament.veg -l feda -m name}
+@code{python3 arbitools-update.py -i mytournament.veg -l feda}
 
 You want to update the FIDE elos because a new list was published:
 
-@code{python3 arbitools-update.py -i mytournament.veg -l fide -m idfide}
+@code{python3 arbitools-update.py -i mytournament.veg -l fide}
 
 Just remember this process is really, really slow. It is because ``players_list_xml.xml'' is a very big file, and the .xml format is very unefficient.
 

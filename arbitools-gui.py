@@ -310,7 +310,7 @@ class App:
         listdata = self.tournament.get_list_data_from_file(elolist, listfile, method)
         self.tournament.get_tournament_data_from_file(inputfile)
         #self.tournament.update_players_data_from_list(listdata, self.method.get(), self.varfide.get(), self.varfeda.get(), self.varidfide.get(), int(self.varidfeda.get()))
-        self.tournament.update_players_data_from_list(listdata, method, self.varfide.get(), self.varfeda.get(), self.varidfide.get(), self.varidfeda.get(), self.varname.get())
+        self.tournament.update_players_data_from_list(listdata, self.varfide.get(), self.varfeda.get(), self.varidfide.get(), self.varidfeda.get(), self.varname.get())
         self.tournament.output_to_file(inputfile)
 
         self.resultsBox.insert(tkinter.END, "File updated...\n")        

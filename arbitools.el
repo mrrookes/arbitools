@@ -13,9 +13,9 @@
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun arbitools-update (list method)
-  (interactive "slist: \nsmethod:")
-  (shell-command (concat (expand-file-name "arbitools-update.py") " -l " list " -m " method " -i " buffer-file-name)))
+(defun arbitools-update (list)
+  (interactive "slist:")
+  (shell-command (concat (expand-file-name "arbitools-update.py") " -l " list  " -i " buffer-file-name)))
 
 (defun arbitools-add (addfile)
   (interactive "saddfile: ")
