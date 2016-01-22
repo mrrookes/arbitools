@@ -87,15 +87,15 @@ def main(argv):
         methods_list=tuple(methods_temp)
         sort_by=tuple(sort_by_temp)
        
-        try:
-                if methods_list:
-                        tournament.applyARPO(inputfile, methods_list, sort_by)
+        #try:
+        if methods_list:
+                tournament.applyARPO(inputfile, methods_list, sort_by)
                 
-                else:
-                        tournament.applyARPO(inputfile, ({'method':'Name'}, {'method':'Points'}, {'method':'ARPO'}), ({'method':'Points'}, {'method': 'ARPO'}))
-        except Exception:
-                print("I cannot calculate ARPO for this file")
-                pass
+        else:
+                tournament.applyARPO(inputfile, ({'method':'Name'}, {'method':'Points'}, {'method':'ARPO'}), ({'method':'Points'}, {'method': 'ARPO'}))
+        #except Exception:
+                #print("I cannot calculate ARPO for this file")
+                #pass
         if inputfile.endswith('.veg') or inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
                 tournament.standings_to_file(inputfile)
                 tournament.export_to_fide(inputfile)

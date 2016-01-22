@@ -1,4 +1,4 @@
-#---------------------arbitools-------------------------
+##---------------------arbitools-------------------------
 #Collection of python functions for typical tasks of Chess Arbiters.
 #The class Tournament offers useful properties and methods for Chess
 #Tournament Management
@@ -22,6 +22,7 @@ import os
 import sys
 import csv
 import unicodedata
+import time
 from collections import namedtuple
 from operator import itemgetter
 from itertools import dropwhile, compress
@@ -36,7 +37,11 @@ try:
         xlrd_present=True
 except ImportError:
         xlrd_present=False
-
+try:
+        import xlwt
+        xlwt_present=True
+except ImportError:
+        xlwt_present=False
 class Tournament:
 
         def __init__(self):
@@ -48,7 +53,7 @@ class Tournament:
                 self.players_data = []
                 self.crosstable = []
 
-                
+                self.typeoffile = ''  
                 
                 #The following variables store information of .veg files.
                 self.header=''
@@ -117,16 +122,35 @@ class Tournament:
         #Export to Fegaxa database format
         def export_to_fegaxa(self, inputfile):
                 inputfilesplit = inputfile.split('.')
-                outputfile = inputfilesplit[0]+'_updated'+'.xls'
-                with open(outputfile, 'w') as csvoutputfile:
-                        writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
-                        writer.writeheader()
-                        try:
-                                writer.writerows(self.players_data)
-                                print('File '+outputfile+' created.')
-                        except csv.Error as e:
-                                sys.exit('file %s, line %d: %s' % (inputfile, DictWriter.line_num, e))
-                return 
+                outputfile = inputfilesplit[0]+'_updated'+'.fegaxa'
+
+
+                print_to_xls = False #dictionaries are not sorted, so writing to xls is difficult
+                if print_to_xls == True and xlwt_present == True:
+                        workbook = xlwt.Workbook()
+                        
+                        sheet = workbook.add_sheet("Jugadores")
+                        for col_index, cell_value in enumerate(self.header):
+                                sheet.write(0, col_index, cell_value)
+                        columns = list(self.players_data[0].keys())
+                        for i, row in enumerate(self.players_data):
+                                for j, col in enumerate(columns):
+                                        adjust = i+1
+                                        sheet.write(adjust, j, row[col])
+                                        #print(row)
+                        workbook.save("prueba_outputfile.xls")
+                        print('File '+' xls'+' created.')
+                else:
+                        print("I could not write in .xls format, you will have to transform it manually") 
+                        with open(outputfile, 'w') as csvoutputfile:
+                                writer = csv.DictWriter(csvoutputfile, fieldnames=self.header, delimiter=';')
+                                writer.writeheader()
+                                try:
+                                        writer.writerows(self.players_data)
+                                        print('File '+outputfile+' created.')
+                                except csv.Error as e:
+                                        sys.exit('file %s, line %d: %s' % (inputfile, DictWriter.line_num, e))
+                return
 
         #Export to FIDE rtf format
         def export_to_fide(self, inputfile):
@@ -386,69 +410,129 @@ class Tournament:
                 return
         #Read a elo list and get the players data for fegaxa database
         def update_players_data_from_list_fegaxa(self, listfile_rows):
+                                        
+                becareful = []
+                count = 0
+                updated = 0
+                nombrecompleto = []
+                listfilerowsplit = []
+                errors = []
                 for row in self.players_data:
                         for listfilerow in listfile_rows:
                                 nombrecompleto = row['Apellidos']+', '+row['Nombre']
-                                if listfilerow['NAME']==nombrecompleto:
-                                        print('Updating data from: '+nombrecompleto+'...')
+                                #print(listfilerow['IDNAT']+'-'+row['codigoFEDA'])
+                                
+                                if listfilerow['IDFIDE'] != ' ' and listfilerow['IDFIDE'] != '' and listfilerow['IDFIDE'] != '0' and listfilerow['IDFIDE']==row['codigoFIDE']:
+                                        #print('Updating data from: '+nombrecompleto+'...'+'idfide')
                                         if listfilerow['ELOFIDE'] != ' ':
-                                                        row['EloFIDE']=listfilerow['ELOFIDE']
-                                        if listfilerow['IDFIDE'] != ' ':
-                                                        row['codigoFIDE']=listfilerow['IDFIDE']
-                                        if listfilerow['IDNAT'] != ' ':
-                                                        row['codigoFEDA']=listfilerow['IDNAT']
+                                                row['EloFIDE']=listfilerow['ELOFIDE']
+                                        if listfilerow['NAME'] != ' ' and listfilerow['NAME'] != '':
+                                                listfilerowsplit = listfilerow['NAME'].split(",")
+                                                try:
+                                                        row['Apellidos'] = listfilerowsplit[0].strip()
+                                                        row['Nombre'] = listfilerowsplit[1].strip()
+                                                except:
+                                                        errors.append("Error procesing: apellidos: "+row['Apellidos']+", nombre: "+row['Nombre'])
+                                                        pass
+                                        if listfilerow['ELONAT'] != ' ' and listfilerow['ELONAT'] != '':
+                                                row['EloFEDA']=listfilerow['ELONAT']
+                                        updated += 1
+                                
+                                elif listfilerow['IDNAT'] != '' and listfilerow['IDNAT'] != '0' and listfilerow['IDNAT']==row['codigoFEDA']:
+                                        #print('Updating data from: '+nombrecompleto+'...'+'idfeda')
                                         if listfilerow['ELONAT'] != ' ':
-                                                        row['EloFEDA']=listfilerow['ELONAT']
+                                                row['EloFEDA']=listfilerow['ELONAT']
+                                        updated += 1
+
+                                elif listfilerow['NAME']==nombrecompleto and len(str(row['codigoFIDE']))<5:
+                                        #print('Updating data from: '+nombrecompleto+'...'+'name')
+                                        becareful.append(nombrecompleto)
+                                        if listfilerow['ELOFIDE'] != ' ':
+                                                row['EloFIDE']=listfilerow['ELOFIDE']
+                                        if listfilerow['IDFIDE'] != ' ':
+                                                row['codigoFIDE'] = listfilerow['IDFIDE']
+                                        if listfilerow['ELONAT'] != ' ' and listfilerow['ELONAT'] != '':
+                                                row['EloFEDA']=listfilerow['ELONAT']
+                                        if listfilerow['IDNAT'] != ' ' and row['codigoFEDA'] == '':
+                                                row['codigoFEDA'] = listfilerow['IDNAT']
+                                        updated += 1
+                        count += 1
+                        print("\r"+str(count)+" players searched", end="")
+                print("\r"+str(count)+" players searched")
+                print(str(updated)+" players updated")
+                with open("arbitools-report.log", 'a') as logfile:
+                        logfile.write("\nFile updated report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
+                        logfile.write(str(count)+" players searched\n")
+                        logfile.write(str(updated)+" players updated\n")
+                        logfile.write("Be careful with:"+str(becareful)+". They have been updated by their names. There may be errors.")
+                        logfile.write("\n"+str(errors))
                 return
 
 
 
         #Read a elo list and get the players data. The argument listfile_rows comes from the get_list_data_from_file method 
-        def update_players_data_from_list(self, listfile_rows, method, fide, feda, idfide, idfeda, name):
+        def update_players_data_from_list(self, listfile_rows, fide, feda, idfide, idfeda, name):
+                becareful = []
+                count = 0
+                updated = 0
+                errors = []
                 for row in self.players_data:
                         for listfilerow in listfile_rows:
-                                if method == 'idfide':
-                                        if listfilerow['IDFIDE']==row['IDFIDE']:
-                                                print('Updating data from: '+row['NAME']+'...')
+                                if listfilerow['IDFIDE'] != ' ' and listfilerow['IDFIDE'] != '' and listfilerow['IDFIDE'] != '0' and listfilerow['IDFIDE']==row['IDFIDE']:
+                                        #print('Updating data from: '+row['NAME']+'...')
                                                 #if listfilerow['IDFIDE'] != ' ' and idfide == 1:
                                                 #        row['IDFIDE']=listfilerow['IDFIDE']
-                                                if listfilerow['ELOFIDE'] != ' ' and fide == 1:
-                                                        row['ELOFIDE']=listfilerow['ELOFIDE']
-                                                if listfilerow['ELONAT'] != ' ' and feda == 1:
-                                                        row['ELONAT']=listfilerow['ELONAT']
-                                                if listfilerow['IDNAT'] != ' ' and idfeda == 1:
-                                                        row['IDNAT']=listfilerow['IDNAT']
-                                                if listfilerow['KFIDE'] != ' ':
-                                                        row['KFIDE']=listfilerow['KFIDE']
-                                                if listfilerow['NAME'] != ' ' and name == 1:
-                                                        row['NAME']=listfilerow['NAME']
-                                if method == 'name':
-                                        if listfilerow['NAME']==row['NAME']:
-                                                print('Updating data from: '+row['NAME']+'...')
-                                                if listfilerow['IDFIDE'] != ' ' and idfide == 1:
-                                                        row['IDFIDE']=listfilerow['IDFIDE']
-                                                if listfilerow['ELOFIDE'] != ' ' and fide == 1:
-                                                        row['ELOFIDE']=listfilerow['ELOFIDE']
-                                                if listfilerow['ELONAT'] != ' ' and feda == 1:
-                                                        row['ELONAT']=listfilerow['ELONAT']
-                                                if listfilerow['IDNAT'] != ' ' and idfeda == 1:
-                                                        row['IDNAT']=listfilerow['IDNAT']
-                                                if listfilerow['KFIDE'] != ' ':
-                                                        row['KFIDE']=listfilerow['KFIDE']
-                                if method == 'idfeda':
-                                        if listfilerow['IDNAT']==row['IDNAT']:
-                                                print('Updating data from: '+row['NAME']+'...')
-                                                if listfilerow['ELONAT'] != ' ' and feda == 1:
-                                                        row['ELONAT']=listfilerow['ELONAT']
-                                                if listfilerow['IDNAT'] != ' ' and idfeda == 1:
-                                                        row['IDNAT']=listfilerow['IDNAT']
-                          
+                                        if listfilerow['ELOFIDE'] != ' ' and fide == 1:
+                                                row['ELOFIDE']=listfilerow['ELOFIDE']
+                                        if listfilerow['ELONAT'] != '' and listfilerow['ELONAT'] != ' ' and feda == 1:
+                                                row['ELONAT']=listfilerow['ELONAT']
+                                        if listfilerow['IDNAT'] != '' and listfilerow['IDNAT'] != ' ' and idfeda == 1:
+                                                row['IDNAT']=listfilerow['IDNAT']
+                                        if listfilerow['KFIDE'] != ' ':
+                                                row['KFIDE']=listfilerow['KFIDE']
+                                        if listfilerow['NAME'] != ' ' and name == 1:
+                                                row['NAME']=listfilerow['NAME']
+                                        updated += 1
+                                
+                                elif listfilerow['IDNAT'] != '' and listfilerow['IDNAT']==row['IDNAT']:
+                                        #print('Updating data from: '+row['NAME']+'...')
+                                        if listfilerow['ELONAT'] != ' ' and feda == 1:
+                                                row['ELONAT']=listfilerow['ELONAT']
+                                        #if listfilerow['IDNAT'] != ' ' and idfeda == 1:
+                                        #        row['IDNAT']=listfilerow['IDNAT']
+                                        updated += 1
+
+                                elif listfilerow['NAME']==row['NAME'] and row['ELOFIDE'] == "0" and row['IDNAT'] == "0":
+                                        #print('Updating data from: '+row['NAME']+'...')
+                                        becareful.append(row['NAME'])
+                                        if listfilerow['IDFIDE'] != ' ' and idfide == 1:
+                                                row['IDFIDE']=listfilerow['IDFIDE']
+                                        if listfilerow['ELOFIDE'] != ' ' and fide == 1:
+                                                row['ELOFIDE']=listfilerow['ELOFIDE']
+                                        if listfilerow['ELONAT'] != ' ' and feda == 1:
+                                                row['ELONAT']=listfilerow['ELONAT']
+                                        if listfilerow['IDNAT'] != ' ' and idfeda == 1:
+                                                row['IDNAT']=listfilerow['IDNAT']
+                                        if listfilerow['KFIDE'] != ' ':
+                                                row['KFIDE']=listfilerow['KFIDE']
+                                        updated += 1
+                        
+                        count += 1
+                        print("\r"+str(count)+" players searched", end="")
+                print("\r"+str(count)+" players searched")
+                print(str(updated)+" players updated")
+                with open("arbitools_report.log", 'a') as logfile:
+                        logfile.write("\nFile updated report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
+                        logfile.write(str(count)+" players searched\n")
+                        logfile.write(str(updated)+" players updated\n")
+                        logfile.write("Be careful with:"+str(becareful)+". They have been updated by their names. There may be errors.")
+                        logfile.write("\n"+str(errors))
                         #print(row)#testing
 
 
         #Get data from a list (fide, feda, fidefeda) and return the data in listfilerows. 
         #Searching by code or by name is possible
-        def get_list_data_from_file(self, elolist, filename, method):
+        def get_list_data_from_file(self, elolist, filename):
                 listfile_rows=[]
                 if elolist == 'fidefeda':
                         with open (filename) as csvupdatefile:
@@ -471,7 +555,7 @@ class Tournament:
                         print("Using FEDA file...")
                         workbook = xlrd.open_workbook(filename)
                         worksheet = workbook.sheet_by_index(0)
-
+                        count = 0
                         for i in range(4, worksheet.nrows):
                                 cell = ''.join(c for c in unicodedata.normalize('NFD', worksheet.cell_value(i, 1)) if unicodedata.category(c) != 'Mn') #This removes diacritics.
                                 
@@ -508,16 +592,32 @@ class Tournament:
                                 
                                 new_row={'NAME': name, 'G': ' ', 'IDFIDE': ' ', 'ELOFIDE': ' ', 'COUNTRY': ' ', 'TITLE': ' ', 'ELONAT': elonat, 'KFIDE': ' ', 'CLUB': ' ', 'BIRTHDAY': ' ', 'KNAT': '0', 'IDNAT': idnat}
                                 listfile_rows.append(new_row)
+                                count += 1
+                                print("\r"+str(count)+" players", end="")
+                        print("\nFinished reading Elo list")
                         return listfile_rows
 
                 if elolist == 'fide' and lxml_present == True:
                         try:
-                                print('Reading data from FIDE list... Please be patient, is a very large file')
+                                print('Reading data from FIDE list... Please be patient, is a very large file. It can take REALLY long...')
                                 doc = etree.parse(filename)
                                 if not doc:
                                         print("I cannot find "+filename)
                                         sys.exit()
                                 root = doc.getroot()
+                                count = 0
+                                filtered = 0
+                                name = ''
+                                birthday = ''
+                                sex = ''
+                                title = ''
+                                idfide= ''
+                                rating = ''
+                                k = ''
+                                new_row = {}
+                                nombrecompleto="" 
+                                codigofide=""
+                                codigofeda=""
                                 for player in root:
                                         name = player.find('name').text
                                         country = player.find('country').text
@@ -529,11 +629,24 @@ class Tournament:
                                         k = player.find('k').text
 
                                         
-                                        #for row in self.players_data:#This file is too large, it is better to fill listfile only with players present in the tournament
-                                        #        if name == row['NAME']:
-                                        new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': rating, 'COUNTRY': country, 'TITLE': title, 'ELONAT': '', 'KFIDE': k, 'CLUB': '', 'BIRTHDAY': birthday, 'KNAT': '0', 'IDNAT': ''}
-                                        listfile_rows.append(new_row)
-                                
+                                        for row in self.players_data:#This file is too large, it is better to fill listfile only with players present in the tournament
+                                                if self.typeoffile == "fegaxa":
+                                                        nombrecompleto = row['Apellidos']+', '+row['Nombre'] #se o ficheiro e fegaxa
+                                                        codigofide = row['codigoFIDE']
+                                                        codigofeda = row['codigoFEDA']
+                                                elif self.typeoffile == "fide" or self.typeoffile == "trf" or self.typeoffile== "csv" or self.typeoffile=="xls":
+                                                        nombrecompleto = row['NAME']
+                                                        codigofide = row['IDFIDE']
+                                                if name == nombrecompleto or idfide == codigofide:
+                                                        new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': rating, 'COUNTRY': country, 'TITLE': title, 'ELONAT': '', 'KFIDE': k, 'CLUB': '', 'BIRTHDAY': birthday, 'KNAT': '0', 'IDNAT': ''}
+                                                        listfile_rows.append(new_row)
+                                                        filtered += 1
+                                        count += 1
+                                        print("\r"+str(count)+" players", end="")
+                                root.clear()
+                                del root
+                                del doc
+                                print("\nFinished reading Elo list ("+str(filtered)+" filtered)") 
                                 return listfile_rows
 
                         except etree.XMLSyntaxError:
@@ -561,6 +674,7 @@ class Tournament:
                 with open(filename) as csvfile:
                         if filename.endswith('.txt') or filename.endswith('.trf') or filename.endswith('.trfx'):
                                 print("FIDE format file")
+                                self.typeoffile = "trf"
                                 line=' '
                                 players_index = 0
                                 numberofrounds = 0
@@ -678,6 +792,7 @@ class Tournament:
         
                                 #print(self.playersopponent)
                         if filename.endswith('.veg'):
+                                self.typeoffile = "veg"
                                 print(".veg file. Don't worry, I won't touch the original. It will be backed up.")
 
                                 #Read the header of the .veg file
@@ -901,6 +1016,7 @@ class Tournament:
                                 
                                 csvfile.seek(0)
                         if filename.endswith('.csv'):
+                                self.typeoffile = 'csv'
                                 reader = csv.DictReader(csvfile, delimiter=';')
                                 self.header = reader.fieldnames
                                 #print(self.header)
@@ -910,7 +1026,7 @@ class Tournament:
                                         reader.fieldnames[i] = reader.fieldnames[i].strip()
                                                                
                                 try:
-                                        print('Reading file...')
+                                        print('Reading csv file...')
                                         for row in reader:
                                                 for i in row:
                                                         row[i] = row[i].strip()
@@ -919,13 +1035,17 @@ class Tournament:
                                 except csv.Error as e:
                                         sys.exit('file %s, line %d: %s' % (inputfile, DictReader.line_num, e))
                         if filename.endswith('.xls') and xlrd_present == True:
-                                print("Excel format (galician league)")
+                                self.typeoffile = 'xls'
+                                print("Reading file. Excel format (galician league).")
                                 header = ['NAME', 'COUNTRY', 'BIRTHDAY', 'G', 'TITLE', 'IDFIDE', 'ELOFIDE', 'KFIDE', 'IDNAT', 'ELONAT', 'K', 'CLUB']
                                 self.header = header
                                 workbook = xlrd.open_workbook(filename)
                                 worksheet = workbook.sheet_by_index(0)
+                                count = 0
                                 for i in range(1, worksheet.nrows):
-                                        cell = str(worksheet.cell_value(i, 10))
+                                        
+                                        cell = ''.join(c for c in unicodedata.normalize('NFD', worksheet.cell_value(i, 10)) if unicodedata.category(c) != 'Mn') #This removes diacritics.
+                                        #cell = str(worksheet.cell_value(i, 10))
                                         cellsplit = cell.split(' ')
                                         cellsplithyphen = cellsplit[0].split('-')
                                         surname = cellsplithyphen[0].capitalize()
@@ -957,12 +1077,17 @@ class Tournament:
                                         new_row={'NAME': name, 'COUNTRY': fed, 'BIRTHDAY': birthday, 'G': sex, 'TITLE': title, 'IDFIDE': idfide, 'ELOFIDE': fide,  'KFIDE': '0', 'IDNAT': idfeda, 'ELONAT': feda, 'K': '0', 'CLUB': ' '}
                                         #print(surname+', '+firstname)
                                         self.players_data.append(new_row)
+                                        count += 1
+                                        print("\r"+str(count)+" players", end="")
+                                print("\nFinished reading file")
                         if filename.endswith(".fegaxa") and xlrd_present == True: #Database file in fegaxa format
-                                print("Fegaxa format")
+                                self.typeoffile = "fegaxa"
+                                print("Reading file. Fegaxa format....")
                                 header = ['codigoFADA', 'codigoFEDA', 'codigoFIDE', 'DNI', 'LetraFinal', 'Apellidos', 'Nombre', 'FechaNacimiento', 'Hombre', 'email', 'Direccion', 'Telefono', 'Nacionalidad', 'Federado', 'NombreClub', 'Provincia', 'CodJugador', 'nombreLocalidad', 'Localidad', 'EloFADA', 'EloFEDA', 'EloFIDE']
                                 self.header = header
                                 workbook = xlrd.open_workbook(filename)
                                 worksheet = workbook.sheet_by_index(0)
+                                count = 0
                                 for i in range(1, worksheet.nrows):
                                         cell = str(worksheet.cell_value(i, 5))
                                         cellsplit = cell.split(' ')
@@ -983,9 +1108,16 @@ class Tournament:
                                         firstname = cellsplit[0].capitalize()
                                         if len(cellsplit)>1:
                                                 for j in range(1, len(cellsplit)):
-                                                        firstname = firstname+' '+cellsplit[j].capitalize()
+                                                        secondname = cellsplit[j]
+                                                        if secondname != "II":
+                                                                firstname = firstname+' '+secondname.capitalize()
+                                                        else:
+                                                                firstname = firstname+' '+secondname
 
-                                        idfeda = str(int(worksheet.cell_value(i, 1)))
+                                        idfeda = str(worksheet.cell_value(i, 1))
+                                        if idfeda != ' ':
+                                                idfedasplit = idfeda.split('.')
+                                                idfeda = idfedasplit[0]
                                         idfide = str(int(worksheet.cell_value(i, 2)))
                                         dni = str(worksheet.cell_value(i, 3))
                                         letradni = str(worksheet.cell_value(i, 4))
@@ -1003,14 +1135,16 @@ class Tournament:
                                         cityname = str(worksheet.cell_value(i, 17))
                                         city = str(worksheet.cell_value(i, 18))
                                         
-                                        feda = str(int(worksheet.cell_value(i,20)))
-                                        fide = str(int(worksheet.cell_value(i, 21)))
+                                        feda = str(worksheet.cell_value(i,20))
+                                        fide = str(worksheet.cell_value(i, 21))
                                         title = str(worksheet.cell_value(i, 2))
                                         
                                         new_row={'codigoFADA': '0', 'codigoFEDA': idfeda, 'codigoFIDE': idfide, 'DNI': dni, 'LetraFinal': letradni, 'Apellidos': surname, 'Nombre': firstname, 'FechaNacimiento': birthday, 'Hombre': sex, 'email': email, 'Direccion':address, 'Telefono': telephone, 'Nacionalidad': nationality, 'Federado': federated, 'NombreClub': club, 'Provincia': province, 'CodJugador': code, 'nombreLocalidad':cityname, 'Localidad':city, 'EloFADA':'0', 'EloFEDA':feda, 'EloFIDE':fide}
                                         #print(surname+', '+firstname)
                                         self.players_data.append(new_row)
-
+                                        count += 1
+                                        print("\r"+str(count)+" players", end="")
+                                print("\nFinished reading file")
 
         #Add new players to players_data
         def add_players_data_from_file(self, addfile):

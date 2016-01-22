@@ -39,16 +39,19 @@ def main(argv):
         method=''
         listdata=''
         inputfile=''
+        silent_mode = False
         
         try:
-                opts, args = getopt.getopt(argv,"hvl:m:i:",["version","list=", "method=", "ifile="])
+                opts, args = getopt.getopt(argv,"hvsl:i:",["version","list=", "ifile="])
         except getopt.GetoptError:
-                print('arbitools-update.py -l <list> -m <method> -i <inputfile>')
+                print('arbitools-update.py -l <list> -i <inputfile>')
                 sys.exit(2)
         for opt, arg in opts:
                 if opt == '-h':
-                        print('usage: arbitools-update.py -l <list: fide, feda or fidefeda> -m <search method> -i <infile>')
+                        print('usage: arbitools-update.py -l <list: fide, feda or fidefeda> -i <infile>')
                         sys.exit()
+                #if opt == '-s':
+                #        silent_mode = True
 
                 elif opt in ("-l", "--list"):
                         elolist = arg
@@ -73,17 +76,17 @@ def main(argv):
                                         sys.exit()
 
 
-                elif opt in ("-m", "--method"):
-                        method = arg
-                        if method == 'name':
-                                print("Searching players by name...")
-                        elif method == 'idfide':
-                                print("Searching players by ID FIDE...")
-                        elif method == 'idfeda':
-                                print("Searching players by ID FEDA...")
-                        else:
-                                print("I don't know this search method. Try name of idfide.")
-                                sys.exit()
+                #elif opt in ("-m", "--method"):
+                #        method = arg
+                #        if method == 'name':
+                #                print("Searching players by name...")
+                #        elif method == 'idfide':
+                #                print("Searching players by ID FIDE...")
+                #        elif method == 'idfeda':
+                #                print("Searching players by ID FEDA...")
+                #        else:
+                #                print("I don't know this search method. Try name of idfide.")
+                #                sys.exit()
                 elif opt in ("-i", "--ifile"):
                         inputfile = arg
                 
@@ -100,17 +103,18 @@ def main(argv):
 
         tournament = arbitools.Tournament()
         
+        tournament.get_tournament_data_from_file(inputfile)
         if listfile:
                 print(listfile)
-                listdata = tournament.get_list_data_from_file(elolist, listfile, method)
+                listdata = tournament.get_list_data_from_file(elolist, listfile)
         else:
                 print("No list specified")
         #print(listdata)
-        tournament.get_tournament_data_from_file(inputfile)
+        
         if inputfile.endswith('.fegaxa'):
-                tournament.update_players_data_from_list_fegaxa(listdata)
+                tournament.update_players_data_from_list_fegaxa(listdata) #There are problems with the names. Maybe checking names is not reliable. It is better to complete the task manually
         else:
-                tournament.update_players_data_from_list(listdata, method, 1,1,1,1,1)
+                tournament.update_players_data_from_list(listdata, 1,1,1,1,1) #maybe it is a good idea not to change the name wen using feda list
         tournament.output_to_file(inputfile)
 
 if __name__ == "__main__":
