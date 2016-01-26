@@ -306,7 +306,12 @@ class _Tournament:
     @staticmethod        
     def _extract(target_list, indices):
         # Auxiliary function for extracting parts of lists
-        return (target_list[each_index] for each_index in indices)
+        return (target_list[each_index] for each_index in indices) #added if
+
+    #def _extract(target_list, indices):
+    #     for each_index in indices:
+    #         target_list[each_index]
+    #     return target_list
 
     ################### Tie-breaking rules ####################
     def _recursive_performance(
