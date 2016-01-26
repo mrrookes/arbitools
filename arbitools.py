@@ -49,9 +49,14 @@ class Tournament:
                 self.info={'TOURNAMENT_NAME':' ', 'CITY':' ', 'FED':' ', 'BEGIN_DATE':' ', 'END_DATE':' ', 'ARBITER':' ', 'DEPUTY':' ', 'TIEBREAKS':' ', 'NUMBER_OF_ROUNDS':' ', 'CURRENT_ROUND':' ', 'NUMBER_OF_PLAYERS':' ', 'NUMBER_OF_RATED_PLAYERS':' ', 'NUMBER_OF_TEAMS':' ', 'TYPE_OF_TOURNAMENT':' ', 'ALLOTED_TIME':' ', 'DATES': ' '}
                 self.standings=[]
                 self.dates=[]
+                self.teamnames = []
+                self.teamsmembers = []
+                self.purged = False
 
                 self.players_data = []
                 self.crosstable = []
+                self.players_to_purge = []
+                self.indexes_to_purge = []
 
                 self.typeoffile = ''  
                 
@@ -166,7 +171,7 @@ class Tournament:
                         txtoutputfile.write("072 "+self.info['NUMBER_OF_RATED_PLAYERS'])#Number of rated players.
                         if self.info['NUMBER_OF_RATED_PLAYERS'] == ' ':
                                 txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
-                        txtoutputfile.write("082 "+self.info['NUMBER_OF_TEAMS'])#Number of teams. Implement in the future, by now, only tournaments without teams.
+                        txtoutputfile.write("082 "+self.info['NUMBER_OF_TEAMS'])#Number of teams.
                         if self.info['NUMBER_OF_TEAMS'] == ' ':
                                 txtoutputfile.write("\n")#Write a return carrier in case the variable is empty.
                         txtoutputfile.write("092 "+self.info['TYPE_OF_TOURNAMENT'])#Type of tournament.
@@ -187,7 +192,9 @@ class Tournament:
                         #if self.info['DATES'] == ' ':
                         txtoutputfile.write("\n")
                         count = 1
+                        countplayer = 1
                         for player in self.players_data:
+                                
                                 countstr = ''
                                 titlestr=''
                                 namestr=''
@@ -199,7 +206,7 @@ class Tournament:
                                 roundsstr = ''
                                 if len(str(count)) < 4:
                                         extra = 4-len(str(count))
-                                        countstr = " "*extra+str(count)
+                                        countstr = " "*extra+str(countplayer)
                                 if len(player['TITLE']) == 2:
                                         titlestr = " "+player['TITLE']
                                 elif player['TITLE'] == '':
@@ -246,7 +253,7 @@ class Tournament:
                                 color = ''
                                 result = ''
                                 for i in range(len(playersopponentsplit)):
-                                        if len(playersopponentsplit[i]) < 4:
+                                        if len(playersopponentsplit[i]) < 4: #fill with extra spaces to fill the space
                                                 extra = 4-len(playersopponentsplit[i])
                                                 opponent = " "*extra+playersopponentsplit[i]
                                         else:
@@ -258,6 +265,21 @@ class Tournament:
                                 playerdata = "001 "+countstr+" "+player['G']+titlestr+" "+namestr+" "+elostr+" "+player['COUNTRY']+" "+idfidestr+" "+birthdaystr+" "+pointsstr+" "+rankstr+roundsstr
                                 txtoutputfile.write(playerdata+"\n")
                                 count += 1
+                                countplayer += 1
+                                if self.purged == True and count in self.indexes_to_purge: #if the player was purged, skip one
+                                        countplayer += 1
+                                        continue
+                        if len(self.teamnames)>0:
+                                for i in range(len(self.teamnames)):
+                                        teamdata = "013 "+self.teamnames[i]
+                                        for member in self.teamsmembers[i]: #fill with extra spaces to fill the space
+                                                if len(member)<4:
+                                                        extra = 4-len(member)
+                                                        member=" "*extra+member
+                                                teamdata = teamdata+" "+member
+                                        txtoutputfile.write(teamdata+"\n")
+                                        
+                #print(self.indexes_to_purge)
                 return
 
 
@@ -267,7 +289,9 @@ class Tournament:
                 outputfile = inputfilestrip[0]+"_standings.txt"
                 outputfileTeX = inputfilestrip[0]+"_standings.tex"
                 numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
-                currentround = int(self.info['CURRENT_ROUND'])
+                currentround = 0
+                if self.info['CURRENT_ROUND'] != '' and self.info['CURRENT_ROUND'] != ' ':
+                        currentround = int(self.info['CURRENT_ROUND'])
                 #tex_header = []
                 #tex_middle = []
                 #playerspoints = []
@@ -334,8 +358,10 @@ class Tournament:
                         
                                                 
                         line = [i+1, i+1, self.players_data[i]['TITLE'], self.players_data[i]['NAME'], self.players_data[i]['ELOFIDE'], self.players_data[i]['COUNTRY']]
-                        
-                        for j in range(0, int(self.info['CURRENT_ROUND'])-1):
+                        current_round = 0
+                        if self.info['CURRENT_ROUND'] != ' ' and self.info['CURRENT_ROUND'] != '':
+                                current_round = self.info['CURRENT_ROUND']
+                        for j in range(0, current_round-1):
                                 if j < len(opponents):
                                         line.append(opponents[j])
                                         line.append(colors[j])
@@ -371,8 +397,8 @@ class Tournament:
                 #print(lines)#testing
                 index_rounds = []
                 roundcount = 6
-                limit = self.info['CURRENT_ROUND']*3+6
-                while roundcount <= self.info['CURRENT_ROUND']*3:
+                limit = current_round*3+6
+                while roundcount <= current_round*3:
                         index_rounds.append(roundcount)
                         roundcount += 3
                 
@@ -391,7 +417,7 @@ class Tournament:
                 RPtournament._names = list(compress(RPtournament._names, RPtournament._number_of_opponents))
                 #print(RPtournament._names)#testing
                 RPtournament._elos = [RPtournament._calculate_elo(line[4], 1400) for line in compress(lines, RPtournament._number_of_opponents)]
-                index_points = 3+self.info['CURRENT_ROUND']*3 #I don't really understand why 3+ and not 5+, since there are 5 fields and then the fields for the rounds.
+                index_points = 3+current_round*3 #I don't really understand why 3+ and not 5+, since there are 5 fields and then the fields for the rounds.
                 
                 RPtournament._points = [RPtournament._calculate_points(line[index_points], draw_character="x") for line in compress(lines, RPtournament._number_of_opponents)]
                 
@@ -466,6 +492,9 @@ class Tournament:
                         logfile.write(str(updated)+" players updated\n")
                         logfile.write("Be careful with:"+str(becareful)+". They have been updated by their names. There may be errors.")
                         logfile.write("\n"+str(errors))
+                        logfile.write("\n")
+                        logfile.write(self.players_to_purge)
+                        logfile.write("did not play")
                 return
 
 
@@ -742,6 +771,8 @@ class Tournament:
                                                         numberofrounds += 1                                               
                                                 self.info['NUMBER_OF_ROUNDS'] = numberofrounds-1 #This is not correct, but the info is not always available in this file format and we need to fill the variable.
                                                 self.info['CURRENT_ROUND'] = numberofrounds-1
+                                                if self.info['CURRENT_ROUND'] < 0:
+                                                        self.info['CURRENT_ROUND'] = 0
                                         if firstblock == "001": #Players information
                                                 sex = line[9].strip()
                                                 title = line[10:13].strip()
@@ -759,6 +790,7 @@ class Tournament:
                                                 playersopponent_temp = ''
                                                 playerscolor_temp = ''
                                                 playersresults_temp = ''
+                                                didnotplay = True
                                                 
                                                 for i in range(1, len(self.dates)):
                                                        
@@ -775,9 +807,12 @@ class Tournament:
                                                        else: #If there is data, use the actual data
                                                               playersopponent_temp = playersopponent_temp+" "+opponent.strip()
                                                               playerscolor_temp = playerscolor_temp+" "+color.strip()
+                                                              if color.strip() == "w" or color.strip() == "b":
+                                                                      didnotplay = False
                                                               playersresults_temp = playersresults_temp+" "+result.strip()
                                                        
-                                                    
+                                                if didnotplay == True:
+                                                       self.players_to_purge.append(name)    
                                                 new_row={'NAME': name, 'G': sex, 'IDFIDE': idfide, 'ELOFIDE': fide, 'COUNTRY': fed, 'TITLE': title, 'BIRTHDAY': birthday, 'POINTS':points, 'RANK':rank}
                                         
                                                 self.playersopponent.append(playersopponent_temp.strip())
@@ -789,8 +824,23 @@ class Tournament:
                                                 self.players_data.append(new_row)
                                                 players_index += 1
                                                 playercount += 1
-        
-                                #print(self.playersopponent)
+                                        if firstblock == "013": #Teams information, have to check
+                                                info = line[4:36]
+                                                self.teamnames.append(info)
+                                                #get the players for each team
+                                                offset = 0
+                                                teammembers = []
+                                                while 1:
+                                                        member = line[36+offset:40+offset]
+                                                        offset += 6
+                                                        if not member:
+                                                                break
+                                                        teammembers.append(member.strip())
+                                                self.teamsmembers.append(teammembers)
+         
+                                if len(self.players_to_purge) > 0:
+                                        print(self.players_to_purge, end='')
+                                        print("did not play")
                         if filename.endswith('.veg'):
                                 self.typeoffile = "veg"
                                 print(".veg file. Don't worry, I won't touch the original. It will be backed up.")
@@ -1184,4 +1234,25 @@ class Tournament:
                                 
                                 
                 #print(self.players_data)
+        def purge_tournament(self):
+                #for index,player in enumerate(self.players_data):
+                #        for player_to_purge in self.players_to_purge:
+                #        
+                #                if player['NAME'] == player_to_purge:
+                #                        if player['ELOFIDE'] != "0":
+               #                                 self.info['NUMBER_OF_RATED_PLAYERS'] = str(int(self.info['NUMBER_OF_RATED_PLAYERS']) - 1)+"\n"
+                #                        self.indexes_to_purge.append(index+1) #store the index in order to skip it in export
+                #                        self.players_data.remove(player)
+                #                        del self.playerscolor[index]
+                #                        del self.playersopponent[index]
+                #                        del self.roundresults[index]
+                #                        self.info['NUMBER_OF_PLAYERS'] = str(int(self.info['NUMBER_OF_PLAYERS']) - 1)+"\n"
+                #print(self.players_data)
+                self.purged = True
+                with open("arbitools-report.log", 'a') as logfile:
+                        logfile.write("\nFile purge report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
+                        logfile.write("\n")
+                        logfile.write(str(self.players_to_purge))
+                        logfile.write("did not play")
+                return
 
