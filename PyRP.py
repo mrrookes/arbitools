@@ -130,11 +130,15 @@ class Tournament(_Tournament):
             else:
                 # Update iterand and continue
                 p0 = p
+            
         else:
             # The method did not converge
-            self._write_log_info(method_name, max_iterations, difference)
-            raise TournamentError(
-                'The {} method did not converge'.format(method_name))
+            try:
+                self._write_log_info(method_name, max_iterations, difference)
+                raise TournamentError(
+                    'The {} method did not converge'.format(method_name))
+            except:
+                pass
 
     def _rivals_average(self, strengths, worst=0, best=0):
         # Average strength of the opponents removing best and worst opponents
