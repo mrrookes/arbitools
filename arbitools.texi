@@ -91,6 +91,11 @@ Ir this is too difficult for you, there are graphical python installer you can f
 @end indentedblock
 
 
+@indentedblock
+@emph{custom_elo.csv} It is recommended that you create this file, with the header described in the section @xref{File Formats}. Add the data of the players you really need and update monthly with the official lists. Make sure the FIDE and FEDA codes are correct.
+@end indentedblock
+
+
 
 @node    Usage
 @chapter Usage
@@ -143,6 +148,12 @@ This action produces the standings for a tournament. You will get the files:
 
 - A file with the ``_ARPO.csv'' suffix, with tiebreaks information. The library PyRP.py and _PyRP.py by Julio Gonzalez And Jose Carlos Diaz is used.
 
+- A file with the ``Rating_admin_'' preffis, with the FEDA rating information for the Spanish Federation.
+
+- A .tex file, with the suffix ``IT3'', that you can edit and compile to get a Tournament Report Form.
+
+- If there is a latex environment installed, you will also get a .pdf file with the Tournament Report Form.
+
 @section Command Line
 @subsection arbitools-update.py
 Updates the players information stored in a file. It is a very useful function when a new list is published and you had already set up the tournament.
@@ -152,7 +163,7 @@ Updates the players information stored in a file. It is a very useful function w
 You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
 @end indentedblock
 @indentedblock
-@b{-l} Write the name of the elo list here. ``fide'' uses the official fide list from the file ``players_list_xml.xml''. It won't work if you don't have that file in your folder. You can download it from www.fide.com. ``feda'' uses the feda list from the file ``elo_feda.xls''. You have to rename the file from www.feda.org. ``fidefeda'' uses the file ``FIDE-FEDA Vega.csv''. You can download it from www.jemchess.com.
+@b{-l} Write the name of the elo list here. ``fide'' uses the official fide list from the file ``players_list_xml.xml''. It won't work if you don't have that file in your folder. You can download it from www.fide.com. ``feda'' uses the feda list from the file ``elo_feda.xls''. You have to rename the file from www.feda.org. ``fidefeda'' uses the file ``FIDE-FEDA Vega.csv''. You can download it from www.jemchess.com. By default, it uses your personal ``custom_elo.csv'' file.
 @end indentedblock
 
 If you used a .veg file, a backup of the original file is renamed with the ``_old'' suffix.
@@ -189,6 +200,13 @@ Produces the standings for a tournament. You will get the files:
 
 - A file with the ``_ARPO.csv'' suffix, with tiebreaks information. The library PyRP.py and _PyRP.py by Julio Gonzalez And Jose Carlos Diaz is used.
 
+- A file with the ``Rating_admin_'' preffis, with the FEDA rating information for the Spanish Federation.
+
+- A .tex file, with the suffix ``IT3'', that you can edit and compile to get a Tournament Report Form.
+
+- If there is a latex environment installed, you will also get a .pdf file with the Tournament Report Form.
+
+
 @indentedblock
 @b{-i} This argument takes the name of the input file. It will only work witn .txt (FIDE Krause) or .veg. Other formats don't contain the tournament's information needed to produce the standings.
 @end indentedblock
@@ -216,6 +234,8 @@ Chess Arbiter Tools accepts .csv with ``;'' separator and the following headings
 @code{NAME;COUNTRY;BIRTHDAY;G;TITLE;IDFIDE;ELOFIDE;KFIDE;IDNAT;ELONAT;K;CLUB}
 
 You won't be able to produce reports from this kind of file, since it doesn't store the tournament information, only the players'.
+
+This is the header you have to use in order to create your personal ``custom_elo.csv''
 
 @section .xls files
 Files with .xls format are admitted if they store the information with the followint format of columns. The name of the columns is not important in this case, just the data has to be in the right column.
@@ -257,6 +277,22 @@ This task is really easy to perform
 @code{python3 arbitools-standings.py -i mytournament.veg}
 
 You will get a .txt file with the standings. You will also get a .tex file you can compile with pdflatex and get a pdf. Additionally, it generates a file with the suffix ``_ARPO.csv'' with the ARPO tiebreak calculations. This is very experimental. This option is possible thanks to the python libraries written by Julio Gonzalez and Jose Carlos Diaz. More information on @url{http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm}
+
+@section Writing a tournament report.
+It is recommended that you create your own ``custom_elo.csv'', with the information of the players you usually need. Get this file update monthly with the official lists with the commands:
+
+@code{python3 arbitools-update.py -i custom_elo.csv -l fide}
+
+@code{python3 arbitools-udpate.py -i custom_elo_updated.csv -l feda}
+
+After these two commands you will get ``custom_elo_updated_updated.csv''. Check if it is correct and rename it again to ``custom_elo.csv''
+
+Use you favourite pairings program to input the pairings and results. When the tournament is finished, use this command with the TRF file:
+
+@code{python3 arbitools-standings.py -i <tournamentFIDEfile>}
+
+And that's it, you already have your FIDE TRF, your FEDA Rating_admin and your IT3.
+
 @node    The python library
 @chapter The python library
 

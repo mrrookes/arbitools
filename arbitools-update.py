@@ -34,8 +34,8 @@ except ImportError:
 
 def main(argv):
         
-        listfile=''
-        elolist=''
+        listfile="custom_elo.csv"
+        elolist='custom'
         method=''
         listdata=''
         inputfile=''
@@ -55,26 +55,23 @@ def main(argv):
 
                 elif opt in ("-l", "--list"):
                         elolist = arg
-                        if elolist == '':
-                                print("You have to select an elo list with option -l. You can choose fide, feda or fidefeda.")
-                                sys.exit()
-
                         if elolist == 'feda':
                                 if xlrd_present==True:
                                         listfile = "elo_feda.xls"
                                 else:
                                         print("To search feda list you need to install xlrd module.")
                                         sys.exit()
-                        if elolist == 'fidefeda':
+                        elif elolist == 'fidefeda':
                         
                                 listfile = "FIDE-FEDA Vega.csv"
-                        if elolist == 'fide':
+                        elif elolist == 'fide':
                                 if lxml_present==True:
                                         listfile = "players_list_xml.xml"
                                 else:
                                         print("To search fide list you have to install lxml module.")
                                         sys.exit()
-
+                        elif elolist == 'custom':
+                               listfile = "custom_elo.csv"
 
                 #elif opt in ("-m", "--method"):
                 #        method = arg

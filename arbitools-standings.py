@@ -88,17 +88,34 @@ def main(argv):
         sort_by=tuple(sort_by_temp)
        
         
-        if inputfile.endswith('.veg') or inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
-                tournament.standings_to_file(inputfile)
-                tournament.export_to_fide(inputfile)
-        #try:
-        if methods_list:
+        if inputfile.endswith('.veg') or inputfile.endswith('.txt') or inputfile.endswith('.trfx') or inputfile.endswith('.TXT'):
+                try:
+                        tournament.standings_to_file(inputfile)
+                except:
+                        print("An error ocurred while writing standings to file")
+                        pass
+                try:
+                        tournament.export_to_fide(inputfile)
+                except:
+                        print("An error ocurred while writing the trf file")
+                        pass
+                try:
+                        tournament.export_to_feda(inputfile)
+                except:
+                        print("An error ocurred while writing FEDA rating file")
+                        pass
+                try:
+                        tournament.write_it3_report(inputfile)
+                except:
+                        print("An error ocurred while writing IT3 report")
+        try:
+            if methods_list:
                 tournament.applyARPO(inputfile, methods_list, sort_by)
                 
-        else:
+            else:
                 tournament.applyARPO(inputfile, ({'method':'Name'}, {'method':'Points'}, {'method':'ARPO'}), ({'method':'Points'}, {'method': 'ARPO'}))
-        #except Exception:
-                #print("I cannot calculate ARPO for this file")
-                #pass
+        except Exception:
+                print("I cannot calculate ARPO for this file")
+                pass
 if __name__ == "__main__":
    main(sys.argv[1:])
