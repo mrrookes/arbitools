@@ -1,0 +1,381 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename arbitools.info
+@settitle Chess Arbiter Tools 0.9
+@c %**end of header
+
+@copying
+This manual is for Chess Arbiter Tools, version 0.9.
+
+Copyright @copyright{} 2015 David Gonzalez Gandara.
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation.
+@end quotation
+@end copying
+
+@titlepage
+@title Chess Arbiter Tools
+@subtitle arbitools
+@author David Gonzalez Gandara
+
+@c  The following two commands
+@c  start the copyright page.
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+
+@end titlepage
+
+@ifnottex
+@node Top
+@top Chess Arbiter Tools
+@insertcopying
+@end ifnottex
+
+@contents
+
+@menu
+* Introduction: Introduction
+* Installation: Installation
+* Usage: Usage
+* File Formats: File Formats
+* Common Arbiters Tasks: Common Arbiters Tasks
+* The python library: The python library
+* Troubleshooting: Troubleshooting
+
+@end menu
+
+@node    Introduction
+@chapter Introduction
+
+Chess Arbiter Tools were born as a solution to a situation where chess arbiters are forced to use privative software because of the lack of free tournament management tools. It consists of a group of programs that allows the arbiter to do some important tasks in tournaments, such as maintaining the players database up to date or produce reports.
+
+The philosophy is to provide the arbiter with more freedom over the tournament files. The most common programs (usually privative software) don't usually allow direct operations  on the files, so the arbiter has to stick to the possibilities the program offers. The alternative is to allow the arbiter with complete control over the files during the tournament.
+
+Apart from that, as it happens with any other free software program, if the user is not happy with the way the program does stuff, he or she can just change the code to make it works the way he likes.
+
+@node Installation
+@chapter Installation
+This program is written in python 3, which is an interpreted language, so you don't really need to install it. Just download the latest version from @url{http://www.github.com/mrrookes/arbitools}.
+
+@section Installing Python
+What you may need to install is python. If you use GNU/Linux it is most likely already install, but not in other systems. You can get the latest version from @url{http://www.python.org/downloads}. Remember to download 3.*.* and not 2.*.*.
+
+You also need to have some modules of python, namely xlrd, xlwt and lxml. The easiest way to install modules is through pip. In order to use pip, open a command console, go to the python folder in your system, then go to the Scripts folder and type:
+
+@code{pip install xlrd}
+
+@code{pip install lxml}
+
+@code{pip install xlwt}
+
+Ir this is too difficult for you, there are graphical python installer you can find on the internet.
+
+@section Other files you may need
+
+@indentedblock
+@emph{players_list_xml.xml} You need this file if you want to update the FIDE ratings of the players. You can download it from @url{http://ratings.fide.com/download/players_list_xml.zip}.
+@end indentedblock
+
+@indentedblock
+@emph{elo_feda.xls} You need this file if you want to update the FEDA ratings of the players. You can get it here @url{http://www.feda.org/web/index.php/elo}. The file has a different name, but you need to rename it to ``elo_feda.xls''
+@end indentedblock
+
+
+@indentedblock
+@emph{FIDE-FEDA Vega.csv} Alternatively, you can use this file, which contain either FIDE ratings and FEDA ratings. This file is maintained by Jesus Mena. You can get it here @url{http://www.jemchess.com}
+@end indentedblock
+
+
+@indentedblock
+@emph{custom_elo.csv} It is recommended that you create this file, with the header described in the section @xref{File Formats}. Add the data of the players you really need and update monthly with the official lists. Make sure the FIDE and FEDA codes are correct.
+@end indentedblock
+
+
+
+@node    Usage
+@chapter Usage
+
+Chess Arbiter Tools has been designed to be used in command line. Some of the newest features are only possible through this means.
+Additionally, there are two frontends. The first one (and recommended) is through Emacs. It is the most GNU way of managing a tournament.
+The second frontend is the Graphical Interface.
+@section Emacs environment
+The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. In order to do this, launch ``arbitools.el'' by ``M-x load-file''. It will provide the interactive functions: arbitools-standings, arbitools-add and arbitools-update.
+@section Graphical Interface
+Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform. The main screen looks like this:
+@image{arbitools, 640, 480}
+
+The interface is really easy to understand.
+@subsection Update data
+- Browse the tournament file in the ``input file'' box.
+
+- Select an ELO list from the list. Some of the options may not be available until you download the corresponding files.
+
+- Select a search method from the list.
+
+- Click the data you want to update.
+
+- Click the ``Update data'' button.
+
+You will get the results in a file:
+
+If you used a .veg file, a backup of the original file is renamed with the ``_old'' suffix.
+
+If you used a .csv file, a file with the ``_update'' suffix is created with the updated data, the original file remains untouched.
+
+If you used a .txt file, a file with the ``_export'' suffix is created with the updated data, the original file remains untouched.
+
+@subsection Add players to an existing tournament
+- Browse the tournament file in the ``input file'' box.
+
+- Browse the file with additional players in ``file with new data''.
+
+- Click ``Add data from file''.
+@subsection Get the standings.
+- Browse the tournament file in the ``input file'' box. 
+
+- Click ``Get standings''.
+
+This action produces the standings for a tournament. You will get the files:
+
+- A file with the ``_standings.txt'' suffix with the standings in a text file.
+
+- A file with the ``_standings.tex'' suffix with the standings in a LaTeX file, ready for pdflatex.
+
+- A file with the ``_ARPO.csv'' suffix, with tiebreaks information. The library PyRP.py and _PyRP.py by Julio Gonzalez And Jose Carlos Diaz is used.
+
+- A file with the ``Rating_admin_'' preffis, with the FEDA rating information for the Spanish Federation.
+
+- A .tex file, with the suffix ``IT3'', that you can edit and compile to get a Tournament Report Form.
+
+- If there is a latex environment installed, you will also get a .pdf file with the Tournament Report Form.
+
+@section Command Line
+@subsection arbitools-update.py
+Updates the players information stored in a file. It is a very useful function when a new list is published and you had already set up the tournament.
+@indentedblock
+@b{-i} This argument takes the name of the input file. This is the file with the information we want to update.
+
+You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
+@end indentedblock
+@indentedblock
+@b{-l} Write the name of the elo list here. ``fide'' uses the official fide list from the file ``players_list_xml.xml''. It won't work if you don't have that file in your folder. You can download it from www.fide.com. ``feda'' uses the feda list from the file ``elo_feda.xls''. You have to rename the file from www.feda.org. ``fidefeda'' uses the file ``FIDE-FEDA Vega.csv''. You can download it from www.jemchess.com. By default, it uses your personal ``custom_elo.csv'' file.
+@end indentedblock
+
+If you used a .veg file, a backup of the original file is renamed with the ``_old'' suffix.
+
+If you used a .csv or a .xls file, a new file with the ``_update'' suffix is created with the updated data, the original file remains untouched.
+
+If you used a .fegaxa file, a new file with the ``_update'' suffix is created with the updated data. Arbitools will try to produce a xls format file, but most likely a csv is going to be. Be careful about this, because if you want to use the produced file to be upgraded again, it has to be a xls file. What you can do is open with LibreOffice and save is as xls.
+
+If you used a .txt file, a file with the ``_export'' suffix is created with the updated data, the original file remains untouched.
+
+You can see a report of the updated actions in arbitools-report.log
+
+
+@subsection arbitools-add.py
+Adds extra players to an existing file.
+@indentedblock
+@b{-i} This argument takes the name of the input file. This is the file with the information we want to update.
+
+You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
+@end indentedblock
+@indentedblock
+@b{-a} This argument takes the name of the file with the extra players you want to add. It should be a .csv file with the structure described in @xref{File Formats}.
+
+You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
+@end indentedblock
+
+
+@subsection arbitools-standings.py
+Produces the standings for a tournament. You will get the files:
+
+- A file with the ``_standings.txt'' suffix with the standings in a text file.
+
+- A file with the ``_standings.tex'' suffix with the standings in a LaTeX file, ready for pdflatex.
+
+- A file with the ``_ARPO.csv'' suffix, with tiebreaks information. The library PyRP.py and _PyRP.py by Julio Gonzalez And Jose Carlos Diaz is used.
+
+- A file with the ``Rating_admin_'' preffis, with the FEDA rating information for the Spanish Federation.
+
+- A .tex file, with the suffix ``IT3'', that you can edit and compile to get a Tournament Report Form.
+
+- If there is a latex environment installed, you will also get a .pdf file with the Tournament Report Form.
+
+
+@indentedblock
+@b{-i} This argument takes the name of the input file. It will only work witn .txt (FIDE Krause) or .veg. Other formats don't contain the tournament's information needed to produce the standings.
+@end indentedblock
+
+You can write a file ``.arbitools'', and define the tiebreak methods for ARPO. The structure of the file is as follows:
+
+Methods:<methods>
+
+Sort:<methods>
+
+Either in the ``Methods'' or the ``Sort'' line you can choose: Name, Points, Bucholz, ARPO, and some more (see PyRP.py).
+
+@node File Formats
+@chapter File Formats
+
+@section .veg files
+This is the format of the Vega software, written by Luigi Forlano. Although it is not free software, the file format is free. This program is widely used in Spain and Italy.
+
+@section .txt files (FIDE Krause)
+This is the official format approved by FIDE.
+
+@section .csv files
+Chess Arbiter Tools accepts .csv with ``;'' separator and the following headings:
+
+@code{NAME;COUNTRY;BIRTHDAY;G;TITLE;IDFIDE;ELOFIDE;KFIDE;IDNAT;ELONAT;K;CLUB}
+
+You won't be able to produce reports from this kind of file, since it doesn't store the tournament information, only the players'.
+
+This is the header you have to use in order to create your personal ``custom_elo.csv''
+
+@section .xls files
+Files with .xls format are admitted if they store the information with the followint format of columns. The name of the columns is not important in this case, just the data has to be in the right column.
+
+@code{ID;NAME;TITLE;IDNAT;ELONAT;IDFIDE;ELOFIDE;BIRTHDAY;COUNTRY;G;SURNAME;FIRSTNAME}
+
+@section .fegaxa files
+A special kind of xls files are accepted if the .xls ending is replaced with a .fegaxa ending. This type of file is specially designed for the Galician Federation. The structure of the columns has to be:
+
+@code{codigoFADA;codigoFEDA;codigoFIDE;DNI;LetraFinal;Apellidos;Nombre;FechaNacimiento;Hombre;email;Direccion;Telefono;Nacionalidad;Federado;NombreClub;Provincia;CodJugador;nombreLocalidad;Localidad;EloFADA;EloFEDA;EloFIDE}
+
+This kind of files is very useful if you really need to store extra data about the players.
+
+
+@node Common Arbiters Tasks
+@chapter Common Arbiters Tasks
+You created a tournament and already have the file ``mytournament.veg'' with the tournaments information. You can do lots of operations with arbitools. For example:
+@section Updating the players data in a file.
+You want to add the FEDA elos to the players data. You type the following command:
+
+@code{python3 arbitools-update.py -i mytournament.veg -l feda}
+
+You want to update the FIDE elos because a new list was published:
+
+@code{python3 arbitools-update.py -i mytournament.veg -l fide}
+
+Just remember this process is really, really slow. It is because ``players_list_xml.xml'' is a very big file, and the .xml format is very unefficient.
+
+@section Adding extra players to an existing file.
+You got a new list of players that have to be added to your original file. The new list is called ``late_entries.csv''.
+
+@code{python3 arbitools-add.py -i mytournament.veg -a late_entries.csv}
+
+Remember that the headings of the original file and the file with the extra players have to be identical. Be specially careful with the ``K'' fields. Sometimes, it is called ``KNAT''. Remember also that you should only add players to a tournament that has not started yet. If you add players to an already started tournament, you will corrupt the pairings information, and you won't be able to use the file anymore.
+
+@section Getting the standings for a tournament.
+This task is really easy to perform
+
+@code{python3 arbitools-standings.py -i mytournament.veg}
+
+You will get a .txt file with the standings. You will also get a .tex file you can compile with pdflatex and get a pdf. Additionally, it generates a file with the suffix ``_ARPO.csv'' with the ARPO tiebreak calculations. This is very experimental. This option is possible thanks to the python libraries written by Julio Gonzalez and Jose Carlos Diaz. More information on @url{http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm}
+
+@section Writing a tournament report.
+It is recommended that you create your own ``custom_elo.csv'', with the information of the players you usually need. Get this file update monthly with the official lists with the commands:
+
+@code{python3 arbitools-update.py -i custom_elo.csv -l fide}
+
+@code{python3 arbitools-udpate.py -i custom_elo_updated.csv -l feda}
+
+After these two commands you will get ``custom_elo_updated_updated.csv''. Check if it is correct and rename it again to ``custom_elo.csv''
+
+Use you favourite pairings program to input the pairings and results. When the tournament is finished, use this command with the TRF file:
+
+@code{python3 arbitools-standings.py -i <tournamentFIDEfile>}
+
+And that's it, you already have your FIDE TRF, your FEDA Rating_admin and your IT3.
+
+@node    The python library
+@chapter The python library
+
+Chess Arbiter Tools offers a python library which programmers can use in other programs. It provides the class ``Tournament'', with the following properties and methods:
+@section Creating an instance of the class
+You can create an instance of the class Tournament easily:
+@code{mytournament = arbitools.Tournament()}
+@section Properties
+@indentedblock
+@emph{info} This dictionary encapsulates important information about the tournament:
+@enumerate
+@item
+@emph{TOURNAMENT_NAME}
+@item
+@emph{CITY}
+@item
+@emph{FED}
+@item
+@emph{BEGIN_DATE}
+@item
+@emph{END_DATE}
+@item
+@emph{ARBITER}
+@item
+@emph{DEPUTY}
+@item
+@emph{NUMBER_OF_ROUNDS}
+@item
+@emph{CURRENT_ROUND}
+@item
+@emph{NUMBER_OR_PLAYERS}
+@end enumerate
+@end indentedblock
+
+@indentedblock
+@emph{players data} List of dictionaries with the data of the players.
+@enumerate
+@item 
+@emph{NAME}: Surname, Name
+@item 
+@emph{G}: Sex: ``m'' or ``f''
+@item 
+@emph{IDFIDE}
+@item 
+@emph{ELOFIDE}
+@item 
+@emph{COUNTRY}
+@item 
+@emph{TITLE}
+@item 
+@emph{ELONAT}
+@item 
+@emph{KFIDE}
+@item 
+@emph{CLUB}
+@item 
+@emph{BIRTHDAY}
+@item 
+@emph{KNAT}
+@item 
+@emph{IDNAT}
+
+
+@end enumerate
+@end indentedblock
+@section Methods
+@indentedblock
+@emph{output_to_file(inputfile)} It takes one argument, the name of the file to output the information.
+@end indentedblock
+@indentedblock
+@emph{export_to_file(inputfile)} This method creates a file with the official Krause FIDE format and fill it with the tournament info and the players data.
+@end indentedblock
+@indentedblock
+@emph{applyARPO(inputfile)} It applies the tiebreaks created by Julio Gonzalez and Jose Carlos Diaz. It outputs the results to a file with the ``_ARPO.csv'' suffix.
+@end indentedblock
+
+
+@node Troubleshooting
+@chapter Troubleshooting
+Known bugs
+@enumerate
+@item
+Standings won't work with tournament files where a player didn't play any rounds.
+@end enumerate
+
+@bye
