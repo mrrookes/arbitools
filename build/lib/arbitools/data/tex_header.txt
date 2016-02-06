@@ -1,0 +1,19 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+
+\addtolength{\oddsidemargin}{-0.5cm}
+\addtolength{\textwidth}{1cm}
+\addtolength{\topmargin}{-2cm}
+\addtolength{\textheight}{1cm}
+\addtolength{\headheight}{3cm}
+\setlength{\columnsep}{10mm}
+
+
+\begin{document}
+\thispagestyle{fancy}
+
+\lfoot{}
+\cfoot{}
+\rfoot{}

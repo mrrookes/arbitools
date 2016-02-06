@@ -1,0 +1,156 @@
+33 Open Internacional Ciudad de San Sebastian
+33. Donostia Hiria Nazioarteko Txapelketa
+
+Final Ranking
+
+Rank;SNo.;;Name;Rtg;FED;1.Rd.;;;2.Rd.;;;3.Rd.;;;4.Rd.;;;5.Rd.;;;6.Rd.;;;7.Rd.;;;8.Rd.;;;9.Rd.;;;Pts;RecRp
+1;14;IM;Alvarez Pedraza Aramis;2486;CUB;81;b;1;69;w;1;68;b;1;7;w;1;5;b;x;30;w;1;9;b;x;2;w;x;15;b;1;7x;2614
+2;13;GM;Tratar Marko;2486;SLO;76;w;1;46;b;1;25;w;1;4;b;x;3;w;x;10;w;1;5;b;1;1;b;x;6;w;x;7;2642
+3;4;IM;Alsina Leal Daniel;2548;ESP;63;b;1;19;w;1;44;b;1;17;w;x;2;b;x;11;w;x;16;b;1;7;w;1;4;w;x;7;2604
+4;2;GM;Gleizerov Evgeny;2565;RUS;123;b;1;27;w;1;11;b;1;2;w;x;9;b;x;16;w;x;12;b;1;17;w;1;3;b;x;7;2596
+5;1;GM;Spraggett Kevin;2580;CAN;53;w;1;51;b;1;32;w;x;33;b;1;1;w;x;8;b;1;2;w;0;11;w;1;20;b;1;7;2590
+6;3;GM;Korneev Oleg;2558;RUS;59;w;1;66;b;x;49;w;1;34;b;1;8;w;x;15;b;x;33;w;1;9;w;1;2;b;x;7;2545
+7;7;GM;Movsziszian Karen;2530;ARM;86;w;1;48;b;1;18;w;1;1;b;0;21;w;1;32;b;1;15;w;1;3;b;0;8;w;x;6x;2523
+8;12;GM;Pogorelov Ruslan;2486;UKR;78;b;1;50;w;1;45;b;1;10;w;x;6;b;x;5;w;0;19;b;1;37;w;1;7;b;x;6x;2487
+9;10;IM;Llaneza Vega Marcos;2514;ESP;98;b;1;43;w;1;29;b;x;41;w;1;4;w;x;20;b;1;1;w;x;6;b;0;32;w;1;6x;2475
+10;5;GM;San Segundo Carrillo Pablo;2534;ESP;62;w;1;88;b;1;36;w;1;8;b;x;32;w;x;2;b;0;21;w;1;18;b;x;29;w;1;6x;2450
+11;23;IM;Argandona Riveiro Inigo;2388;ESP;92;w;1;93;b;1;4;w;0;52;b;1;48;w;1;3;b;x;31;w;1;5;b;0;35;w;1;6x;2436
+12;11;IM;Alonso Rosell Alvar;2509;ESP;121;w;1;28;b;1;24;w;x;39;b;x;51;w;1;25;b;1;4;w;0;34;b;1;14;w;x;6x;2392
+13;19;IM;Marholev Dimitar;2423;BUL;82;-;-;108;b;1;86;w;1;46;b;x;49;w;1;87;b;x;52;w;1;29;b;x;31;w;1;6x;2357
+14;18;IM;Ledger Andrew J;2431;ENG;80;b;1;68;w;0;73;b;1;69;w;1;19;b;0;66;b;1;48;w;1;47;w;1;12;b;x;6x;2295
+15;6;GM;Cabrera Alexis;2533;ESP;71;b;1;67;w;x;85;b;1;29;w;1;17;b;1;6;w;x;7;b;0;44;w;1;1;w;0;6;2438
+16;17;IM;Barria Zuniga Daniel;2435;CHI;60;w;1;37;b;x;54;w;1;21;b;x;88;w;1;4;b;x;3;w;0;45;b;1;18;w;x;6;2379
+17;29;FM;Thomassen Joachim;2331;NOR;118;w;1;56;b;1;31;w;1;3;b;x;15;w;0;79;b;1;35;w;1;4;b;0;30;w;x;6;2364
+18;28;IM;Jakobsen Ole;2332;DEN;95;b;1;61;w;1;7;b;0;85;w;x;38;b;1;23;w;x;50;b;1;10;w;x;16;b;x;6;2326
+19;41;;Griffiths Ryan Rhys;2195;IRL;109;w;1;3;b;0;76;w;1;72;b;1;14;w;1;31;b;x;8;w;0;22;b;x;54;b;1;6;2324
+20;33;IM;Andonov Bogomil;2304;BUL;107;-;-;124;b;1;74;-;+;61;w;1;91;b;1;9;w;0;55;b;1;30;w;1;5;w;0;6;2315
+21;38;FM;Nava Pereda Carlos;2254;ESP;106;b;1;99;w;1;22;b;x;16;w;x;7;b;0;42;w;1;10;b;0;93;w;1;47;b;1;6;2286
+22;15;IM;Recuero Guerra David;2481;ESP;75;w;1;52;b;1;21;w;x;66;b;0;29;w;0;85;b;1;56;b;1;19;w;x;50;b;1;6;2277
+23;45;;Diez Fraile David;2168;ESP;117;w;1;31;b;0;75;w;1;59;b;1;36;w;x;18;b;x;32;w;x;33;b;x;53;w;1;6;2263
+24;32;FM;Trepat Herranz Joan;2305;ESP;149;-;+;55;w;1;12;b;x;30;w;0;85;b;1;33;b;0;72;w;1;46;b;x;57;w;1;6;2258
+;34;;Martin Alvarez Inigo;2289;ESP;102;b;1;77;w;1;2;b;0;71;w;1;50;b;1;12;w;0;47;b;0;70;w;1;55;b;1;6;2258
+26;16;IM;Huerga Leache Mikel;2446;ESP;64;b;1;38;w;x;41;b;0;63;w;x;79;-;-;116;b;1;58;b;1;68;w;1;48;w;1;6;2196
+27;39;;Nelson Jonathan P;2245;ENG;124;w;1;4;b;0;121;w;1;56;b;x;35;w;0;61;b;x;59;w;1;94;b;1;46;w;1;6;2192
+28;52;;Guijarro Galan Jose Luis;2104;ESP;143;b;1;12;w;0;80;b;1;31;b;0;98;w;1;-;-;x;66;w;1;40;b;x;44;w;1;6;2185
+29;35;IM;Piasetski Leon;2280;CAN;108;w;1;47;b;1;9;w;x;15;b;0;22;b;1;36;w;1;30;b;x;13;w;x;10;b;0;5x;2355
+30;9;GM;Ulibin Mikhail;2516;RUS;74;w;1;91;b;1;34;w;x;24;b;1;66;w;1;1;b;0;29;w;x;20;b;0;17;b;x;5x;2328
+31;8;GM;Cifuentes Parada Roberto;2525;ESP;89;b;1;23;w;1;17;b;0;28;w;1;45;b;1;19;w;x;11;b;0;39;w;1;13;b;0;5x;2327
+32;21;IM;Collins Sam E;2401;IRL;116;w;1;97;b;1;5;b;x;38;w;1;10;b;x;7;w;0;23;b;x;41;w;1;9;b;0;5x;2319
+33;26;FM;Alvarez Fernandez Enrique;2366;ESP;90;b;x;105;w;1;70;b;1;5;w;0;41;b;1;24;w;1;6;b;0;23;w;x;38;b;x;5x;2294
+34;31;FM;Cruz-Lopez Claret Carlos;2318;ESP;122;w;1;72;b;1;30;b;x;6;w;0;70;b;1;44;w;x;68;b;1;12;w;0;37;b;x;5x;2274
+35;20;IM;Bae Torstein;2414;NOR;84;b;1;70;w;x;38;b;0;58;w;1;27;b;1;47;w;1;17;b;0;67;w;1;11;b;0;5x;2225
+36;27;FM;Andres Gonzalez Ivan;2340;ESP;96;w;1;42;b;1;10;b;0;68;w;1;23;b;x;29;b;0;46;w;0;75;b;1;77;w;1;5x;2213
+37;58;;Garro Beraza Haritz;2075;ESP;135;b;1;16;w;x;67;b;x;44;w;x;-;-;x;123;b;1;87;w;1;8;b;0;34;w;x;5x;2211
+38;57;;Aranaz Murillo Amalia;2083;ESP;138;w;1;26;b;x;35;w;1;32;b;0;18;w;0;82;b;1;49;w;x;87;b;1;33;w;x;5x;2175
+39;36;FM;Hernandez Elvis;2277;DOM;115;b;1;79;w;x;58;b;1;12;w;x;47;b;0;97;w;1;-;-;x;31;b;0;72;w;1;5x;2141
+40;24;FM;Alonso Arburu Juan Ignacio;2372;ESP;65;b;1;85;w;0;71;b;0;-;-;x;-;-;x;99;w;1;73;b;1;28;w;x;69;w;1;5x;2101
+;51;;Rodriguez Lapetra Pablo;2105;ESP;-;-;x;145;b;1;26;w;1;9;b;0;33;w;0;62;b;1;71;w;1;32;b;0;79;w;1;5x;2101
+42;66;;Segura Del Frago Imanol;2010;ESP;133;-;+;36;w;0;95;b;0;100;w;1;84;b;1;21;b;0;122;w;1;51;b;x;66;w;1;5x;2057
+43;47;;Ros Eskisabel Jose Ramon;2143;ESP;126;w;1;9;b;0;60;w;0;92;b;x;124;w;1;77;b;x;86;w;x;76;b;1;71;w;1;5x;2050
+44;25;FM;Almeida Toledano Daniel;2367;ESP;101;w;1;94;b;1;3;w;0;37;b;x;46;w;1;34;b;x;57;w;1;15;b;0;28;b;0;5;2230
+45;37;WIM;Hagesaether Ellen;2269;NOR;150;-;+;82;b;1;8;w;0;97;b;1;31;w;0;94;b;1;54;w;1;16;w;0;-;-;0;5;2185
+46;54;;Lakunza Plazaola Asier;2093;ESP;137;b;1;2;w;0;99;b;1;13;w;x;44;b;0;121;w;1;36;b;1;24;w;x;27;b;0;5;2175
+47;72;;Navarrete Espi Samuel;1992;ESP;139;b;1;29;w;0;114;b;1;67;w;1;39;w;1;35;b;0;25;w;1;14;b;0;21;w;0;5;2137
+48;46;;Hagemann Tim Dr;2164;GER;120;b;1;7;w;0;81;b;1;107;w;1;11;b;0;73;w;1;14;b;0;56;w;1;26;b;0;5;2126
+;49;;Meneses Gonzalez Kevin Moises;2117;ESP;-;-;x;100;w;1;6;b;0;83;w;1;13;b;0;63;w;1;38;b;x;54;w;0;98;b;1;5;2126
+50;50;;Torres Ganuza Fco  Javier;2109;ESP;132;w;1;8;b;0;82;w;1;60;b;1;25;w;0;53;b;1;18;w;0;89;b;1;22;w;0;5;2125
+51;40;WIM;Bjerke Silje;2218;NOR;125;b;1;5;w;0;89;b;1;77;w;1;12;b;0;55;w;0;78;b;1;42;w;x;62;b;x;5;2101
+52;55;;Uriarte Prieto Goyo;2086;ESP;145;-;+;22;w;0;65;b;1;11;w;0;78;b;1;96;w;1;13;b;0;53;b;0;89;w;1;5;2097
+53;74;;Rodriguez Cabrera Fco  Javier;1962;ESP;5;b;0;111;w;1;105;b;0;102;w;1;90;b;1;50;w;0;96;b;1;52;w;1;23;b;0;5;2091
+54;73;;Sanchez Dolado Jorge;1966;ESP;141;w;1;-;-;x;16;b;0;90;w;x;95;b;1;91;w;1;45;b;0;49;b;1;19;w;0;5;2079
+55;67;;Fletcher John;2004;WLS;112;w;1;24;b;0;122;w;0;118;b;1;75;w;1;51;b;1;20;w;0;88;b;1;25;w;0;5;2057
+56;68;;Torres Patrice;2003;FRA;136;b;1;17;w;0;102;b;1;27;w;x;-;-;x;88;b;1;22;w;0;48;b;0;99;w;1;5;2056
+57;56;;Montoya Irigoyen Inigo;2083;ESP;105;b;0;-;-;x;-;-;x;65;w;1;81;b;1;107;w;1;44;b;0;90;w;1;24;b;0;5;2047
+58;84;;Molina Rodriguez Borja;1941;ESP;-;-;x;130;b;1;39;w;0;35;b;0;109;w;1;69;b;1;26;w;0;61;b;x;87;w;1;5;2032
+59;76;;Miguelez Garcia Erlantz;1958;ESP;6;b;0;115;w;1;127;b;1;23;w;0;107;b;0;65;w;1;27;b;0;96;w;1;90;b;1;5;2028
+60;93;;Baroja Arrue Miguel Maria;1875;ESP;16;b;0;135;w;1;43;b;1;50;w;0;73;b;0;105;w;1;70;b;0;111;w;1;93;b;1;5;2020
+61;65;;Tome Vazquez Oscar;2015;ESP;147;w;1;18;b;0;118;w;1;20;b;0;-;-;x;27;w;x;80;b;x;58;w;x;101;b;1;5;1966
+62;79;;Tung Kai Ming;1957;ESP;10;b;0;106;w;0;137;b;1;115;w;x;105;b;1;41;w;0;110;b;1;109;w;1;51;w;x;5;1956
+63;78;;Etxeberria Iriondo Sabino;1958;ESP;3;w;0;110;b;x;145;w;1;26;b;x;82;w;x;49;b;0;100;w;x;122;b;1;92;w;1;5;1938
+64;92;;Garro Beraza Julen;1881;ESP;26;w;0;131;b;1;91;w;0;119;b;1;97;w;0;125;b;1;94;w;0;108;b;1;88;w;1;5;1868
+65;100;;D`amade Philippe;1810;FRA;40;w;0;147;b;1;52;w;0;57;b;0;131;w;1;59;b;0;126;w;1;97;b;1;94;w;1;5;1859
+66;42;;Vea Odin Blikra;2195;NOR;128;b;1;6;w;x;83;b;1;22;w;1;30;b;0;14;w;0;28;b;0;86;w;1;42;b;0;4x;2131
+67;43;;Andersen Alf R;2185;NOR;110;w;1;15;b;x;37;w;x;47;b;0;89;w;1;72;b;x;79;w;1;35;b;0;-;-;0;4x;2117
+68;59;;Benson Oisin P;2065;IRL;131;w;1;14;b;1;1;w;0;36;b;0;76;w;1;86;b;1;34;w;0;26;b;0;83;w;x;4x;2096
+69;53;;Korhonen Pasi;2102;FIN;114;w;1;1;b;0;92;w;1;14;b;0;-;-;x;58;w;0;107;b;1;74;w;1;40;b;0;4x;2062
+70;61;;Navarro Rivas Rashid;2046;CUB;119;w;1;35;b;x;33;w;0;122;b;1;34;w;0;92;b;x;60;w;1;25;b;0;75;w;x;4x;2057
+71;80;;Hernandez Lopez Daniel;1955;ESP;15;w;0;117;b;1;40;w;1;25;b;0;122;w;1;-;-;x;41;b;0;112;w;1;43;b;0;4x;2030
+72;70;;Segovia Sanchez Antonio;1998;ESP;144;b;1;34;w;0;106;b;1;19;w;0;99;b;1;67;w;x;24;b;0;82;w;1;39;b;0;4x;1983
+73;77;;Perez Cameselle Francisco;1958;ESP;-;-;x;-;-;x;14;w;0;108;b;1;60;w;1;48;b;0;40;w;0;95;b;x;116;-;+;4x;1981
+74;83;;Tirado Parra Alberto;1943;ESP;30;b;0;142;w;1;20;-;-;-;-;0;-;-;x;134;b;1;106;w;1;69;b;0;118;w;1;4x;1963
+75;91;;Nogues Fernandez Ramon;1894;ESP;22;b;0;137;w;1;23;b;0;114;w;1;55;b;0;128;w;1;97;b;1;36;w;0;70;b;x;4x;1958
+76;88;;Fernandez Zubitur Jokin;1908;ESP;2;b;0;143;w;1;19;b;0;134;w;1;68;b;0;102;w;x;115;b;1;43;w;0;109;b;1;4x;1943
+77;69;;Lopez Heras Arturo;2001;ESP;104;w;1;25;b;0;140;w;1;51;b;0;-;-;x;43;w;x;84;b;x;80;w;1;36;b;0;4x;1929
+78;87;;Kopischke Maik;1911;GER;8;w;0;114;b;0;120;w;1;126;b;1;52;w;0;95;b;1;51;w;0;107;b;x;106;w;1;4x;1909
+79;71;;Darrigues Alain;1997;FRA;146;w;1;39;b;x;87;w;0;109;b;1;26;-;+;17;w;0;67;b;0;84;w;1;41;b;0;4x;1893
+80;94;;Zaballa Zarzosa Jon;1872;ESP;14;w;0;119;b;1;28;w;0;130;b;1;94;w;0;126;b;1;61;w;x;77;b;0;107;w;1;4x;1887
+81;89;;Fuente San Sebastian Ernesto;1897;ESP;1;w;0;138;b;1;48;w;0;132;b;1;57;w;0;122;b;0;-;-;x;124;w;1;114;b;1;4x;1884
+82;95;;Tung Siu Hung;1864;ESP;13;-;+;45;w;0;50;b;0;127;w;1;63;b;x;38;w;0;114;b;1;72;b;0;105;-;+;4x;1867
+83;90;;Nortes Hernandez Pedro;1896;ESP;-;-;x;133;b;1;66;w;0;49;b;0;110;w;x;140;b;1;88;w;0;102;w;1;68;b;x;4x;1863
+84;96;;Saenz Zabala Juan Ignacio;1845;ESP;35;w;0;127;b;0;138;w;1;139;b;1;42;w;0;141;b;1;77;w;x;79;b;0;112;b;1;4x;1765
+85;63;;Thomassen Thomas;2041;NOR;127;w;1;40;b;1;15;w;0;18;b;x;24;w;0;22;w;0;102;b;x;92;b;0;125;w;1;4;2008
+86;81;;Lyons Brendan;1952;IRL;7;b;0;128;w;1;13;b;0;106;w;1;113;b;1;68;w;0;43;b;x;66;b;0;95;w;x;4;1985
+87;30;;Acosta Garcia Alfonso Carlos;2327;ESP;100;b;x;113;w;1;79;b;1;-;-;x;-;-;x;13;w;x;37;b;0;38;w;0;58;b;0;4;1983
+88;44;;Aranaz Portugues Jose Carlos;2169;ESP;142;b;1;10;w;0;98;b;1;95;w;1;16;b;0;56;w;0;83;b;1;55;w;0;64;b;0;4;1946
+89;82;;Arana Garate Jon;1944;ESP;31;w;0;126;b;1;51;w;0;140;b;1;67;b;0;101;w;1;91;b;1;50;w;0;52;b;0;4;1940
+;102;;D Anna Razzetti Juan Pablo;1804;ESP;33;w;x;140;b;x;93;w;x;54;b;x;53;w;0;98;b;1;123;w;1;57;b;0;59;w;0;4;1940
+91;48;;Corral Sierra Javier;2123;ESP;134;b;1;30;w;0;64;b;1;105;w;1;20;w;0;54;b;0;89;w;0;99;b;0;124;b;1;4;1932
+92;99;;Buiza Prieto Aizbeltz;1812;ESP;11;b;0;129;w;1;69;b;0;43;w;x;117;b;1;70;w;x;93;b;0;85;w;1;63;b;0;4;1926
+93;62;;Pasanen Tuomo;2041;FIN;130;-;+;11;w;0;90;b;x;113;w;x;-;-;x;112;b;x;92;w;1;21;b;0;60;w;0;4;1909
+94;64;;Fehr Jukka;2024;FIN;129;b;1;44;w;0;96;b;0;101;w;1;80;b;1;45;w;0;64;b;1;27;w;0;65;b;0;4;1903
+95;104;;Bas Mas Miguel;1801;ESP;18;w;0;104;b;1;42;w;1;88;b;0;54;w;0;78;w;0;128;b;1;73;w;x;86;b;x;4;1892
+96;103;;Iglesias Gonzalez Veronica;1803;ESP;36;b;0;136;w;1;94;w;1;-;-;x;-;-;x;52;b;0;53;w;0;59;b;0;126;w;1;4;1885
+97;60;;Bas Mas Jose Joaquin;2051;ESP;103;b;1;32;w;0;101;b;1;45;w;0;64;b;1;39;b;0;75;w;0;65;w;0;128;b;1;4;1879
+98;85;;Severri Arrese Carlos;1925;ESP;9;w;0;132;b;1;88;w;0;142;b;1;28;b;0;90;w;0;113;w;1;100;b;1;49;w;0;4;1861
+99;98;;Izagirre Alsua Aritz;1820;ESP;148;-;+;21;b;0;46;w;0;141;b;1;72;w;0;40;b;0;142;w;1;91;w;1;56;b;0;4;1849
+100;106;;Espin Laborde Jesus Maria;1796;ESP;87;w;x;49;b;0;130;w;x;42;b;0;-;-;x;111;w;1;63;b;x;98;w;0;127;b;1;4;1821
+101;101;;Arabiotorre Arbulu Aitor;1807;ESP;44;b;0;112;w;1;97;w;0;94;b;0;119;w;1;89;b;0;103;w;1;123;b;1;61;w;0;4;1814
+102;110;;Aguado Zabaleta Felix;1775;ESP;25;w;0;146;b;1;56;w;0;53;b;0;130;w;1;76;b;x;85;w;x;83;b;0;129;w;1;4;1799
+103;136;;Santesteban Gonzalez Begona;1588;ESP;97;w;0;116;b;x;109;w;0;124;b;0;-;-;x;133;w;1;101;b;0;140;-;+;123;-;+;4;1520
+104;145;;Gallas Gautier;0;FRA;77;b;0;95;w;0;134;b;0;137;w;0;147;w;1;130;b;0;131;w;1;132;b;1;122;-;+;4;1490
+105;132;;Perez Varela Alvaro;0;ESP;57;w;1;33;b;0;53;w;1;91;b;0;62;w;0;60;b;0;-;-;x;110;w;1;82;-;-;3x;1965
+106;115;;Lazkano Gaite Tomas;1741;ESP;21;w;0;62;b;1;72;w;0;86;b;0;-;-;x;117;w;1;74;b;0;119;w;1;78;b;0;3x;1840
+107;109;;Cantabrana Garona Alejandro;1780;ESP;20;-;+;-;-;x;-;-;x;48;b;0;59;w;1;57;b;0;69;w;0;78;w;x;80;b;0;3x;1820
+108;111;;Ciruelos Clerencia Juan Manuel;1773;ESP;29;b;0;13;w;0;135;b;1;73;w;0;114;b;x;142;w;x;127;b;1;64;w;0;111;b;x;3x;1775
+109;118;;Orube Bona Andoni;1732;ESP;19;b;0;123;w;x;103;b;1;79;w;0;58;b;0;132;w;1;118;b;1;62;b;0;76;w;0;3x;1772
+110;121;;Cendagortagalarza Rodriguez Jo;1685;ESP;67;b;0;63;w;x;123;b;0;129;w;1;83;b;x;-;-;x;62;w;0;105;b;0;135;-;+;3x;1743
+111;149;;Sanmateu Juan Sergio;0;ESP;-;-;x;53;b;0;116;w;1;123;w;0;-;-;x;100;b;0;140;w;1;60;b;0;108;w;x;3x;1742
+112;143;;Berdote Alonso Carlos;1443;ESP;55;b;0;101;b;0;117;w;x;120;w;1;115;b;1;93;w;x;-;-;x;71;b;0;84;w;0;3x;1724
+113;119;;Veras Sanz Jose Antonio;1712;ESP;-;-;x;87;b;0;133;w;1;93;b;x;86;w;0;-;-;x;98;b;0;136;w;1;-;-;0;3x;1723
+114;129;;Sanchez Merino Christian;1623;ESP;69;b;0;78;w;1;47;w;0;75;b;0;108;w;x;145;b;1;82;w;0;115;b;1;81;w;0;3x;1718
+115;112;;Bas Sanchez Jose Joaquin;1764;ESP;39;w;0;59;b;0;131;w;1;62;b;x;112;w;0;137;b;1;76;w;0;114;w;0;138;b;1;3x;1697
+116;97;;Urruticoechea Sarriegui Jose A;1840;ESP;32;b;0;103;w;x;111;b;0;145;w;1;-;-;x;26;w;0;125;b;x;117;w;1;73;-;-;3x;1663
+117;123;;Vicente Ezeiza Mikel;1674;ESP;23;b;0;71;w;0;112;b;x;133;w;1;92;w;0;106;b;0;130;w;1;116;b;0;139;-;+;3x;1661
+118;105;;Navascues Zabaleta Jesus;1800;ESP;17;b;0;144;w;1;61;b;0;55;w;0;-;-;x;143;b;1;109;w;0;134;-;+;74;b;0;3x;1654
+119;137;;Campos Urbaneja Ricardo;1547;ESP;70;b;0;80;w;0;128;b;1;64;w;0;101;b;0;136;w;x;143;w;1;106;b;0;137;w;1;3x;1647
+120;124;;Muriel Dominguez Mariano;1657;ESP;48;w;0;-;-;x;78;b;0;112;b;0;141;w;0;146;w;1;-;-;x;139;b;x;136;b;1;3x;1531
+121;86;;Bello Castano Diego;1911;ESP;12;b;0;134;w;1;27;b;0;143;w;1;-;-;x;46;b;0;-;-;x;-;-;0;-;-;0;3;1898
+122;107;;Navarro Vallejo Jonathan;1795;ESP;34;b;0;139;w;1;55;b;1;70;w;0;71;b;0;81;w;1;42;b;0;63;w;0;104;-;-;3;1881
+123;75;;Martinez Pelaez David;1960;ESP;4;w;0;109;b;x;110;w;1;111;b;1;-;-;x;37;w;0;90;b;0;101;w;0;103;-;-;3;1875
+124;116;;Moreno Romero Ernesto;1739;ESP;27;b;0;20;w;0;129;b;x;103;w;1;43;b;0;-;-;x;141;w;1;81;b;0;91;w;0;3;1730
+125;117;;Cejudo Urdampilleta Juan Pablo;1736;ESP;51;w;0;-;-;x;-;-;x;-;-;0;136;b;1;64;w;0;116;w;x;129;b;x;85;b;0;3;1667
+126;125;;Aizpurua Zufiria Inaki;1648;ESP;43;b;0;89;w;0;136;b;1;78;w;0;127;b;1;80;w;0;65;b;0;133;w;1;96;b;0;3;1666
+127;139;;Jauregi Barandiaran Jon;1508;ESP;85;b;0;84;w;1;59;w;0;82;b;0;126;w;0;131;b;1;108;w;0;142;b;1;100;w;0;3;1637
+128;120;;Arri Martinez Iker;0;ESP;66;w;0;86;b;0;119;w;0;147;b;1;139;w;1;75;b;0;95;w;0;130;b;1;97;w;0;3;1611
+129;140;;Irulegi Garmendia Jose Antonio;1503;ESP;94;w;0;92;b;0;124;w;x;110;b;0;133;b;x;135;w;x;138;b;1;125;w;x;102;b;0;3;1569
+130;138;;Vazquez Alvarez Diego;1534;ESP;93;-;-;58;w;0;100;b;x;80;w;0;102;b;0;104;w;1;117;b;0;128;w;0;144;b;1;3;1543
+131;135;;Santos Etxepare Agustin;1593;ESP;68;b;0;64;w;0;115;b;0;144;w;1;65;b;0;127;w;0;104;b;0;147;w;1;146;b;1;3;1450
+132;127;;Moreiro Sanchez Silvestre;1636;ESP;50;b;0;98;w;0;144;b;1;81;w;0;-;-;x;109;b;0;-;-;x;104;w;0;141;-;+;3;1443
+133;142;;Fernandez Lopez Ivan;1472;ESP;42;-;-;83;w;0;113;b;0;117;b;0;129;w;x;103;b;0;145;w;1;126;b;0;142;w;1;3;1402
+134;126;;Martikorena Endara Patxi;1643;ESP;91;w;0;121;b;0;104;w;1;76;b;0;-;-;x;74;w;0;135;b;1;118;-;-;-;-;0;2x;1676
+135;134;;Sebastian Garcia Iban;1607;ESP;37;w;0;60;b;0;108;w;0;146;b;1;140;w;0;129;b;x;134;w;0;141;b;1;110;-;-;2x;1561
+136;144;;Benson Nicola;1377;IRL;56;w;0;96;b;0;126;w;0;138;b;1;125;w;0;119;b;x;137;w;1;113;b;0;120;w;0;2x;1524
+137;130;;Delgado Canton Manuel;1620;FRA;46;w;0;75;b;0;62;w;0;104;b;1;-;-;x;115;w;0;136;b;0;146;w;1;119;b;0;2x;1518
+138;133;;Gonzalez Pueyo Patricia;1610;ESP;38;b;0;81;w;0;84;b;0;136;w;0;-;-;x;139;b;1;129;w;0;143;b;1;115;w;0;2x;1490
+139;148;;Mohseni Neik;0;AFG;47;w;0;122;b;0;-;-;1;84;w;0;128;b;0;138;w;0;147;b;1;120;w;x;117;-;-;2x;1424
+140;114;;Bayrakdar Bianco Philippe;1745;ESP;-;-;x;90;w;x;77;b;0;89;w;0;135;b;1;83;w;0;111;b;0;103;-;-;-;-;0;2;1639
+141;150;;Santos Etxepare Mikel;0;ESP;54;b;0;-;-;x;-;-;x;99;w;0;120;b;1;84;w;0;124;b;0;135;w;0;132;-;-;2;1483
+142;122;;Olivares Gutierrez Antonio;0;ESP;88;w;0;74;b;0;147;w;1;98;w;0;-;-;x;108;b;x;99;b;0;127;w;0;133;b;0;2;1449
+143;128;;Sanchez Ruesga Carlos;0;ESP;28;w;0;76;b;0;146;w;1;121;b;0;-;-;x;118;w;0;119;b;0;138;w;0;147;b;x;2;1399
+144;146;;Goubert-Gaebele Robert;0;FRA;72;w;0;118;b;0;132;w;0;131;b;0;-;-;x;-;-;x;146;b;0;145;w;1;130;w;0;2;1145
+145;131;;Giovagnoni Josette;0;FRA;52;-;-;41;w;0;63;b;0;116;b;0;-;-;x;114;w;0;133;b;0;144;b;0;-;-;1;2;864
+146;147;;Mazouat Herve;0;FRA;79;b;0;102;w;0;143;b;0;135;w;0;-;-;x;120;b;0;144;w;1;137;b;0;131;w;0;1x;1218
+147;141;;Juaristi Izaga Jose Ignacio;1489;ESP;61;b;0;65;w;0;142;b;0;128;w;0;104;b;0;-;-;1;139;w;0;131;b;0;143;w;x;1x;1140
+148;22;IM;Seret Jean-Luc;2395;FRA;99;-;-;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;0;3
+;108;;Ramos Espinosa Didier;1784;ESP;24;-;-;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;0;3
+;113;;Jimenez Penafiel Gustavo;1761;ESP;45;-;-;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;-;-;0;0;3
