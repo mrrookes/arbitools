@@ -8,7 +8,7 @@ tie-breaking rules and to import from Swiss Manager outputs.
 import sys
 from itertools import dropwhile, compress
 
-from _PyRP import _Tournament, TournamentError, _FewRounds
+from arbitools._PyRP import _Tournament, TournamentError, _FewRounds
 
 
 class Tournament(_Tournament):
