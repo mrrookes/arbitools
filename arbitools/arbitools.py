@@ -19,6 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import pkg_resources
 import sys
 import csv
 import unicodedata
@@ -26,7 +27,7 @@ import time
 from collections import namedtuple
 from operator import itemgetter
 from itertools import dropwhile, compress
-import PyRP
+import arbitools.PyRP
 try:
         from lxml import etree
         lxml_present=True
@@ -83,7 +84,7 @@ class Tournament:
                         print("I don't have anything to write in the file")
                         sys.exit()
                 inputfilesplit = inputfile.split('.')#Separate file name and extension.
-                outputfiletxt=inputfilesplit[0]+'_updated'+'.txt' #The name for the .txt file.
+                outputfiletxt=inputfilesplit[0]+'_updated'+'.txt' #The name for the .txt file. #WARNING-paths can contain "."
                 if inputfile.endswith('.csv') or inputfile.endswith('.xls'):
                         outputfile=inputfilesplit[0]+'_updated'+'.csv'#Get the name for the updated file.
                 elif inputfile.endswith('.veg'):
@@ -129,7 +130,8 @@ class Tournament:
         #######################################################################################
         def export_to_fegaxa(self, inputfile):
                 inputfilesplit = inputfile.split('.')
-                outputfile = inputfilesplit[0]+'_updated'+'.fegaxa'
+                outputfilepath = os.path.join(os.getcwd(),inputfilesplit[0])
+                outputfile = outputfilepath+'_updated'+'.fegaxa' #TESTING
 
 
                 print_to_xls = False #dictionaries are not sorted, so writing to xls is difficult
@@ -164,7 +166,7 @@ class Tournament:
         def export_to_feda(self, inputfile):
                 if inputfile.startswith('FIDE'):
                         inputfile = inputfile[5:]
-                outputfiletxt = 'Rating_Admin_'+inputfile
+                outputfiletxt = inputfile+"_RatingAdmin_.txt"#IMPROVE THE NAME OF THE FILE. SPLIT THE PATH AND ADD THE PREFIX
                 with open(outputfiletxt, 'w') as txtoutputfile:
                         txtoutputfile.write('localid;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
                         for i, j in enumerate(self.players_data):
@@ -373,8 +375,8 @@ class Tournament:
                 if inputfile.startswith('FIDE'):
                         inputfile = inputfile[5:]
                 inputfilesplit = inputfile.split('.')
-                outputfile = inputfilesplit[0]+"_IT3"+".tex"
-                with open("it3.tex") as it3texfile:
+                outputfile = inputfile+"_IT3"+".tex" #TESTING
+                with open(pkg_resources.resource_filename(__name__, "data/it3.tex")) as it3texfile: #TESTING - SLASHES ARE A PROBLEM FOR CROSSPLATFORM... FIX THIS
                         tex_template = it3texfile.read()
                 #Now, lets insert the data of the tournament in the tex template
                 
@@ -631,8 +633,9 @@ class Tournament:
         ######################################################################################################
         def standings_to_file(self, inputfile):
                 inputfilestrip = inputfile.split('.')
-                outputfile = inputfilestrip[0]+"_standings.txt"
-                outputfileTeX = inputfilestrip[0]+"_standings.tex"
+                outputfilepath = os.path.join(os.getcwd(),inputfilestrip[0])
+                outputfile = outputfilepath+"_standings.txt" #TESTING
+                outputfileTeX = outputfilepath+"_standings.tex" #TESTING
                 numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
                 currentround = 0
                 if self.info['CURRENT_ROUND'] != '' and self.info['CURRENT_ROUND'] != ' ':
@@ -673,9 +676,11 @@ class Tournament:
                                 
 #Writing the LaTeX file
                 print("Writing standings to .tex file...")
-                with open("tex_header.txt") as texheaderfile:
+                textemplatepath = pkg_resources.resource_filename(__name__, 'data/tex_header.txt')
+                with open(textemplatepath) as texheaderfile: #TESTING
                         tex_header = texheaderfile.read()
-                with open("tex_middle.txt") as texmiddlefile:
+                textemplatepath = pkg_resources.resource_filename(__name__, 'data/tex_middle.txt')
+                with open(textemplatepath) as texmiddlefile:
                         tex_middle = texmiddlefile.read()
                 with open(outputfileTeX, 'w') as csvoutputfile:
                         csvoutputfile.write(tex_header)
@@ -775,7 +780,8 @@ class Tournament:
                 #print(self.info['NUMBER_OF_PLAYERS'])#testing
                 #print(self.players_data)#testing
                 inputfilesplit = inputfile.split('.')
-                outputfile = inputfilesplit[0]+"_ARPO.csv"
+                outputfilepath = os.path.join(os.getcwd(),inputfilesplit[0])
+                outputfile = outputfilepath+"_ARPO.csv" #TESTING
                 RPtournament.run(methods_list = methods_list, output_file = outputfile, sort_by=sort_by)
                 
                 
@@ -838,7 +844,8 @@ class Tournament:
                         print("\r"+str(count)+" players searched", end="")
                 print("\r"+str(count)+" players searched")
                 print(str(updated)+" players updated")
-                with open("arbitools-report.log", 'a') as logfile:
+                logfilepath = os.path.join(os.getcwd(),"arbitools-report.log")
+                with open(logfilepath, 'a') as logfile: #TESTING
                         logfile.write("\nFile updated report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
                         logfile.write(str(count)+" players searched\n")
                         logfile.write(str(updated)+" players updated\n")
@@ -903,7 +910,7 @@ class Tournament:
                         print("\r"+str(count)+" players searched", end="")
                 print("\r"+str(count)+" players searched")
                 print(str(updated)+" updates done")
-                with open("arbitools-report.log", 'a') as logfile:
+                with open(os.getcwd()+"arbitools-report.log", 'a') as logfile:
                         logfile.write("\nFile updated report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
                         logfile.write(str(count)+" players searched\n")
                         logfile.write(str(updated)+" updates done\n")
@@ -1639,7 +1646,8 @@ class Tournament:
                 #                        self.info['NUMBER_OF_PLAYERS'] = str(int(self.info['NUMBER_OF_PLAYERS']) - 1)+"\n"
                 #print(self.players_data)
                 self.purged = True
-                with open("arbitools-report.log", 'a') as logfile:
+                logfilepath = os.path.join(os.getcwd(),"arbitools-report.log")
+                with open(logfilepath, 'a') as logfile: #TESTING
                         logfile.write("\nFile purge report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
                         logfile.write("\n")
                         logfile.write(str(self.players_to_purge))
