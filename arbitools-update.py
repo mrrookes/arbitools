@@ -16,7 +16,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import arbitools
+from arbitools import arbitools
 import os
 import sys, getopt
 import csv
@@ -34,7 +34,7 @@ except ImportError:
 
 def main(argv):
         
-        listfile="custom_elo.csv"
+        listfile=os.path.join(os.path.expanduser("~"),"custom_elo.csv") #TESTING
         elolist='custom'
         method=''
         listdata=''
@@ -57,21 +57,21 @@ def main(argv):
                         elolist = arg
                         if elolist == 'feda':
                                 if xlrd_present==True:
-                                        listfile = "elo_feda.xls"
+                                        listfile = os.path.join(os.path.expanduser("~"), "elo_feda.xls") #TESTING
                                 else:
                                         print("To search feda list you need to install xlrd module.")
                                         sys.exit()
                         elif elolist == 'fidefeda':
                         
-                                listfile = "FIDE-FEDA Vega.csv"
+                                listfile = os.path.join(os.path.expanduser("~"), "FIDE-FEDA Vega.csv") #TESTING
                         elif elolist == 'fide':
                                 if lxml_present==True:
-                                        listfile = "players_list_xml.xml"
+                                        listfile = os.path.join(os.path.expanduser("~"), "players_list_xml.xml") #TESTING
                                 else:
                                         print("To search fide list you have to install lxml module.")
                                         sys.exit()
                         elif elolist == 'custom':
-                               listfile = "custom_elo.csv"
+                               listfile = os.path.join(os.path.expanduser("~"),"custom_elo.csv") #TESTING
 
                 #elif opt in ("-m", "--method"):
                 #        method = arg
@@ -85,7 +85,7 @@ def main(argv):
                 #                print("I don't know this search method. Try name of idfide.")
                 #                sys.exit()
                 elif opt in ("-i", "--ifile"):
-                        inputfile = arg
+                        inputfile = os.path.join(os.getcwd(), arg) #TESTING
                 
                 elif opt in ("-v", "--version"):
                         print('GNU Chess Arbiter')

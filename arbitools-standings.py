@@ -16,7 +16,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import arbitools
+from arbitools import arbitools
 import os
 import sys, getopt
 import csv
@@ -50,8 +50,8 @@ def main(argv):
                         print('usage: arbitools-standings.py -i <inputfile>')
                         sys.exit()
                 elif opt in ("-i", "--ifile"):
-                        inputfile = arg
-                
+                        inputfile = os.path.join(os.getcwd(), arg) #TESTING - seems to work
+                 
                 elif opt in ("-v", "--version"):
                         print('GNU Chess Arbiter Tools')
                         print('Copyright 2015 David González Gándara')
@@ -72,7 +72,8 @@ def main(argv):
         sort_by = ()
         sort_by_temp = []
         tournament.get_tournament_data_from_file(inputfile)
-        with open(".arbitools") as configfile:
+        configfilename = os.path.join(os.path.expanduser("~"), ".arbitools")
+        with open(configfilename) as configfile:
                 lines = configfile.readlines()
                 for line in lines:
                         linesplit = line.split(":")
@@ -89,25 +90,29 @@ def main(argv):
        
         
         if inputfile.endswith('.veg') or inputfile.endswith('.txt') or inputfile.endswith('.trfx') or inputfile.endswith('.TXT'):
+                
                 try:
                         tournament.standings_to_file(inputfile)
                 except:
                         print("An error ocurred while writing standings to file")
                         pass
+                
                 try:
                         tournament.export_to_fide(inputfile)
                 except:
                         print("An error ocurred while writing the trf file")
                         pass
+                
                 try:
                         tournament.export_to_feda(inputfile)
                 except:
                         print("An error ocurred while writing FEDA rating file")
                         pass
-                try:
-                        tournament.write_it3_report(inputfile)
-                except:
-                        print("An error ocurred while writing IT3 report")
+                tournament.write_it3_report(inputfile)
+                #try:
+                #        tournament.write_it3_report(inputfile)
+                #except:
+                #        print("An error ocurred while writing IT3 report")
         try:
             if methods_list:
                 tournament.applyARPO(inputfile, methods_list, sort_by)

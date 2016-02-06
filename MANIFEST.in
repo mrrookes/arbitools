@@ -1,0 +1,2 @@
+include arbitools-standings.py arbitools-update.py arbitools-gui.py arbitools-add.py arbitools-purge.py README.md LICENSE
+recursive-include arbitools/data *
