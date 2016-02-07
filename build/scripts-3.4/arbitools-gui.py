@@ -17,10 +17,11 @@
 
 #Frontend for arbitools
 
-import arbitools
+from arbitools import arbitools
 import sys
 import os
 import csv
+import pkg_resources
 try:
     from lxml import etree
     lxml_present=True
@@ -64,16 +65,18 @@ class App:
         
         
         # create and position widgets
-        current_path=os.path.dirname(os.path.realpath(sys.argv[0]))
-        if not os.path.isfile(current_path+"/FIDE-FEDA Vega.csv"):
-                tkinter.messagebox.showinfo("Error", "I can't find FIDE-FEDA Vega.csv. You won't be able to get fidefeda data.")
-        if not os.path.isfile(current_path+"/players_list_xml.xml"):
-                tkinter.messagebox.showinfo("Error", "I can't find players_list_xml.xml. You won't be able to use fide xml data.")
-        if not os.path.isfile(current_path+"/elo_feda.xls"):
-                tkinter.messagebox.showinfo("Error", "I can't find elo_feda.xls. You won't be able to use feda data.")
-        if not os.path.isfile(current_path+"/arbitools-update.py"):
+        current_path=os.path.expanduser("~")
+        if not os.path.isfile(os.path.join(current_path,"custom_elo.csv")):
+                tkinter.messagebox.showinfo("Error", "I can't find custom_elo.csv in your personal folder. You won't be able to get fidefeda data.")
+        if not os.path.isfile(os.path.join(current_path, "FIDE-FEDA Vega.csv")):
+                tkinter.messagebox.showinfo("Error", "I can't find FIDE-FEDA Vega.csv in your personal folder. You won't be able to get fidefeda data.")
+        if not os.path.isfile(os.path.join(current_path, "/players_list_xml.xml")):
+                tkinter.messagebox.showinfo("Error", "I can't find players_list_xml.xml in your personal folder. You won't be able to use fide xml data.")
+        if not os.path.isfile(os.path.join(current_path, "/elo_feda.xls")):
+                tkinter.messagebox.showinfo("Error", "I can't find elo_feda.xls in your personal folder. You won't be able to use feda data.")
+        if not os.path.isfile(pkg_resources.resource_filename(__name__, "arbitools-update.py")):
                 tkinter.messagebox.showinfo("Error", "I can't find arbitools-update.py. This program may not work properly. Copy the file to this folder.")
-        if not os.path.isfile(current_path+"/arbitools-add.py"):
+        if not os.path.isfile(pkg_resources.resource_filename(__name__, "/arbitools-add.py")):
                 tkinter.messagebox.showinfo("Error", "I can't find arbitools-add.py. This program may not work properly. Copy the file to this folder.")
 
         #widgets for the infile information
@@ -94,7 +97,7 @@ class App:
         self.optionslabel.grid(row=1, column=0, padx="2")
  
         self.optionscombobox=ttk.Combobox(frame_update)
-        self.optionscombobox['values']=('FIDE-FEDA Vega.csv', 'players_list_xml.xml', 'elo_feda.xls')
+        self.optionscombobox['values']=('custom_elo.csv', 'FIDE-FEDA Vega.csv', 'players_list_xml.xml', 'elo_feda.xls')
         self.optionscombobox.state(['readonly'])
         #self.optionscombobox.bind('<<Combobox Selected>>, 
         self.optionscombobox.grid(row=1, column=1)
@@ -270,7 +273,7 @@ class App:
 
     def update_data(self):
           
-        current_path=os.path.dirname(os.path.realpath(sys.argv[0]))
+        current_path=os.path.expanduser("~")
         elolist=''
         listfile=''
         
@@ -284,30 +287,34 @@ class App:
         
         self.resultsBox.insert(tkinter.END, "Updating data...\n")       
         
+        if self.optionscombobox.get() == "custom_elo.csv":
+                elolist='custom'
+                tkinter.messagebox.showinfo("Custom list", "Using user custom list.")
+                listfile=os.path.join(current_path, 'custom_elo.csv')
         if self.optionscombobox.get() == "player_list_xml.xml":
                 elolist='fide'
                 tkinter.messagebox.showinfo("WARNING!", "This process is extremely slow (more than fifteen minutes. Do it only if you really need it.")
-                listfile='players_list_xml.xml'
+                listfile=os.path.join(current_path,'players_list_xml.xml')
         if self.optionscombobox.get() == "FIDE-FEDA Vega.csv":
                 elolist='fidefeda'
                 tkinter.messagebox.showinfo("FIDE-FEDA", "Possible thanks to Jesus Mena. Download FIDE-FEDA monthly from www.jemchess.com")
-                listfile='FIDE-FEDA Vega.csv'
+                listfile=os.path.join(current_path, 'FIDE-FEDA Vega.csv')
         if self.optionscombobox.get() == "elo_feda.xls":
                 elolist='feda'
                 tkinter.messagebox.showinfo("ELO Feda", "There are multiple spelling issues in this file. Check everything after doing this.")
-                listfile='elo_feda.xls'
+                listfile=os.path.join(current_path, 'elo_feda.xls')
         method=''        
 
         if self.methodcombobox.get() == "idfide":
                 method='idfide'
-                tkinter.messagebox.showinfo("WARNING!", "Don't use this option with the FEDA elo file.")
+                tkinter.messagebox.showinfo("WARNING!", "Don't use this option with the FEDA elo file. It does not include FIDE IDs!")
         if self.methodcombobox.get() == "name":
                 method='name'
 
         inputfile = self.infiletextbox.get(1.0, tkinter.END).strip()
 
         #tkinter.messagebox.showinfo("var", elolist)#testing
-        listdata = self.tournament.get_list_data_from_file(elolist, listfile, method)
+        listdata = self.tournament.get_list_data_from_file(elolist, listfile)
         self.tournament.get_tournament_data_from_file(inputfile)
         #self.tournament.update_players_data_from_list(listdata, self.method.get(), self.varfide.get(), self.varfeda.get(), self.varidfide.get(), int(self.varidfeda.get()))
         self.tournament.update_players_data_from_list(listdata, self.varfide.get(), self.varfeda.get(), self.varidfide.get(), self.varidfeda.get(), self.varname.get())

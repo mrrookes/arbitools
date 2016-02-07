@@ -164,9 +164,10 @@ class Tournament:
         #Export to FEDA Admin format
         ####################################################################################################
         def export_to_feda(self, inputfile):
-                if inputfile.startswith('FIDE'):
-                        inputfile = inputfile[5:]
-                outputfiletxt = inputfile+"_RatingAdmin_.txt"#IMPROVE THE NAME OF THE FILE. SPLIT THE PATH AND ADD THE PREFIX
+                #if inputfile.startswith('FIDE'):
+                #        inputfile = inputfile[5:]
+                inputfilesplit = inputfile.split('.') #WARNING there may be more "."
+                outputfiletxt = inputfilesplit[0]+"_RatingAdmin_.txt"#IMPROVE THE NAME OF THE FILE. SPLIT THE PATH AND ADD THE PREFIX
                 with open(outputfiletxt, 'w') as txtoutputfile:
                         txtoutputfile.write('localid;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
                         for i, j in enumerate(self.players_data):
@@ -188,12 +189,12 @@ class Tournament:
                                opponentssplit = self.playersopponent[i].split(' ') #opponents are stored in a string
                                resultssplit = self.roundresults[i].split(' ')
                                for number, opponent in enumerate(opponentssplit):
-                                       #print(opponent)
+                                       #print(opponent)#testing
                                        index = int(opponent)-1
                                        if len(self.players_data[index]['ELONAT']) > 1:
                                                elosum += int(self.players_data[index]['ELONAT'])
                                                numberofratedopponents += 1
-                                               #print( self.roundresults[number])
+                                               #print( self.roundresults[number])#testing
                                                if resultssplit[number] == '1' or resultssplit[number] == '+':
                                                        points += 1
                                                elif resultssplit[number] == '=':
@@ -910,7 +911,7 @@ class Tournament:
                         print("\r"+str(count)+" players searched", end="")
                 print("\r"+str(count)+" players searched")
                 print(str(updated)+" updates done")
-                with open(os.getcwd()+"arbitools-report.log", 'a') as logfile:
+                with open(os.path.join(os.getcwd(), "arbitools-report.log"), 'a') as logfile:
                         logfile.write("\nFile updated report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
                         logfile.write(str(count)+" players searched\n")
                         logfile.write(str(updated)+" updates done\n")

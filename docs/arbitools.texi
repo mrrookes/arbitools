@@ -58,12 +58,18 @@ The philosophy is to provide the arbiter with more freedom over the tournament f
 
 Apart from that, as it happens with any other free software program, if the user is not happy with the way the program does stuff, he or she can just change the code to make it works the way he likes.
 
+I wrote these tools to simplify my work in real chess tournaments. It has not been widely tested, although I tested it in a few tournaments successfully. Please send me your oppinions and suggestions if you use it for your tournaments, so that the program can go beyond beta state.  
+
 @node Installation
 @chapter Installation
-This program is written in python 3, which is an interpreted language, so you don't really need to install it. Just download the latest version from @url{http://www.github.com/mrrookes/arbitools}.
+Download the latest version from @url{http://www.github.com/mrrookes/arbitools}. Then do:
+
+@code{python3 setup.py install}
+
+The program should work in other platforms, but I don't intend to check it in other systems apart from GNU/Linux. If you have problems installing it, it may work using the scripts from the programs folder.
 
 @section Installing Python
-What you may need to install is python. If you use GNU/Linux it is most likely already install, but not in other systems. You can get the latest version from @url{http://www.python.org/downloads}. Remember to download 3.*.* and not 2.*.*.
+You may need to install python. If you use GNU/Linux it is most likely already installed, but not in other systems. You can get the latest version from @url{http://www.python.org/downloads}. Remember to download 3.*.* and not 2.*.*.
 
 You also need to have some modules of python, namely xlrd, xlwt and lxml. The easiest way to install modules is through pip. In order to use pip, open a command console, go to the python folder in your system, then go to the Scripts folder and type:
 
@@ -73,7 +79,7 @@ You also need to have some modules of python, namely xlrd, xlwt and lxml. The ea
 
 @code{pip install xlwt}
 
-Ir this is too difficult for you, there are graphical python installer you can find on the internet.
+Ir this is too difficult for you, there are graphical python installers you can find on the internet.
 
 @section Other files you may need
 
@@ -95,6 +101,7 @@ Ir this is too difficult for you, there are graphical python installer you can f
 @emph{custom_elo.csv} It is recommended that you create this file, with the header described in the section @xref{File Formats}. Add the data of the players you really need and update monthly with the official lists. Make sure the FIDE and FEDA codes are correct.
 @end indentedblock
 
+Keep these files in your personal folder (/home/<user>) in GNU/Linux.
 
 
 @node    Usage
@@ -106,7 +113,7 @@ The second frontend is the Graphical Interface.
 @section Emacs environment
 The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. In order to do this, launch ``arbitools.el'' by ``M-x load-file''. It will provide the interactive functions: arbitools-standings, arbitools-add and arbitools-update.
 @section Graphical Interface
-Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform. The main screen looks like this:
+I don't maintain this interfacer too often. It may not work properly. Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform. The main screen looks like this:
 @image{arbitools, 640, 480}
 
 The interface is really easy to understand.
@@ -375,7 +382,7 @@ You can create an instance of the class Tournament easily:
 Known bugs
 @enumerate
 @item
-Standings won't work with tournament files where a player didn't play any rounds.
+ARPO calculations fail in some situations. It has probably some problem with ``byed'' players.
 @end enumerate
 
 @bye

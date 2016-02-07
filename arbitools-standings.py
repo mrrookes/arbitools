@@ -72,7 +72,7 @@ def main(argv):
         sort_by = ()
         sort_by_temp = []
         tournament.get_tournament_data_from_file(inputfile)
-        configfilename = os.path.join(os.path.expanduser("~"), ".arbitools")
+        configfilename = os.path.join(os.path.expanduser("~"), ".arbitools") #TODO set default options in case there is not configfile
         with open(configfilename) as configfile:
                 lines = configfile.readlines()
                 for line in lines:
@@ -104,15 +104,29 @@ def main(argv):
                         pass
                 
                 try:
-                        tournament.export_to_feda(inputfile)
+                        listfile = ''
+                        elolist = ''
+                        if os.path.isfile(os.path.join(os.path.expanduser("~"), "custom_elo.csv")):
+                                print("Writing FEDA report from custom_elo.csv")
+                                listfile = os.path.join(os.path.expanduser("~"), "custom_elo.csv")
+                                elolist = "custom"
+                        elif os.path.isfile(os.path.join(os.path.expanduser("~"), "elo_feda.xls")):
+                                print("Writing FEDA report from elo_feda.xls")
+                                listfile = os.path.join(os.path.expanduser("~"), "elo_feda.xls")
+                                elolist = "feda"
+                        else:
+                                print("I cannot write FEDA Rating Admin. No elo information. Copy in your personal folder elo_feda.xls or create custom_elo.csv")
+                        if listfile != '':
+                                listdata = tournament.get_list_data_from_file(elolist, listfile)
+                                tournament.update_players_data_from_list(listdata, 1, 1, 1, 1, 1)
+                                tournament.export_to_feda(inputfile)
                 except:
                         print("An error ocurred while writing FEDA rating file")
                         pass
-                tournament.write_it3_report(inputfile)
-                #try:
-                #        tournament.write_it3_report(inputfile)
-                #except:
-                #        print("An error ocurred while writing IT3 report")
+                try:
+                        tournament.write_it3_report(inputfile)
+                except:
+                        print("An error ocurred while writing IT3 report")
         try:
             if methods_list:
                 tournament.applyARPO(inputfile, methods_list, sort_by)
