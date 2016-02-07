@@ -697,6 +697,15 @@ class Tournament:
                                  csvoutputfile.write("\n\n")
                         csvoutputfile.write("\\end{tabbing}")
                         csvoutputfile.write("\\end{document}")
+                
+                
+                command = "pdflatex "+outputfileTeX
+                try:
+                        os.system(command)
+                except:
+                        print("I could not render the pdf. Is it pdflatex installed in the system?")
+                        pass
+
         ####################################################################################################
         #Apply recursive tiebreaks to standings using Julio Gonzalez and Carlos Diaz library
         ###################################################################################################
