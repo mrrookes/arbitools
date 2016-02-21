@@ -91,6 +91,10 @@ class Tournament:
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
                 elif inputfile.endswith('.txt'):
                         self.export_to_fide(inputfile)
+                elif inputfile.endswith('.TXT'):
+                        self.export_to_fide(inputfile)
+                elif inputfile.endswith('.trf'):
+                        self.export_to_fide(inputfile)
                 elif inputfile.endswith('.fegaxa'):
                         self.export_to_fegaxa(inputfile)
                 else:
@@ -651,7 +655,7 @@ class Tournament:
                                 line = {'NAME':self.players_data[i]['NAME'], 'POINTS':self.players_data[i]['POINTS']}
                                 #print("I'm here"+str(line))#testing
                                 self.standings.append(line)
-                if inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
+                if inputfile.endswith('.txt') or inputfile.endswith('.trfx') or inputfile.endswith('.TXT') or inputfile.endswith('.trf'):
                         for i in range(0, numberofplayers):
                                 line = {'NAME':self.players_data[i]['NAME'], 'POINTS':self.players_data[i]['POINTS']}
                                 #print(line)#testing
@@ -697,6 +701,15 @@ class Tournament:
                                  csvoutputfile.write("\n\n")
                         csvoutputfile.write("\\end{tabbing}")
                         csvoutputfile.write("\\end{document}")
+                
+                
+                command = "pdflatex "+outputfileTeX
+                try:
+                        os.system(command)
+                except:
+                        print("I could not render the pdf. Is it pdflatex installed in the system?")
+                        pass
+
         ####################################################################################################
         #Apply recursive tiebreaks to standings using Julio Gonzalez and Carlos Diaz library
         ###################################################################################################
@@ -1087,13 +1100,14 @@ class Tournament:
                                  self.crosstable[i].update({nameround:opponent[j]})
                                  
 
-
+        ################################################################################################
         #Open a .csv, .txt or .veg and get the players data.
+        ################################################################################################
         def get_tournament_data_from_file(self, filename):
                 
                 with open(filename) as csvfile:
                         #First the stuff for trf FIDE files
-                        if filename.endswith('.txt') or filename.endswith('.trf') or filename.endswith('.trfx'):
+                        if filename.endswith('.txt') or filename.endswith('.TXT') or filename.endswith('.trf') or filename.endswith('.trfx'):
                                 print("FIDE format file")
                                 self.typeoffile = "trf"
                                 line=' '

@@ -263,40 +263,40 @@ You created a tournament and already have the file ``mytournament.veg'' with the
 @section Updating the players data in a file.
 You want to add the FEDA elos to the players data. You type the following command:
 
-@code{python3 arbitools-update.py -i mytournament.veg -l feda}
+@code{arbitools-update.py -i mytournament.veg -l feda}
 
 You want to update the FIDE elos because a new list was published:
 
-@code{python3 arbitools-update.py -i mytournament.veg -l fide}
+@code{arbitools-update.py -i mytournament.veg -l fide}
 
 Just remember this process is really, really slow. It is because ``players_list_xml.xml'' is a very big file, and the .xml format is very unefficient.
 
 @section Adding extra players to an existing file.
 You got a new list of players that have to be added to your original file. The new list is called ``late_entries.csv''.
 
-@code{python3 arbitools-add.py -i mytournament.veg -a late_entries.csv}
+@code{arbitools-add.py -i mytournament.veg -a late_entries.csv}
 
 Remember that the headings of the original file and the file with the extra players have to be identical. Be specially careful with the ``K'' fields. Sometimes, it is called ``KNAT''. Remember also that you should only add players to a tournament that has not started yet. If you add players to an already started tournament, you will corrupt the pairings information, and you won't be able to use the file anymore.
 
 @section Getting the standings for a tournament.
 This task is really easy to perform
 
-@code{python3 arbitools-standings.py -i mytournament.veg}
+@code{arbitools-standings.py -i mytournament.veg}
 
 You will get a .txt file with the standings. You will also get a .tex file you can compile with pdflatex and get a pdf. Additionally, it generates a file with the suffix ``_ARPO.csv'' with the ARPO tiebreak calculations. This is very experimental. This option is possible thanks to the python libraries written by Julio Gonzalez and Jose Carlos Diaz. More information on @url{http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm}
 
 @section Writing a tournament report.
 It is recommended that you create your own ``custom_elo.csv'', with the information of the players you usually need. Get this file update monthly with the official lists with the commands:
 
-@code{python3 arbitools-update.py -i custom_elo.csv -l fide}
+@code{arbitools-update.py -i custom_elo.csv -l fide}
 
-@code{python3 arbitools-udpate.py -i custom_elo_updated.csv -l feda}
+@code{arbitools-udpate.py -i custom_elo_updated.csv -l feda}
 
 After these two commands you will get ``custom_elo_updated_updated.csv''. Check if it is correct and rename it again to ``custom_elo.csv''
 
 Use you favourite pairings program to input the pairings and results. When the tournament is finished, use this command with the TRF file:
 
-@code{python3 arbitools-standings.py -i <tournamentFIDEfile>}
+@code{arbitools-standings.py -i <tournamentFIDEfile>}
 
 And that's it, you already have your FIDE TRF, your FEDA Rating_admin and your IT3.
 
