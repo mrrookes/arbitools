@@ -449,31 +449,40 @@ class Tournament:
                         if player['COUNTRY'] not in ratedfeds and len(player['ELOFIDE']) > 3:
                                 ratedfeds.append(player['COUNTRY'])
                                 numratedfeds += 1
-                        elif player['COUNTRY'] not in unratedfeds and len(player['ELOFIDE']) < 3:
+                        if player['COUNTRY'] not in gmsfeds and player['TITLE'] =="GM":
+                                gmsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in imsfeds and player['TITLE'] =="IM":
+                                imsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in fmsfeds and player['TITLE'] =="FM":
+                                fmsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in wgmsfeds and player['TITLE'] =="WGM":
+                                wgmsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in wimsfeds and player['TITLE'] =="WIM":
+                                wimsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in wfmsfeds and player['TITLE'] =="WFM":
+                                wfmsfeds.append(player['COUNTRY'])
+                                
+                        if player['COUNTRY'] not in unratedfeds and len(player['ELOFIDE']) < 3:
                                 unratedfeds.append(player['COUNTRY'])
                                 numunratedfeds += 1
+                        
+
                         if player['COUNTRY'] == "ESP" and len(player['ELOFIDE']) > 3:
                                 ratedplayersfromhost += 1
                         elif player['COUNTRY'] =="ESP" and len(player['ELOFIDE']) < 3:
                                 unratedplayersfromhost += 1
                         #masters
                         if player['COUNTRY'] =="ESP" and player['TITLE'] == "GM":
-                                gmsfeds.append(player['COUNTRY'])
                                 gmsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "IM":
-                                imsfeds.append(player['COUNTRY'])
                                 imsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "FM":
-                                fmsfeds.append(player['COUNTRY'])
                                 fmsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "WGM":
-                                wgmsfeds.append(player['COUNTRY'])
                                 wgmsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "WIM":
-                                wimsfeds.append(player['COUNTRY'])
                                 wimsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "WFM":
-                                wfmsfeds.append(player['COUNTRY'])
                                 wfmsfromhost += 1
 
                 #number of rated players
@@ -522,13 +531,13 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(gmsfeds))+tex_template[position:]
 
-                increment = len(gmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(gmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(gmsfromhost)+tex_template[position:]
 
                 increment = len(str(gmsfromhost))
                 gmsfromother = gm-gmsfromhost
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(gmsfromother)+tex_template[position:]
                 
                 #IMs
@@ -540,13 +549,13 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(imsfeds))+tex_template[position:]
 
-                increment = len(imsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(imsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(imsfromhost)+tex_template[position:]
 
                 increment = len(str(imsfromhost))
                 imsfromother = im-imsfromhost
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(imsfromother)+tex_template[position:]
 
                 #FMs
@@ -558,8 +567,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(fmsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(fmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(fmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(fmsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(fmsfromhost))
@@ -576,8 +585,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(wgmsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(wgmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(wgmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(wgmsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(wgmsfromhost))
@@ -594,8 +603,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(wimsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(wimsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(wimsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(wimsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(wimsfromhost))
@@ -612,8 +621,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(wfmsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(wfmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(wfmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(wfmsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(wfmsfromhost))
