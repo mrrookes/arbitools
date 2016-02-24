@@ -195,7 +195,7 @@ class Tournament:
                                for number, opponent in enumerate(opponentssplit):
                                        #print(opponent)#testing
                                        index = int(opponent)-1
-                                       if len(self.players_data[index]['ELONAT']) > 1:
+                                       if len(self.players_data[index]['ELONAT']) > 1 and opponent != "0000":
                                                elosum += int(self.players_data[index]['ELONAT'])
                                                numberofratedopponents += 1
                                                #print( self.roundresults[number])#testing
@@ -226,12 +226,17 @@ class Tournament:
                                                birthdaysplit = birthday.split("-")
                                                for part in birthdaysplit:
                                                        if len(part) == 4: #locate the year
-                                                               birthday = part
+                                                               birthday = part[2:]+"-"+"00"+"-"+"00"
                                        elif "." in birthday:
                                                birthdaysplit = birthday.split(".")
                                                for part in birthdaysplit:
                                                        if len(part) == 4:
-                                                               birthday = part
+                                                               birthday = part[2:]+"-"+"00"+"-"+"00"
+                                       elif "/" in birthday:
+                                               birthdaysplit = birthday.split("/")
+                                               for part in birthdaysplit:
+                                                       if len(part) == 4:
+                                                               birthday = part[2:]+"-"+"00"+"-"+"00"
                                txtoutputfile.write(birthday+";")
                                if len(str(points)) < 4:
                                        extra = 4-len(str(points))
@@ -239,7 +244,7 @@ class Tournament:
                                txtoutputfile.write(str(points)+";")
                                if len(str(numberofratedopponents)) == 1:
                                        numberofratedopponents = " "+str(numberofratedopponents)
-                               txtoutputfile.write(numberofratedopponents+";")#Number of rated games here
+                               txtoutputfile.write(str(numberofratedopponents)+";")#Number of rated games here
                                txtoutputfile.write(str(int(rc)))
                                txtoutputfile.write("\n")
         #########################################################################################

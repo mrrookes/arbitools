@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name="arbitools",
-      version="0.9",
+      version="0.92",
       description="Chess Arbiter Tools",
       license="GPL",
       author="David Gonzalez Gandara",

@@ -123,6 +123,7 @@ def main(argv):
                 except:
                         print("An error ocurred while writing FEDA rating file")
                         pass
+
                 try:
                         tournament.write_it3_report(inputfile)
                 except:
