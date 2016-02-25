@@ -176,7 +176,7 @@ class Tournament:
                         txtoutputfile.write('localid;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
                         for i, j in enumerate(self.players_data):
                                idnat = j['IDNAT'] # need to get idnat from list file
-                               ranking = str(i)
+                               ranking = str(i+1) # in order to have "normal" numbers
                                name = j['NAME']
                                if j['G'] == 'f':
                                        sex = 'f'
