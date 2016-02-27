@@ -171,12 +171,12 @@ class Tournament:
                 #if inputfile.startswith('FIDE'):
                 #        inputfile = inputfile[5:]
                 inputfilesplit = inputfile.split('.') #WARNING there may be more "."
-                outputfiletxt = inputfilesplit[0]+"_RatingAdmin_.txt"#IMPROVE THE NAME OF THE FILE. SPLIT THE PATH AND ADD THE PREFIX
+                outputfiletxt = inputfilesplit[0]+"_RatingAdmin.txt"#IMPROVE THE NAME OF THE FILE. SPLIT THE PATH AND ADD THE PREFIX
                 with open(outputfiletxt, 'w') as txtoutputfile:
                         txtoutputfile.write('localid;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
                         for i, j in enumerate(self.players_data):
                                idnat = j['IDNAT'] # need to get idnat from list file
-                               ranking = str(i)
+                               ranking = str(i+1) # in order to have "normal" numbers
                                name = j['NAME']
                                if j['G'] == 'f':
                                        sex = 'f'
@@ -195,8 +195,29 @@ class Tournament:
                                for number, opponent in enumerate(opponentssplit):
                                        #print(opponent)#testing
                                        index = int(opponent)-1
-                                       if len(self.players_data[index]['ELONAT']) > 1 and opponent != "0000":
-                                               elosum += int(self.players_data[index]['ELONAT'])
+                                       if len(self.players_data[index]['ELONAT']) > 1 and opponent != "0000" and opponent != ' ':
+                                               
+                                               #print(j['NAME']+j['ELONAT']) #testing
+                                               #lets apply the 400 elo point difference rule.
+                                               if j['ELONAT'] == ' ' or j['ELONAT'] == '':
+                                                   j['ELONAT'] = 0
+
+                                               elodif = int(j['ELONAT']) - int(self.players_data[index]['ELONAT'])
+                                               #print(elodif) #testing
+                                               if abs(elodif) >= 400:
+                                                   #difference = abs(elodif) - 400
+                                                   #print(difference) # testing
+                                                   if int(self.players_data[index]['ELONAT']) > int(j['ELONAT']) and int(j['ELONAT']) > 0:
+                                                       eloadjust = int(j['ELONAT']) + 400
+                                                   elif int(self.players_data[index]['ELONAT']) < int(j['ELONAT']) and int(j['ELONAT']) >0:
+                                                       eloadjust = int(j['ELONAT']) - 400
+                                                   elif int(j['ELONAT']) == 0:
+                                                       eloadjust = int(self.players_data[index]['ELONAT'])                                                         
+                                                       
+                                               else:
+                                                   eloadjust = int(self.players_data[index]['ELONAT'])
+                                               #print(eloadjust) #testing
+                                               elosum += eloadjust
                                                numberofratedopponents += 1
                                                #print( self.roundresults[number])#testing
                                                if resultssplit[number] == '1' or resultssplit[number] == '+':
@@ -204,7 +225,7 @@ class Tournament:
                                                elif resultssplit[number] == '=':
                                                        points += 0.5
                                if numberofratedopponents > 0:
-                                       rc = elosum/numberofratedopponents
+                                       rc = round(elosum/numberofratedopponents)
                                if len(idnat) < 10:
                                        extra = 10-len(idnat)
                                        idnat = idnat+" "*extra

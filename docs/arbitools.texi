@@ -40,6 +40,7 @@ any later version published by the Free Software Foundation.
 
 @menu
 * Introduction: Introduction
+* History: History
 * Installation: Installation
 * Usage: Usage
 * File Formats: File Formats
@@ -60,26 +61,30 @@ Apart from that, as it happens with any other free software program, if the user
 
 I wrote these tools to simplify my work in real chess tournaments. It has not been widely tested, although I tested it in a few tournaments successfully. Please send me your oppinions and suggestions if you use it for your tournaments, so that the program can go beyond beta state.  
 
+@node History
+@chapter History
+
+This project started as a python library, with the idea of making it available in many platforms easily, and also, to make easy the integration with other similar projects. During the process, I realised that this was not the best way to do it. I saw that most of the work was to maintain a tournament file in plain text format. Emacs was the perfect environment. It makes easy to do the highlighting for the different sections of the file, plus the possibility to do all kind of operations using ELISP. It is also a good cross-platform environment. And easier to install than python.
+
+As a result, Arbitools became an Emacs package. From this point, the new features will be implemented in ELISP. The ``old'' python scripts will be used for some time, until all the code is translated into Emacs functions.
+
 @node Installation
 @chapter Installation
-Download the latest version from @url{http://www.github.com/mrrookes/arbitools}. Then do:
+You can download the latest version of Arbitools from @url{http://www.github.com/mrrookes/arbitools}. Then do:
 
 @code{python3 setup.py install}
 
+Arbitools is in @url{https://pypi.python.org} too, so you can just type:
+
+@code{pip3 install arbitools} 
+
 The program should work in other platforms, but I don't intend to check it in other systems apart from GNU/Linux. If you have problems installing it, it may work using the scripts from the programs folder.
 
+@section Installing Emacs
+The main interface of Arbitools is Emacs, you should install it in order to get the most of it. You can get it in @url{http:/gnu.org/software/emacs}.
+
 @section Installing Python
-You may need to install python. If you use GNU/Linux it is most likely already installed, but not in other systems. You can get the latest version from @url{http://www.python.org/downloads}. Remember to download 3.*.* and not 2.*.*.
-
-You also need to have some modules of python, namely xlrd, xlwt and lxml. The easiest way to install modules is through pip. In order to use pip, open a command console, go to the python folder in your system, then go to the Scripts folder and type:
-
-@code{pip install xlrd}
-
-@code{pip install lxml}
-
-@code{pip install xlwt}
-
-Ir this is too difficult for you, there are graphical python installers you can find on the internet.
+You may need to install python in order to use some features that have not been yet translated to Emacs. If you use GNU/Linux it is most likely already installed, but not in other systems. You can get the latest version from @url{http://www.python.org/downloads}. Remember to download 3.*.* and not 2.*.*.
 
 @section Other files you may need
 
@@ -107,13 +112,17 @@ Keep these files in your personal folder (/home/<user>) in GNU/Linux.
 @node    Usage
 @chapter Usage
 
-Chess Arbiter Tools has been designed to be used in command line. Some of the newest features are only possible through this means.
-Additionally, there are two frontends. The first one (and recommended) is through Emacs. It is the most GNU way of managing a tournament.
+The recommended frontend for Arbitools is Emacs. It is the most GNU way of managing a tournament.
 The second frontend is the Graphical Interface.
+For some time, you can still use the command line interface.
 @section Emacs environment
-The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. In order to do this, launch ``arbitools.el'' by ``M-x load-file''. It will provide the interactive functions: arbitools-standings, arbitools-add and arbitools-update.
+The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. In order to do this, install the ``arbitools.el'' package. Once you install it, the ``arbitools-mode'' will be available, providing syntax colouring for .trf files and some interactive functions: arbitools-standings, arbitools-add, arbitools-update.
+
+You can use all the power of Emacs to manage the file, plus the different Arbitools functions.
+@image{arbitoolsel, 640, 480}
+
 @section Graphical Interface
-I don't maintain this interfacer too often. It may not work properly. Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform. The main screen looks like this:
+Although it should work just fine, this interface is not maintained anymore. It may not work properly. Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform. The main screen looks like this:
 @image{arbitools, 640, 480}
 
 The interface is really easy to understand.
@@ -162,7 +171,12 @@ This action produces the standings for a tournament. You will get the files:
 - If there is a latex environment installed, you will also get a .pdf file with the Tournament Report Form.
 
 @section Command Line
-@subsection arbitools-update.py
+The command line interface is not longer maintained, but most of the features are available through it.
+@subsection arbitools-run.py
+This is the script that provides the access to the different Arbitools functions. The syntax is:
+@code{arbitools-run.py <command> <argument(s)>}
+
+@subsection arbitools-update.py(obsolete)
 Updates the players information stored in a file. It is a very useful function when a new list is published and you had already set up the tournament.
 @indentedblock
 @b{-i} This argument takes the name of the input file. This is the file with the information we want to update.
@@ -184,7 +198,7 @@ If you used a .txt file, a file with the ``_export'' suffix is created with the 
 You can see a report of the updated actions in arbitools-report.log
 
 
-@subsection arbitools-add.py
+@subsection arbitools-add.py(obsolete)
 Adds extra players to an existing file.
 @indentedblock
 @b{-i} This argument takes the name of the input file. This is the file with the information we want to update.
@@ -198,7 +212,7 @@ You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section 
 @end indentedblock
 
 
-@subsection arbitools-standings.py
+@subsection arbitools-standings.py(obsolete)
 Produces the standings for a tournament. You will get the files:
 
 - A file with the ``_standings.txt'' suffix with the standings in a text file.
