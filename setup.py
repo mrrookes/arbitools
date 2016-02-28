@@ -4,7 +4,7 @@
 from setuptools import setup
 
 setup(name="arbitools",
-      version="0.93",
+      version="0.94",
       description="Chess Arbiter Tools",
       license="GPL",
       author="David Gonzalez Gandara",
@@ -15,7 +15,7 @@ setup(name="arbitools",
       install_requires={'xlwt', 'xlrd', 'lxml', 'Click'},
       #entry_points='''
       #    [console_scripts]
-      #    arbitools=arbitools-run:fedarating
+      #    arbitools_run=arbitools-run:arbitoolsrun
       #''',
       scripts=['arbitools-run.py', 'arbitools-standings.py', 'arbitools-update.py', 'arbitools-gui.py', 'arbitools-purge.py', 'arbitools-add.py']
 )

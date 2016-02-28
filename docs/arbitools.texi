@@ -44,7 +44,8 @@ any later version published by the Free Software Foundation.
 * Installation: Installation
 * Usage: Usage
 * File Formats: File Formats
-* Common Arbiters Tasks: Common Arbiters Tasks
+* Common Arbiters Tasks with Emacs: Common Arbiters Tasks with Emacs
+* Common Arbiters Tasks with the command line interface: Common Arbiters Tasks with the command line interface
 * The python library: The python library
 * Troubleshooting: Troubleshooting
 
@@ -70,7 +71,8 @@ As a result, Arbitools became an Emacs package. From this point, the new feature
 
 @node Installation
 @chapter Installation
-You can download the latest version of Arbitools from @url{http://www.github.com/mrrookes/arbitools}. Then do:
+@section Installing the Python package
+Most of the functions of Arbitools are still supported through the python scripts. If you want to use them, you have to install the arbitools python package. The latest version is in @url{http://www.github.com/mrrookes/arbitools}. Then do:
 
 @code{python3 setup.py install}
 
@@ -78,10 +80,28 @@ Arbitools is in @url{https://pypi.python.org} too, so you can just type:
 
 @code{pip3 install arbitools} 
 
-The program should work in other platforms, but I don't intend to check it in other systems apart from GNU/Linux. If you have problems installing it, it may work using the scripts from the programs folder.
+The program should work in other platforms, but I don't intend to check it in other systems apart from GNU/Linux. If you have problems installing it, it may work using the scripts directly from the folder where you downloaded the scripts.
 
 @section Installing Emacs
-The main interface of Arbitools is Emacs, you should install it in order to get the most of it. You can get it in @url{http:/gnu.org/software/emacs}.
+The main interface of Arbitools is Emacs, you should install it in order to get the most of it. You can get it in @url{http:/gnu.org/software/emacs}. Emacs is available for different platforms.
+
+Then, install the ``arbitools.el'' package. In Emacs, type the following:
+
+@code{M-x list-packages}
+
+In Emacs, the keys ``M-x'' means ``Alt+x''. You will get this window:
+
+@image{arbitoolsinstall, 640, 480}
+
+Clik on the arbitools package link and then, click install. After that, the arbitools-mode will load automatically for files with the .trf extension. For other files you have to type:
+
+@code{M-x arbitools-mode}
+
+If you can't install the package for whatever reason, you can allways download the file and insert in Emacs the command:
+
+@code{M-x load-file}
+
+Then write the path where you downloaded ``arbitools.el''
 
 @section Installing Python
 You may need to install python in order to use some features that have not been yet translated to Emacs. If you use GNU/Linux it is most likely already installed, but not in other systems. You can get the latest version from @url{http://www.python.org/downloads}. Remember to download 3.*.* and not 2.*.*.
@@ -116,9 +136,9 @@ The recommended frontend for Arbitools is Emacs. It is the most GNU way of manag
 The second frontend is the Graphical Interface.
 For some time, you can still use the command line interface.
 @section Emacs environment
-The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. In order to do this, install the ``arbitools.el'' package. Once you install it, the ``arbitools-mode'' will be available, providing syntax colouring for .trf files and some interactive functions: arbitools-standings, arbitools-add, arbitools-update.
+The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. To do this, you have to install the ``arbitools.el'' package. Instructions in @xref{Installation}.
 
-You can use all the power of Emacs to manage the file, plus the different Arbitools functions.
+You can use all the power of Emacs to manage the file, plus the different Arbitools functions. You will find the menu entry ``Arbitools'', with the functions available.
 @image{arbitoolsel, 640, 480}
 
 @section Graphical Interface
@@ -171,10 +191,21 @@ This action produces the standings for a tournament. You will get the files:
 - If there is a latex environment installed, you will also get a .pdf file with the Tournament Report Form.
 
 @section Command Line
-The command line interface is not longer maintained, but most of the features are available through it.
+Most of the features are available through the command line interface. In the first version of arbitools there were different commands for each function. The newer ``arbitools-run.py'', provides all the functions in just one comand. The older commands are referred to as ``obsolete''.
+
 @subsection arbitools-run.py
-This is the script that provides the access to the different Arbitools functions. The syntax is:
+This is the newest script that provides the access to the different Arbitools functions. The syntax is:
 @code{arbitools-run.py <command> <argument(s)>}
+
+Possible commands:
+
+@indentedblock
+@b{it3 <filename>} Get the it3 report form for ``filename''.
+@end indentedblock
+
+@indentedblock
+@b{fedarating <filename>} Get the FEDA RatingAdmin file for ``filename''. 
+@end indentedblock
 
 @subsection arbitools-update.py(obsolete)
 Updates the players information stored in a file. It is a very useful function when a new list is published and you had already set up the tournament.
@@ -271,17 +302,32 @@ A special kind of xls files are accepted if the .xls ending is replaced with a .
 This kind of files is very useful if you really need to store extra data about the players.
 
 
-@node Common Arbiters Tasks
-@chapter Common Arbiters Tasks
+@node Common Arbiters Tasks with Emacs
+@chapter Common Arbiters Tasks with Emacs.
+
+The recommended way to manage a tournament with Arbitools is through a .trf tournament file. You can edit it manually or with the Arbitools commands from the Emacs menu options under ``Arbitools''.
+
+Arbitools do not provide a pairing command yet (I hope to have it in the future). In this moment I can only recommend ``JavaPairings'', which is the only true free software possibility. You can also use some privative options to do that.
+
+I recommend that the first thing you do is create a .csv file, with the header described in @xref{File Formats}, with the data for your tournament. When the tournament starts it is necessary that you update the elo ratings if necessary. Use the update command twice, one with the ``fide'' option and one with the ``feda'' option. In that file, You can store all the players data you need.
+
+For each round, introduce manually the results in the .trf file, in the right column. It is useful to use the ``insert'' key in your keyboard.
+
+When the tournament is finished, get the Feda RatingAdmin file from the menu option. This is where the custom file you created is useful, because you will need the FEDA data, which is not stored in the .trf file. Provide you custom file as the file option for the Feda report command.
+
+Then, get the IT3 report forms from the menu option.
+
+@node Common Arbiters Tasks with the command line interface
+@chapter Common Arbiters Tasks with the command line interface.
 You created a tournament and already have the file ``mytournament.veg'' with the tournaments information. You can do lots of operations with arbitools. For example:
 @section Updating the players data in a file.
 You want to add the FEDA elos to the players data. You type the following command:
 
-@code{arbitools-update.py -i mytournament.veg -l feda}
+@code{arbitools-run.py update mytournament.veg -l feda}
 
 You want to update the FIDE elos because a new list was published:
 
-@code{arbitools-update.py -i mytournament.veg -l fide}
+@code{arbitools-run.py update mytournament.veg -l fide}
 
 Just remember this process is really, really slow. It is because ``players_list_xml.xml'' is a very big file, and the .xml format is very unefficient.
 
@@ -295,24 +341,25 @@ Remember that the headings of the original file and the file with the extra play
 @section Getting the standings for a tournament.
 This task is really easy to perform
 
-@code{arbitools-standings.py -i mytournament.veg}
+@code{arbitools-run.py standings mytournament.veg}
 
 You will get a .txt file with the standings. You will also get a .tex file you can compile with pdflatex and get a pdf. Additionally, it generates a file with the suffix ``_ARPO.csv'' with the ARPO tiebreak calculations. This is very experimental. This option is possible thanks to the python libraries written by Julio Gonzalez and Jose Carlos Diaz. More information on @url{http://eio.usc.es/pub/julio/Desempate/Performance_recursiva_en.htm}
 
 @section Writing a tournament report.
-It is recommended that you create your own ``custom_elo.csv'', with the information of the players you usually need. Get this file update monthly with the official lists with the commands:
+It is recommended that you create your own ``custom_elo.csv'', with the information of the players you usually need or that you need for the actual tournament. Get this file update monthly with the official lists with the commands:
 
-@code{arbitools-update.py -i custom_elo.csv -l fide}
+@code{arbitools-run.py update custom_elo.csv -l fide}
 
-@code{arbitools-udpate.py -i custom_elo_updated.csv -l feda}
+@code{arbitools-run.py update custom_elo_updated.csv -l feda}
 
 After these two commands you will get ``custom_elo_updated_updated.csv''. Check if it is correct and rename it again to ``custom_elo.csv''
 
-Use you favourite pairings program to input the pairings and results. When the tournament is finished, use this command with the TRF file:
+Use you favourite pairings program to input the pairings and results. When the tournament is finished, use these commands with the TRF file:
 
-@code{arbitools-standings.py -i <tournamentFIDEfile>}
+@code{arbitools-run.py it3 <tournamentFIDEfile>}
+@code{arbitools-run.py fedarating <tournamentFIDEfile>}
 
-And that's it, you already have your FIDE TRF, your FEDA Rating_admin and your IT3.
+And that's it, you already have your FIDE TRF, your FEDA Rating_admin and your IT3 ready to send to your fedaration.
 
 @node    The python library
 @chapter The python library

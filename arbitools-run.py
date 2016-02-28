@@ -32,26 +32,28 @@ def update(inputfile, elolist):
 
 @click.command()
 @click.argument('inputfile')
+@click.option('--elolist', '-l', default = 'custom', help= 'Elo list to use: fide, feda or custom')
+@click.option('--listfile', '-f', default = '/home/david/custom_elo.csv', help= 'Elo list file. Or tournament custom file.')
 
 
-def fedarating(inputfile):
+def fedarating(inputfile, elolist, listfile):
                                                                                                         
     tournament = arbitools.Tournament()
     
     tournament.get_tournament_data_from_file(inputfile)
 
-    listfile = ''
-    elolist = ''
-    if os.path.isfile(os.path.join(os.path.expanduser("~"), "custom_elo.csv")):
-        print("Writing FEDA report from custom_elo.csv")
-        listfile = os.path.join(os.path.expanduser("~"), "custom_elo.csv")
-        elolist = "custom"
-    elif os.path.isfile(os.path.join(os.path.expanduser("~"), "elo_feda.xls")):
-        print("Writing FEDA report from elo_feda.xls")
-        listfile = os.path.join(os.path.expanduser("~"), "elo_feda.xls")
-        elolist = "feda"
-    else:
-        print("I cannot write FEDA Rating Admin. No elo information. Copy in your personal folder elo_feda.xls or create custom_elo.csv")
+    #listfile = ''
+    #elolist = ''
+    #if os.path.isfile(os.path.join(os.path.expanduser("~"), "custom_elo.csv")):
+    #    print("Writing FEDA report from custom_elo.csv")
+    #    listfile = os.path.join(os.path.expanduser("~"), "custom_elo.csv")
+    #    elolist = "custom"
+    #elif os.path.isfile(os.path.join(os.path.expanduser("~"), "elo_feda.xls")):
+    #    print("Writing FEDA report from elo_feda.xls")
+    #    listfile = os.path.join(os.path.expanduser("~"), "elo_feda.xls")
+    #    elolist = "feda"
+    #else:
+    #    print("I cannot write FEDA Rating Admin. No elo information. Copy in your personal folder elo_feda.xls or create custom_elo.csv")
     listdata = tournament.get_list_data_from_file(elolist, listfile)
     tournament.update_players_data_from_list(listdata, 1, 1, 1, 1, 1)
     tournament.export_to_feda(inputfile)
