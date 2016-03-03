@@ -177,12 +177,11 @@ class Tournament:
                         for i, j in enumerate(self.players_data):
                                idnat = j['IDNAT'] # need to get idnat from list file
                                ranking = str(i+1) # in order to have "normal" numbers
-
                                name = j['NAME']
                                if j['G'] == 'f':
-                                       sex = 'f'
+                                       sex = 'Ff'
                                else:
-                                       sex = " "
+                                       sex = "M "
                                country = j['COUNTRY']
                                birthday = j['BIRTHDAY']
                                points = 0.0
@@ -413,19 +412,20 @@ class Tournament:
                 #Now, lets insert the data of the tournament in the tex template
                 
                 #name of the tournament
-                position = tex_template.find("Name of Tournament")
-                position = position+38
-                tex_template = tex_template[:position]+"\\bfseries\\normalsize "+self.info['TOURNAMENT_NAME'].rstrip()+tex_template[position:]
+                position = tex_template.find("NAME OF THE TOURNAMENT")
+                positionend = position+22 #length of the text to replace
+                tex_template = tex_template[:position]+"\\bfseries\\normalsize "+self.info['TOURNAMENT_NAME'].rstrip()+tex_template[positionend:] 
                 
                 #starting date
-                position = tex_template.find("Starting date")
-                position = position+29
-                tex_template = tex_template[:position]+self.info['BEGIN_DATE'].rstrip()+tex_template[position:]
+                position = tex_template.find("STARTDATE")
+                positionend = position+9
+                
+                tex_template = tex_template[:position]+self.info['BEGIN_DATE'].rstrip()+tex_template[positionend:]
                 
                 #ending date
-                position = tex_template.find("Ending date")
-                position = position+27 # it looks weird, but we have to take into account the characters used by starting date
-                tex_template = tex_template[:position]+self.info['END_DATE'].rstrip()+tex_template[position:]
+                position = tex_template.find("ENDDATE")
+                positionend = position+7 
+                tex_template = tex_template[:position]+self.info['END_DATE'].rstrip()+tex_template[positionend:]
 
                 
                 #masters
