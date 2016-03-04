@@ -173,7 +173,7 @@ class Tournament:
                 inputfilesplit = inputfile.split('.') #WARNING there may be more "."
                 outputfiletxt = inputfilesplit[0]+"_RatingAdmin.txt"#IMPROVE THE NAME OF THE FILE. SPLIT THE PATH AND ADD THE PREFIX
                 with open(outputfiletxt, 'w') as txtoutputfile:
-                        txtoutputfile.write('localid;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
+                        txtoutputfile.write('local_id;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
                         for i, j in enumerate(self.players_data):
                                idnat = j['IDNAT'] # need to get idnat from list file
                                ranking = str(i+1) # in order to have "normal" numbers
@@ -234,8 +234,8 @@ class Tournament:
                                        extra = 4-len(ranking)
                                        ranking = " "*extra+ranking
                                txtoutputfile.write(ranking+';')
-                               if len(name) < 34:
-                                       extra = 34-len(name)
+                               if len(name) < 35:     #TESTING - it was wrong
+                                       extra = 35-len(name)
                                        name = name+" "*extra
                                txtoutputfile.write(name+";")
                                txtoutputfile.write(sex+";")
@@ -266,7 +266,10 @@ class Tournament:
                                if len(str(numberofratedopponents)) == 1:
                                        numberofratedopponents = " "+str(numberofratedopponents)
                                txtoutputfile.write(str(numberofratedopponents)+";")#Number of rated games here
-                               txtoutputfile.write(str(int(rc)))
+                               if int(rc) == 0:
+                                       txtoutputfile.write("   0")
+                               else:
+                                       txtoutputfile.write(str(int(rc)))
                                txtoutputfile.write("\n")
         #########################################################################################
         #Export to FIDE trf file format (Krause)
