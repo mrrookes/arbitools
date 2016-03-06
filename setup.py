@@ -4,7 +4,7 @@
 from setuptools import setup
 
 setup(name="arbitools",
-      version="0.951",
+      version="0.953",
       description="Chess Arbiter Tools",
       license="GPL",
       author="David Gonzalez Gandara",

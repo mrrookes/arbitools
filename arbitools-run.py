@@ -32,6 +32,12 @@ def update(inputfile, elolist):
 
 @click.command()
 @click.argument('inputfile')
+
+def add(inputfile):
+    tournament = arbitools.Tournament() #Still have to write it 
+
+@click.command()
+@click.argument('inputfile')
 @click.option('--elolist', '-l', default = 'custom', help= 'Elo list to use: fide, feda or custom')
 @click.option('--listfile', '-f', default = '/home/david/custom_elo.csv', help= 'Elo list file. Or tournament custom file.')
 
@@ -68,9 +74,21 @@ def it3(inputfile):
     tournament.get_tournament_data_from_file(inputfile)
     tournament.write_it3_report(inputfile)
 
+@click.command()
+@click.argument('inputfile')
+
+def standings(inputfile):
+    tournament = arbitools.Tournament()
+    tournament.get_tournament_data_from_file(inputfile)
+    tournament.standings_to_file(inputfile)
+
+
 arbitoolsrun.add_command(fedarating)
 arbitoolsrun.add_command(it3)
 arbitoolsrun.add_command(update)
+arbitoolsrun.add_command(standings)
+arbitoolsrun.add_command(add)
+
 
 if __name__ == '__main__':
     arbitoolsrun()
