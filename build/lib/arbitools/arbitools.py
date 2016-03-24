@@ -178,10 +178,10 @@ class Tournament:
                                idnat = j['IDNAT'] # need to get idnat from list file
                                ranking = str(i+1) # in order to have "normal" numbers
                                name = j['NAME']
-                               if j['G'] == 'f':
-                                       sex = 'Ff'
+                               if j['G'] == 'w':
+                                       sex = 'F'
                                else:
-                                       sex = "M "
+                                       sex = "M"
                                country = j['COUNTRY']
                                birthday = j['BIRTHDAY']
                                points = 0.0
