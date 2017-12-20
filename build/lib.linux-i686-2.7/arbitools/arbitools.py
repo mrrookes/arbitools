@@ -19,6 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import pkg_resources
 import sys
 import csv
 import unicodedata
@@ -26,7 +27,7 @@ import time
 from collections import namedtuple
 from operator import itemgetter
 from itertools import dropwhile, compress
-import PyRP
+import arbitools.PyRP
 try:
         from lxml import etree
         lxml_present=True
@@ -83,12 +84,16 @@ class Tournament:
                         print("I don't have anything to write in the file")
                         sys.exit()
                 inputfilesplit = inputfile.split('.')#Separate file name and extension.
-                outputfiletxt=inputfilesplit[0]+'_updated'+'.txt' #The name for the .txt file.
+                outputfiletxt=inputfilesplit[0]+'_updated'+'.txt' #The name for the .txt file. #WARNING-paths can contain "."
                 if inputfile.endswith('.csv') or inputfile.endswith('.xls'):
                         outputfile=inputfilesplit[0]+'_updated'+'.csv'#Get the name for the updated file.
                 elif inputfile.endswith('.veg'):
                         outputfile=inputfilesplit[0]+'_updated'+'.veg'
                 elif inputfile.endswith('.txt'):
+                        self.export_to_fide(inputfile)
+                elif inputfile.endswith('.TXT'):
+                        self.export_to_fide(inputfile)
+                elif inputfile.endswith('.trf'):
                         self.export_to_fide(inputfile)
                 elif inputfile.endswith('.fegaxa'):
                         self.export_to_fegaxa(inputfile)
@@ -129,7 +134,8 @@ class Tournament:
         #######################################################################################
         def export_to_fegaxa(self, inputfile):
                 inputfilesplit = inputfile.split('.')
-                outputfile = os.getcwd()+inputfilesplit[0]+'_updated'+'.fegaxa' #TESTING
+                outputfilepath = os.path.join(os.getcwd(),inputfilesplit[0])
+                outputfile = outputfilepath+'_updated'+'.fegaxa' #TESTING
 
 
                 print_to_xls = False #dictionaries are not sorted, so writing to xls is difficult
@@ -162,19 +168,20 @@ class Tournament:
         #Export to FEDA Admin format
         ####################################################################################################
         def export_to_feda(self, inputfile):
-                if inputfile.startswith('FIDE'):
-                        inputfile = inputfile[5:]
-                outputfiletxt = os.getcwd()+'Rating_Admin_'+inputfile#TESTING
+                #if inputfile.startswith('FIDE'):
+                #        inputfile = inputfile[5:]
+                inputfilesplit = inputfile.split('.') #WARNING there may be more "."
+                outputfiletxt = inputfilesplit[0]+"_RatingAdmin.txt"#IMPROVE THE NAME OF THE FILE. SPLIT THE PATH AND ADD THE PREFIX
                 with open(outputfiletxt, 'w') as txtoutputfile:
-                        txtoutputfile.write('localid;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
+                        txtoutputfile.write('local_id;initial_ranking;Name;Sex;country;birthdate;W;N;Rc\n')
                         for i, j in enumerate(self.players_data):
                                idnat = j['IDNAT'] # need to get idnat from list file
-                               ranking = str(i)
+                               ranking = str(i+1) # in order to have "normal" numbers
                                name = j['NAME']
-                               if j['G'] == 'f':
-                                       sex = 'f'
+                               if j['G'] == 'w':
+                                       sex = 'F'
                                else:
-                                       sex = " "
+                                       sex = "M"
                                country = j['COUNTRY']
                                birthday = j['BIRTHDAY']
                                points = 0.0
@@ -186,18 +193,39 @@ class Tournament:
                                opponentssplit = self.playersopponent[i].split(' ') #opponents are stored in a string
                                resultssplit = self.roundresults[i].split(' ')
                                for number, opponent in enumerate(opponentssplit):
-                                       #print(opponent)
+                                       #print(opponent)#testing
                                        index = int(opponent)-1
-                                       if len(self.players_data[index]['ELONAT']) > 1:
-                                               elosum += int(self.players_data[index]['ELONAT'])
+                                       if len(self.players_data[index]['ELONAT']) > 1 and opponent != "0000" and opponent != ' ':
+                                               
+                                               #print(j['NAME']+j['ELONAT']) #testing
+                                               #lets apply the 400 elo point difference rule.
+                                               if j['ELONAT'] == ' ' or j['ELONAT'] == '':
+                                                   j['ELONAT'] = 0
+
+                                               elodif = int(j['ELONAT']) - int(self.players_data[index]['ELONAT'])
+                                               #print(elodif) #testing
+                                               if abs(elodif) >= 400:
+                                                   #difference = abs(elodif) - 400
+                                                   #print(difference) # testing
+                                                   if int(self.players_data[index]['ELONAT']) > int(j['ELONAT']) and int(j['ELONAT']) > 0:
+                                                       eloadjust = int(j['ELONAT']) + 400
+                                                   elif int(self.players_data[index]['ELONAT']) < int(j['ELONAT']) and int(j['ELONAT']) >0:
+                                                       eloadjust = int(j['ELONAT']) - 400
+                                                   elif int(j['ELONAT']) == 0:
+                                                       eloadjust = int(self.players_data[index]['ELONAT'])                                                         
+                                                       
+                                               else:
+                                                   eloadjust = int(self.players_data[index]['ELONAT'])
+                                               #print(eloadjust) #testing
+                                               elosum += eloadjust
                                                numberofratedopponents += 1
-                                               #print( self.roundresults[number])
+                                               #print( self.roundresults[number])#testing
                                                if resultssplit[number] == '1' or resultssplit[number] == '+':
                                                        points += 1
                                                elif resultssplit[number] == '=':
                                                        points += 0.5
                                if numberofratedopponents > 0:
-                                       rc = elosum/numberofratedopponents
+                                       rc = round(elosum/numberofratedopponents)
                                if len(idnat) < 10:
                                        extra = 10-len(idnat)
                                        idnat = idnat+" "*extra
@@ -206,8 +234,8 @@ class Tournament:
                                        extra = 4-len(ranking)
                                        ranking = " "*extra+ranking
                                txtoutputfile.write(ranking+';')
-                               if len(name) < 34:
-                                       extra = 34-len(name)
+                               if len(name) < 35:     #TESTING - it was wrong
+                                       extra = 35-len(name)
                                        name = name+" "*extra
                                txtoutputfile.write(name+";")
                                txtoutputfile.write(sex+";")
@@ -219,12 +247,17 @@ class Tournament:
                                                birthdaysplit = birthday.split("-")
                                                for part in birthdaysplit:
                                                        if len(part) == 4: #locate the year
-                                                               birthday = part
+                                                               birthday = part[2:]+"-"+"00"+"-"+"00"
                                        elif "." in birthday:
                                                birthdaysplit = birthday.split(".")
                                                for part in birthdaysplit:
                                                        if len(part) == 4:
-                                                               birthday = part
+                                                               birthday = part[2:]+"-"+"00"+"-"+"00"
+                                       elif "/" in birthday:
+                                               birthdaysplit = birthday.split("/")
+                                               for part in birthdaysplit:
+                                                       if len(part) == 4:
+                                                               birthday = part[2:]+"-"+"00"+"-"+"00"
                                txtoutputfile.write(birthday+";")
                                if len(str(points)) < 4:
                                        extra = 4-len(str(points))
@@ -232,15 +265,18 @@ class Tournament:
                                txtoutputfile.write(str(points)+";")
                                if len(str(numberofratedopponents)) == 1:
                                        numberofratedopponents = " "+str(numberofratedopponents)
-                               txtoutputfile.write(numberofratedopponents+";")#Number of rated games here
-                               txtoutputfile.write(str(int(rc)))
+                               txtoutputfile.write(str(numberofratedopponents)+";")#Number of rated games here
+                               if int(rc) == 0:
+                                       txtoutputfile.write("   0")
+                               else:
+                                       txtoutputfile.write(str(int(rc)))
                                txtoutputfile.write("\n")
         #########################################################################################
         #Export to FIDE trf file format (Krause)
         #########################################################################################
         def export_to_fide(self, inputfile):
                 inputfilesplit = inputfile.split('.')
-                outputfiletxt=os.getcwd()+inputfilesplit[0]+'_export'+'.txt' #The name for the .txt file.
+                outputfiletxt=inputfilesplit[0]+'_export'+'.txt' #The name for the .txt file.
                 with open(outputfiletxt, 'w') as txtoutputfile:
                         txtoutputfile.write("012 "+self.info['TOURNAMENT_NAME'])
                         txtoutputfile.write("022 "+self.info['CITY'])
@@ -373,25 +409,26 @@ class Tournament:
                 if inputfile.startswith('FIDE'):
                         inputfile = inputfile[5:]
                 inputfilesplit = inputfile.split('.')
-                outputfile = os.getcwd()+inputfilesplit[0]+"_IT3"+".tex" #TESTING
-                with open(os.path.realpath(__file__)+"/data/"+"it3.tex") as it3texfile: #TESTING
+                outputfile = inputfile+"_IT3"+".tex" #TESTING
+                with open(pkg_resources.resource_filename(__name__, "data/it3.tex")) as it3texfile: #TESTING - SLASHES ARE A PROBLEM FOR CROSSPLATFORM... FIX THIS
                         tex_template = it3texfile.read()
                 #Now, lets insert the data of the tournament in the tex template
                 
                 #name of the tournament
-                position = tex_template.find("Name of Tournament")
-                position = position+38
-                tex_template = tex_template[:position]+"\\bfseries\\normalsize "+self.info['TOURNAMENT_NAME'].rstrip()+tex_template[position:]
+                position = tex_template.find("NAME OF THE TOURNAMENT")
+                positionend = position+22 #length of the text to replace
+                tex_template = tex_template[:position]+"\\bfseries\\normalsize "+self.info['TOURNAMENT_NAME'].rstrip()+tex_template[positionend:] 
                 
                 #starting date
-                position = tex_template.find("Starting date")
-                position = position+29
-                tex_template = tex_template[:position]+self.info['BEGIN_DATE'].rstrip()+tex_template[position:]
+                position = tex_template.find("STARTDATE")
+                positionend = position+9
+                
+                tex_template = tex_template[:position]+self.info['BEGIN_DATE'].rstrip()+tex_template[positionend:]
                 
                 #ending date
-                position = tex_template.find("Ending date")
-                position = position+27 # it looks weird, but we have to take into account the characters used by starting date
-                tex_template = tex_template[:position]+self.info['END_DATE'].rstrip()+tex_template[position:]
+                position = tex_template.find("ENDDATE")
+                positionend = position+7 
+                tex_template = tex_template[:position]+self.info['END_DATE'].rstrip()+tex_template[positionend:]
 
                 
                 #masters
@@ -442,31 +479,40 @@ class Tournament:
                         if player['COUNTRY'] not in ratedfeds and len(player['ELOFIDE']) > 3:
                                 ratedfeds.append(player['COUNTRY'])
                                 numratedfeds += 1
-                        elif player['COUNTRY'] not in unratedfeds and len(player['ELOFIDE']) < 3:
+                        if player['COUNTRY'] not in gmsfeds and player['TITLE'] =="GM":
+                                gmsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in imsfeds and player['TITLE'] =="IM":
+                                imsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in fmsfeds and player['TITLE'] =="FM":
+                                fmsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in wgmsfeds and player['TITLE'] =="WGM":
+                                wgmsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in wimsfeds and player['TITLE'] =="WIM":
+                                wimsfeds.append(player['COUNTRY'])
+                        if player['COUNTRY'] not in wfmsfeds and player['TITLE'] =="WFM":
+                                wfmsfeds.append(player['COUNTRY'])
+                                
+                        if player['COUNTRY'] not in unratedfeds and len(player['ELOFIDE']) < 3:
                                 unratedfeds.append(player['COUNTRY'])
                                 numunratedfeds += 1
+                        
+
                         if player['COUNTRY'] == "ESP" and len(player['ELOFIDE']) > 3:
                                 ratedplayersfromhost += 1
                         elif player['COUNTRY'] =="ESP" and len(player['ELOFIDE']) < 3:
                                 unratedplayersfromhost += 1
                         #masters
                         if player['COUNTRY'] =="ESP" and player['TITLE'] == "GM":
-                                gmsfeds.append(player['COUNTRY'])
                                 gmsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "IM":
-                                imsfeds.append(player['COUNTRY'])
                                 imsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "FM":
-                                fmsfeds.append(player['COUNTRY'])
                                 fmsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "WGM":
-                                wgmsfeds.append(player['COUNTRY'])
                                 wgmsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "WIM":
-                                wimsfeds.append(player['COUNTRY'])
                                 wimsfromhost += 1
                         elif player['COUNTRY'] =="ESP" and player['TITLE'] == "WFM":
-                                wfmsfeds.append(player['COUNTRY'])
                                 wfmsfromhost += 1
 
                 #number of rated players
@@ -515,13 +561,13 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(gmsfeds))+tex_template[position:]
 
-                increment = len(gmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(gmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(gmsfromhost)+tex_template[position:]
 
                 increment = len(str(gmsfromhost))
                 gmsfromother = gm-gmsfromhost
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(gmsfromother)+tex_template[position:]
                 
                 #IMs
@@ -533,13 +579,13 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(imsfeds))+tex_template[position:]
 
-                increment = len(imsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(imsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(imsfromhost)+tex_template[position:]
 
                 increment = len(str(imsfromhost))
                 imsfromother = im-imsfromhost
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(imsfromother)+tex_template[position:]
 
                 #FMs
@@ -551,8 +597,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(fmsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(fmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(fmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(fmsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(fmsfromhost))
@@ -569,8 +615,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(wgmsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(wgmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(wgmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(wgmsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(wgmsfromhost))
@@ -587,8 +633,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(wimsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(wimsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(wimsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(wimsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(wimsfromhost))
@@ -605,8 +651,8 @@ class Tournament:
                 position = position+increment+1+21 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(len(wfmsfeds)).rstrip()+tex_template[position:]
 
-                increment = len(wfmsfeds)
-                position = position+increment+1+23 #21 is the spaced occupied by latex codes \bfseries\normalsize
+                increment = len(str(len(wfmsfeds)))
+                position = position+increment+1+22 #21 is the spaced occupied by latex codes \bfseries\normalsize
                 tex_template = tex_template[:position]+"\\bfseries\\normalsize "+str(wfmsfromhost).rstrip()+tex_template[position:]
 
                 increment = len(str(wfmsfromhost))
@@ -631,8 +677,9 @@ class Tournament:
         ######################################################################################################
         def standings_to_file(self, inputfile):
                 inputfilestrip = inputfile.split('.')
-                outputfile = os.getcwd()+inputfilestrip[0]+"_standings.txt" #TESTING
-                outputfileTeX = os.getcwd()+inputfilestrip[0]+"_standings.tex" #TESTING
+                outputfilepath = os.path.join(os.getcwd(),inputfilestrip[0])
+                outputfile = outputfilepath+"_standings.txt" #TESTING
+                outputfileTeX = outputfilepath+"_standings.tex" #TESTING
                 numberofplayers = int(self.info['NUMBER_OF_PLAYERS'])
                 currentround = 0
                 if self.info['CURRENT_ROUND'] != '' and self.info['CURRENT_ROUND'] != ' ':
@@ -647,7 +694,7 @@ class Tournament:
                                 line = {'NAME':self.players_data[i]['NAME'], 'POINTS':self.players_data[i]['POINTS']}
                                 #print("I'm here"+str(line))#testing
                                 self.standings.append(line)
-                if inputfile.endswith('.txt') or inputfile.endswith('.trfx'):
+                if inputfile.endswith('.txt') or inputfile.endswith('.trfx') or inputfile.endswith('.TXT') or inputfile.endswith('.trf'):
                         for i in range(0, numberofplayers):
                                 line = {'NAME':self.players_data[i]['NAME'], 'POINTS':self.players_data[i]['POINTS']}
                                 #print(line)#testing
@@ -673,9 +720,11 @@ class Tournament:
                                 
 #Writing the LaTeX file
                 print("Writing standings to .tex file...")
-                with open("tex_header.txt") as texheaderfile:
+                textemplatepath = pkg_resources.resource_filename(__name__, 'data/tex_header.txt')
+                with open(textemplatepath) as texheaderfile: #TESTING
                         tex_header = texheaderfile.read()
-                with open("tex_middle.txt") as texmiddlefile:
+                textemplatepath = pkg_resources.resource_filename(__name__, 'data/tex_middle.txt')
+                with open(textemplatepath) as texmiddlefile:
                         tex_middle = texmiddlefile.read()
                 with open(outputfileTeX, 'w') as csvoutputfile:
                         csvoutputfile.write(tex_header)
@@ -691,6 +740,15 @@ class Tournament:
                                  csvoutputfile.write("\n\n")
                         csvoutputfile.write("\\end{tabbing}")
                         csvoutputfile.write("\\end{document}")
+                
+                
+                command = "pdflatex "+outputfileTeX
+                try:
+                        os.system(command)
+                except:
+                        print("I could not render the pdf. Is it pdflatex installed in the system?")
+                        pass
+
         ####################################################################################################
         #Apply recursive tiebreaks to standings using Julio Gonzalez and Carlos Diaz library
         ###################################################################################################
@@ -775,7 +833,8 @@ class Tournament:
                 #print(self.info['NUMBER_OF_PLAYERS'])#testing
                 #print(self.players_data)#testing
                 inputfilesplit = inputfile.split('.')
-                outputfile = os.getcwd()+inputfilesplit[0]+"_ARPO.csv" #TESTING
+                outputfilepath = os.path.join(os.getcwd(),inputfilesplit[0])
+                outputfile = outputfilepath+"_ARPO.csv" #TESTING
                 RPtournament.run(methods_list = methods_list, output_file = outputfile, sort_by=sort_by)
                 
                 
@@ -838,7 +897,8 @@ class Tournament:
                         print("\r"+str(count)+" players searched", end="")
                 print("\r"+str(count)+" players searched")
                 print(str(updated)+" players updated")
-                with open(os.getcwd()+"arbitools-report.log", 'a') as logfile: #TESTING
+                logfilepath = os.path.join(os.getcwd(),"arbitools-report.log")
+                with open(logfilepath, 'a') as logfile: #TESTING
                         logfile.write("\nFile updated report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
                         logfile.write(str(count)+" players searched\n")
                         logfile.write(str(updated)+" players updated\n")
@@ -903,7 +963,7 @@ class Tournament:
                         print("\r"+str(count)+" players searched", end="")
                 print("\r"+str(count)+" players searched")
                 print(str(updated)+" updates done")
-                with open(os.getcwd()+"arbitools-report.log", 'a') as logfile:
+                with open(os.path.join(os.getcwd(), "arbitools-report.log"), 'a') as logfile:
                         logfile.write("\nFile updated report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
                         logfile.write(str(count)+" players searched\n")
                         logfile.write(str(updated)+" updates done\n")
@@ -1079,13 +1139,14 @@ class Tournament:
                                  self.crosstable[i].update({nameround:opponent[j]})
                                  
 
-
+        ################################################################################################
         #Open a .csv, .txt or .veg and get the players data.
+        ################################################################################################
         def get_tournament_data_from_file(self, filename):
                 
                 with open(filename) as csvfile:
                         #First the stuff for trf FIDE files
-                        if filename.endswith('.txt') or filename.endswith('.trf') or filename.endswith('.trfx'):
+                        if filename.endswith('.txt') or filename.endswith('.TXT') or filename.endswith('.trf') or filename.endswith('.trfx'):
                                 print("FIDE format file")
                                 self.typeoffile = "trf"
                                 line=' '
@@ -1158,7 +1219,7 @@ class Tournament:
                                                 if self.info['CURRENT_ROUND'] < 0:
                                                         self.info['CURRENT_ROUND'] = 0
                                         if firstblock == "001": #Players information
-                                                sex = line[9].strip()
+                                                sex = line[9:10].strip()
                                                 title = line[10:13].strip()
                                                 name = line[14:47].strip()
                                                 fide = line[48:52].strip()
@@ -1639,7 +1700,8 @@ class Tournament:
                 #                        self.info['NUMBER_OF_PLAYERS'] = str(int(self.info['NUMBER_OF_PLAYERS']) - 1)+"\n"
                 #print(self.players_data)
                 self.purged = True
-                with open(os.getcwd()+"arbitools-report.log", 'a') as logfile: #TESTING
+                logfilepath = os.path.join(os.getcwd(),"arbitools-report.log")
+                with open(logfilepath, 'a') as logfile: #TESTING
                         logfile.write("\nFile purge report: "+time.strftime("%d/%m/%Y-%H:%M:%S")+"\n")
                         logfile.write("\n")
                         logfile.write(str(self.players_to_purge))

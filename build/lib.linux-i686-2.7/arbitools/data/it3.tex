@@ -1,5 +1,7 @@
 \documentclass[11pt, a4paper]{article}
 
+\usepackage{graphicx}
+\usepackage{wrapfig}
 \addtolength{\oddsidemargin}{-2.5cm}
 %\addtolength{\evensidemargin}{-2cm}
 \addtolength{\textwidth}{3cm}
@@ -25,28 +27,31 @@
 \noindent\begin{tabular}{|p{5cm}|p{10.97cm}|}
 \hline
 {\bfseries Federation}&{\bfseries Name of Tournament}\\
-\normalsize ESP& \\
+\normalsize ESP&\bfseries\normalsize NAME OF THE TOURNAMENT\\
 \hline
 \end{tabular}
 
 \noindent\begin{tabular}{|p{11cm}|p{2.28cm}|p{2.27cm}|}
 Country and Place of Tournament&Starting date&Ending date\\
-& & \\
+PLACE&STARTDATE&ENDDATE \\
 \hline
 \end{tabular}
 
 \noindent\begin{tabular}{|p{16.4cm}|}
 Organizer of the Tournament: [Contact Information (Address, phone, fax, E-mail) of the person responsible for information]:\\
-{\normalsize}\\
-{\normalsize}\\
-{\normalsize}\\
+{\normalsize\bfseries ORGANIZER}
+\begin{verbatim}
+address: ADDRESS
+phone: PHONE
+email: EMAIL
+\end{verbatim}
 \\
 \hline
 \end{tabular}
 
 \noindent\begin{tabular}{|p{5cm}|p{5.4cm}|p{5.15cm}|}
 Number of rounds&Schedule(number of rounds/day)&Rate(s) of play\\
-& &\\
+ROUNDS&ROUNDSDAY&RATE\\
 \hline
 \end{tabular}
 
@@ -55,7 +60,7 @@ Number of rounds&Schedule(number of rounds/day)&Rate(s) of play\\
 Tournament type&\\
 &Manual\hspace{1cm} [ ]\hspace{1cm} Person responsible:\\
 {\bfseries \normalsize TYPE OF TOURNAMENT}& \\
-&Computerized [X]\hspace{1cm}Program used:\\
+&Computerized [X]\hspace{1cm}Program used: {\bfseries PROGRAM}\\
 \hline
 \end{tabular}
 
@@ -82,10 +87,13 @@ FM& & & & &WFM& & & & \\
 
 \noindent\begin{tabular}{|p{16.4cm}|}
 Chief Arbiter and contact information for Chief Arbiter (Address, phone, fax, E-mail):\\
-{\normalsize}\\
-{\normalsize}\\
-{\normalsize}\\
-{\normalsize}\\
+{\normalsize\bfseries NAME OF ARBITER}
+\begin{verbatim}
+address: ADDRESS
+phone: PHONE
+email: EMAIL
+\end{verbatim}
+\\
 \hline
 \end{tabular}
 

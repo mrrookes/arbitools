@@ -1,11 +1,11 @@
 \input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename arbitools.info
-@settitle Chess Arbiter Tools 0.9
+@settitle Chess Arbiter Tools
 @c %**end of header
 
 @copying
-This manual is for Chess Arbiter Tools, version 0.9.
+This manual is for Chess Arbiter Tools.
 
 Copyright @copyright{} 2015 David Gonzalez Gandara.
 
@@ -54,20 +54,22 @@ any later version published by the Free Software Foundation.
 @node    Introduction
 @chapter Introduction
 
-Chess Arbiter Tools were born as a solution to a situation where chess arbiters are forced to use privative software because of the lack of free tournament management tools. It consists of a group of programs that allows the arbiter to do some important tasks in tournaments, such as maintaining the players database up to date or produce reports.
+Chess Arbiter Tools were born as a solution to a situation where chess arbiters are forced to use privative software because of the lack of free (as in libre, not as in free beer)tournament management tools. It consists of a group of programs that allows the arbiter to do some important tasks in tournaments, such as maintaining the players database up to date or produce reports.
 
 The philosophy is to provide the arbiter with more freedom over the tournament files. The most common programs (usually privative software) don't usually allow direct operations  on the files, so the arbiter has to stick to the possibilities the program offers. The alternative is to allow the arbiter with complete control over the files during the tournament.
 
-Apart from that, as it happens with any other free software program, if the user is not happy with the way the program does stuff, he or she can just change the code to make it works the way he likes.
+Apart from that, as it happens with any other free software program, if the user is not happy with the way the program does stuff, he or she can just change the code to make it works the way he or she likes.
 
 I wrote these tools to simplify my work in real chess tournaments. It has not been widely tested, although I tested it in a few tournaments successfully. Please send me your oppinions and suggestions if you use it for your tournaments, so that the program can go beyond beta state.  
 
 @node History
 @chapter History
 
-This project started as a python library, with the idea of making it available in many platforms easily, and also, to make easy the integration with other similar projects. During the process, I realised that this was not the best way to do it. I saw that most of the work was to maintain a tournament file in plain text format. Emacs was the perfect environment. It makes easy to do the highlighting for the different sections of the file, plus the possibility to do all kind of operations using ELISP. It is also a good cross-platform environment. And easier to install than python.
+This project started as a python library, with the idea of making it available in many platforms easily, and also, to make the integration with other similar projects possible. During the process, I realised that this was not the best way to do it. I saw that most of the work was to maintain a tournament file in plain text format. Emacs, then, emerged as the perfect environment. It makes easy to do the color highlighting for the different sections of the file, plus the possibility to do all kind of operations using ELISP. It is also a good cross-platform environment. And easier to install than python.
 
 As a result, Arbitools became an Emacs package. From this point, the new features will be implemented in ELISP. The ``old'' python scripts will be used for some time, until all the code is translated into Emacs functions.
+
+I realize that managing a tournament in Emacs is not the most user friendly experience, but I think it is important to have the possibility to manage a tournament completely with free (as in freedom) tools. Up to now, it is possible to do almost every task in a tournament: creating the crosstable for FIDE, insert players, do the pairings, delete rounds, create the report forms, and some more. Also, I think it is good for the arbiters to be aware on how the FIDE file is structured. This is a good knowledge that can be applied in a lot of situations: the file from the file manager is corrupted, someone has to be changed and it is not allowed in the software, etc.
 
 @node Installation
 @chapter Installation
@@ -76,11 +78,16 @@ Most of the functions of Arbitools are still supported through the python script
 
 @code{python3 setup.py install}
 
-Arbitools is in @url{https://pypi.python.org} too, so you can just type:
+Arbitools is in @url{https://pypi.org} too, so you can just type:
 
 @code{pip3 install arbitools} 
 
 The program should work in other platforms, but I don't intend to check it in other systems apart from GNU/Linux. If you have problems installing it, it may work using the scripts directly from the folder where you downloaded the scripts.
+
+@section Installing bbpPairings
+Arbitools is able to do the pairings for a tournament thanks to this fantastic tool that you can find under a GPL license in @url{http://https://github.com/BieremaBoyzProgramming/bbpPairings}. You will find binary files for different platforms. Download it and copy it to a folder that is executable. In GNU/Linux, you can copy to ``/usr/bin''. Using arbitools and bbpPairings is, in my opinion, a perfect example of how the free software community should maintain a chess tournament manager project. Two free modules that can work together and be maintained independently.
+
+To use bbpPairings on a file, you have to make sure that the field ``XXR'' exists, followed by the number of rounds in the tournament. If you wish, you can remove that line before sending the report to your federation. This is an extension of the structure of the file, which you can find in the FIDE website @url{https://www.fide.com/FIDE/handbook/C04Annex2_TRF16.pdf}. @xref{Usage} for an image where you can see where to place the ``XXR'' field.
 
 @section Installing Emacs
 The main interface of Arbitools is Emacs, you should install it in order to get the most of it. You can get it in @url{http:/gnu.org/software/emacs}. Emacs is available for different platforms.
@@ -123,7 +130,7 @@ You may need to install python in order to use some features that have not been 
 
 
 @indentedblock
-@emph{custom_elo.csv} It is recommended that you create this file, with the header described in the section @xref{File Formats}. Add the data of the players you really need and update monthly with the official lists. Make sure the FIDE and FEDA codes are correct.
+@emph{custom_elo.csv} It is recommended that you create this file, with the header described in the section ``File Formats'' (@xref{File Formats}). Add the data of the players you really need and update monthly with the official lists. Make sure the FIDE and FEDA codes are correct.
 @end indentedblock
 
 Keep these files in your personal folder (/home/<user>) in GNU/Linux.
@@ -132,14 +139,30 @@ Keep these files in your personal folder (/home/<user>) in GNU/Linux.
 @node    Usage
 @chapter Usage
 
-The recommended frontend for Arbitools is Emacs. It is the most GNU way of managing a tournament.
-The second frontend is the Graphical Interface.
-For some time, you can still use the command line interface.
+The recommended frontend for Arbitools is Emacs. It is the most GNU way of managing a tournament. For some time, you will also be able to use the command line interface.
 @section Emacs environment
-The most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files and run the arbitool commands. To do this, you have to install the ``arbitools.el'' package. Instructions in @xref{Installation}.
+As I said before, the most logical way to use ``Chess Arbiter Tools'' is through Emacs. It combines the possibility of directly edit the tournament files, run the arbitool commands and launch a pairing engine. To do this, you have to install the ``arbitools.el'' package. Instructions in the ``Instalation'' section (@xref{Installation}).
 
-You can use all the power of Emacs to manage the file, plus the different Arbitools functions. You will find the menu entry ``Arbitools'', with the functions available.
+You can use all the power of Emacs to manage the file, plus the different Arbitools functions and the pairing engines. You will find the menu entry ``Arbitools'', with the functions available. It also is possible to search and replace text, to copy and paste, etc.
 @image{arbitoolsel, 640, 480}
+
+The functions available are: ``New Tournament'', ``Insert Player'', ``Delete Player'', ``Do Pairings'', ``Insert Result'', etc. Some of them require external programs that are detailed above.
+
+It is possible to manage a tournament enterily with arbitools, although is not a very user-friendly experience. Unless you are familiar with Emacs, of course. 
+
+- First, you create an empty FIDE file and write manually the information of the tournament.
+
+- Then you add the players. You can insert everything manually, checking with the FIDE list. The alternative is to create a csv file with the format recommended in the ``File Formats'' section (@xref{File Formats}) and add the players to the file with the corresponding option.
+
+- After this, you can do the pairings through the option in the menu.
+
+- You can also print the pairing clicking on ``List Pairings'', telling the program what round to print and going to the ``Pairing list'' buffer from the ``Buffers'' menu.
+
+- When the tournamet is finished, you don't need to create the FIDE export file, because you already worked on it. You can generate the IT3 report by clicking on the option. You will get a pdf file in which you have to edit some data. You can do this with your favourite software, but I recommend editing the tex file created in the same folder and compile it with ``pdflatex''. Additionally, you can create the FEDA rating file, if the tournament is in Spain and use it to include and your tournament report.
+
+- And that's it.
+
+Additional functions are: updating the ratings on a csv file, delete a player who didn't play any games, delete the results of a round and a couple more. 
 
 @section Graphical Interface
 Although it should work just fine, this interface is not maintained anymore. It may not work properly. Invoking the graphical interface is easy. Just run ``arbitools-gui.py''. Choose your file, your options and press the button withe function you want to perform. The main screen looks like this:
@@ -207,12 +230,16 @@ Possible commands:
 @b{fedarating <filename>} Get the FEDA RatingAdmin file for ``filename''. 
 @end indentedblock
 
+@indentedblock
+@b{update <filename>} Update the elo of ``filename''. If you use the option -l, you can specify fide or feda lists. If you dont use this, the custom file will be used. You need to have in your home directory the files ``elo_feda.xls'', ``players_list_xml.xml'' if you want to use the fide or feda lists. I recommend that you create a ``custom_elo.csv'' as described later.
+@end indentedblock
+
 @subsection arbitools-update.py(obsolete)
 Updates the players information stored in a file. It is a very useful function when a new list is published and you had already set up the tournament.
 @indentedblock
 @b{-i} This argument takes the name of the input file. This is the file with the information we want to update.
 
-You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
+You can use .veg files, .txt (FIDE Krause) or .csv. For details @xref{File Formats}.
 @end indentedblock
 @indentedblock
 @b{-l} Write the name of the elo list here. ``fide'' uses the official fide list from the file ``players_list_xml.xml''. It won't work if you don't have that file in your folder. You can download it from www.fide.com. ``feda'' uses the feda list from the file ``elo_feda.xls''. You have to rename the file from www.feda.org. ``fidefeda'' uses the file ``FIDE-FEDA Vega.csv''. You can download it from www.jemchess.com. By default, it uses your personal ``custom_elo.csv'' file.
@@ -234,12 +261,12 @@ Adds extra players to an existing file.
 @indentedblock
 @b{-i} This argument takes the name of the input file. This is the file with the information we want to update.
 
-You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
+You can use .veg files, .txt (FIDE Krause) or .csv. For details @xref{File Formats}.
 @end indentedblock
 @indentedblock
-@b{-a} This argument takes the name of the file with the extra players you want to add. It should be a .csv file with the structure described in @xref{File Formats}.
+@b{-a} This argument takes the name of the file with the extra players you want to add. It should be a .csv file with the structure described in ``File Formats'' (@xref{File Formats}).
 
-You can use .veg files, .txt (FIDE Krause) or .csv. For details see the section @xref{File Formats}.
+You can use .veg files, .txt (FIDE Krause) or .csv. For details @xref{File Formats}.
 @end indentedblock
 
 
@@ -305,17 +332,15 @@ This kind of files is very useful if you really need to store extra data about t
 @node Common Arbiters Tasks with Emacs
 @chapter Common Arbiters Tasks with Emacs.
 
-The recommended way to manage a tournament with Arbitools is through a .trf tournament file. You can edit it manually or with the Arbitools commands from the Emacs menu options under ``Arbitools''.
+The recommended way to manage a tournament with Arbitools is through a .trf tournament file. You can edit it manually or with the Arbitools commands from the Emacs menu options under ``Arbitools''. Every different kind of tournament is really the same in terms of the .trf FIDE file. Round robin, swiss, team, etc. In team tournaments an extra section is added at the end of the file. But it is not really necessary for elo administration. I think you could send a team tournament file in the same format as individual files. Sometimes, team tournament software is very problematic. They are usually necessary depending on your federation, because you may need to maintain the webpage from the software in the official federation site, but you can always work with the .trf file and import the data in your software before you upload it. The power of Arbitools is that you will be able to write a tournament report even if you are having troubles with your software.
 
-Arbitools do not provide a pairing command yet (I hope to have it in the future). In this moment I can only recommend ``JavaPairings'', which is the only true free software possibility. You can also use some privative options to do that.
+To create a .trf file, you can use the option in the menu and change the data according to your tournament, or use your favourite tournament management software. If you name your file ending in .trf, the arbitools-mode will be automatically set in Emacs. In case you name the file with something else (.txt), for example, you will need to type ``M-x arbitools-mode'' (``Alt-x'' and then ``arbitools-mode'').
 
-I recommend that the first thing you do is create a .csv file, with the header described in @xref{File Formats}, with the data for your tournament. When the tournament starts it is necessary that you update the elo ratings if necessary. Use the update command twice, one with the ``fide'' option and one with the ``feda'' option. In that file, You can store all the players data you need.
+I recommend that the first thing you do is create a .csv file, with the header described in the ``File Formats'' section (@xref{File Formats}), with the data for your tournament. It can be useful for several purposes.
 
-For each round, introduce manually the results in the .trf file, in the right column. It is useful to use the ``insert'' key in your keyboard.
+Summing up, use Emacs and Arbitools to maintain your .trf text file and optionally, import the data in your favourite software to get pairings and update to the internet site.
 
-When the tournament is finished, get the Feda RatingAdmin file from the menu option. This is where the custom file you created is useful, because you will need the FEDA data, which is not stored in the .trf file. Provide you custom file as the file option for the Feda report command.
-
-Then, get the IT3 report forms from the menu option.
+You can find more details in the ``Usage'' section (@xref{Usage}).
 
 @node Common Arbiters Tasks with the command line interface
 @chapter Common Arbiters Tasks with the command line interface.
@@ -354,12 +379,15 @@ It is recommended that you create your own ``custom_elo.csv'', with the informat
 
 After these two commands you will get ``custom_elo_updated_updated.csv''. Check if it is correct and rename it again to ``custom_elo.csv''
 
-Use you favourite pairings program to input the pairings and results. When the tournament is finished, use these commands with the TRF file:
+Use arbitools or you favourite pairings program to input the pairings and results. When the tournament is finished, use these commands with the TRF file:
 
 @code{arbitools-run.py it3 <tournamentFIDEfile>}
+
 @code{arbitools-run.py fedarating <tournamentFIDEfile>}
 
 And that's it, you already have your FIDE TRF, your FEDA Rating_admin and your IT3 ready to send to your fedaration.
+
+You can do all these tasks through Emacs, as described in the ``Usage'' section (@xref{Usage})
 
 @node    The python library
 @chapter The python library

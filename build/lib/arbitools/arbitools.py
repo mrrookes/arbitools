@@ -1219,7 +1219,7 @@ class Tournament:
                                                 if self.info['CURRENT_ROUND'] < 0:
                                                         self.info['CURRENT_ROUND'] = 0
                                         if firstblock == "001": #Players information
-                                                sex = line[9].strip()
+                                                sex = line[9:10].strip()
                                                 title = line[10:13].strip()
                                                 name = line[14:47].strip()
                                                 fide = line[48:52].strip()

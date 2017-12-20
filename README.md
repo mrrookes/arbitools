@@ -18,11 +18,8 @@ Up to here, the following tasks are possible:
 - Produce output for standings: a .txt file and a .tex file, ready for pdflatex
 
 TODO:
-- Pairing engine. Arbitools doesn't do the pairings in this moment. The Dutch algorithm is tricky to implement and difficult to get officially endorsed by FIDE. I recommend the use of JavaPairing (javapairing.sourceforge.net). The program is able to do a pairing from arbitools output.
 - Detect duplicated players in the elo list and warn the user about it.
-- Generate PGN files.
 - Appliying tiebreaks.
-- Producing FIDE reports.
 
 
 
